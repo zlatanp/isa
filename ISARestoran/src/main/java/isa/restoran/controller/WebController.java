@@ -26,7 +26,7 @@ public class WebController extends WebMvcConfigurerAdapter  {
 //		return korisnikService.getAllUsers();
 //	}
 	
-	@RequestMapping("/projekat")
+	@RequestMapping("/")
 	public String home(){
 		return "home.html";
 	}
