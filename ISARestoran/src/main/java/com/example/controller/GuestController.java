@@ -1,12 +1,15 @@
 package com.example.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.model.Guest;
 import com.example.service.GuestService;
@@ -32,13 +35,13 @@ public class GuestController {
     
 	
 	@RequestMapping(value = "/login")
-	public synchronized String login(@ModelAttribute("username") String email, @ModelAttribute("password") String password){
-		String rezultat = "";
+	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("username") String email, @ModelAttribute("password") String password) throws IOException{
+		boolean uspesno = false;
 		
 		if (email.isEmpty() || password.isEmpty()) {
 			
-			rezultat = "F";	//nema ga u bazi
-		}
+			uspesno = false;	//nema ga u bazi
+		}else{
 		
 		Iterable<Guest> listagostiju = guestService.getAllGuests();
 		ArrayList<Guest> list = new ArrayList<Guest>();
@@ -50,30 +53,35 @@ public class GuestController {
 	    for(int i=0;i<list.size();i++){
 	    	if(list.get(i).getEmail().equals(email)){
 	    		if(list.get(i).getPassword().equals(password))
-	    			rezultat = "T"; //ima ga u bazi
+	    			uspesno = true; //ima ga u bazi
 	    	}
 	    }
+		}
 	    
-	    if(rezultat=="")
-	    	rezultat = "F";
-	    
-		return rezultat;
+		if(uspesno){
+			httpServletResponse.sendRedirect("/restoran.html");
+			}else{
+			httpServletResponse.sendRedirect("/home.html");	
+			}
 	}
 	
 	@RequestMapping(value = "/register")
-	public synchronized String register(@ModelAttribute("name") String name, @ModelAttribute("email") String email,  @ModelAttribute("password") String password){
-		String rezultat = "";
+	public synchronized void register(HttpServletResponse httpServletResponse, @ModelAttribute("name") String name, @ModelAttribute("email") String email,  @ModelAttribute("password") String password) throws IOException{
+		boolean uspesno = false;
 		
 		if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
 			
-			rezultat = "F";	//nema ga u bazi
-		}
+			uspesno = false;	//nema ga u bazi
+		}else{
 		
 		Guest gost = new Guest(name, "", password, email);
 		guestService.saveGuest(gost);
 	   
-	    
-		return rezultat;
+		uspesno = true;
+		}
+		
+		
+		httpServletResponse.sendRedirect("/home.html");
 	}
 	
 	@RequestMapping(value = "/obrisi")
