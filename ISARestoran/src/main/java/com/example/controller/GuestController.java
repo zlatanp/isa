@@ -22,7 +22,7 @@ import com.example.service.GuestService;
 
 
 @RestController
-@RequestMapping("/gostkontroler")
+@RequestMapping("/gost")
 public class GuestController {
 	
 	@Autowired
@@ -31,8 +31,8 @@ public class GuestController {
 	
     
 	
-	@RequestMapping(value = "/vrati")
-	public synchronized String vrati(@ModelAttribute("username") String email, @ModelAttribute("password") String password){
+	@RequestMapping(value = "/login")
+	public synchronized String login(@ModelAttribute("username") String email, @ModelAttribute("password") String password){
 		String rezultat = "";
 		
 		if (email.isEmpty() || password.isEmpty()) {
@@ -60,11 +60,20 @@ public class GuestController {
 		return rezultat;
 	}
 	
-	@RequestMapping(value = "/dodaj")
-	public synchronized String dodaj(){
-		Guest g = new Guest("ime", "prezime", "pasword", "mejl");
-		guestService.saveGuest(g);
-		return "dodao";
+	@RequestMapping(value = "/register")
+	public synchronized String register(@ModelAttribute("name") String name, @ModelAttribute("email") String email,  @ModelAttribute("password") String password){
+		String rezultat = "";
+		
+		if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+			
+			rezultat = "F";	//nema ga u bazi
+		}
+		
+		Guest gost = new Guest(name, "", password, email);
+		guestService.saveGuest(gost);
+	   
+	    
+		return rezultat;
 	}
 	
 	@RequestMapping(value = "/obrisi")
