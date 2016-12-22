@@ -53,9 +53,23 @@ public class GuestController {
 	    			rezultat = "T"; //ima ga u bazi
 	    	}
 	    }
+	    
 	    if(rezultat=="")
 	    	rezultat = "F";
 	    
 		return rezultat;
+	}
+	
+	@RequestMapping(value = "/dodaj")
+	public synchronized String dodaj(){
+		Guest g = new Guest("ime", "prezime", "pasword", "mejl");
+		guestService.saveGuest(g);
+		return "dodao";
+	}
+	
+	@RequestMapping(value = "/obrisi")
+	public synchronized String obrisi(){
+		guestService.deleteGuest((long) 2);
+		return "obrisao";
 	}
 }
