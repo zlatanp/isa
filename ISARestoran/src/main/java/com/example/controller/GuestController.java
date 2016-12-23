@@ -11,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.example.model.Guest;
-import com.example.service.GuestService;
+import com.example.beans.korisnici.Gost;
+import com.example.beans.korisnici.Korisnik;
+import com.example.enums.TipKorisnika;
+import com.example.service.GostService;
+import com.example.service.KorisnikService;
 
 
 
@@ -29,9 +32,10 @@ import com.example.service.GuestService;
 public class GuestController {
 	
 	@Autowired
-	private GuestService guestService;
+	private KorisnikService korisnikService;
 
-	
+	@Autowired
+	private GostService gostService;
     
 	
 	@RequestMapping(value = "/login")
@@ -41,19 +45,23 @@ public class GuestController {
 		if (email.isEmpty() || password.isEmpty()) {
 			
 			uspesno = false;	//nema ga u bazi
+			
 		}else{
 		
-		Iterable<Guest> listagostiju = guestService.getAllGuests();
-		ArrayList<Guest> list = new ArrayList<Guest>();
-	    for (Guest item : listagostiju){
+		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+		ArrayList<Korisnik> list = new ArrayList<Korisnik>();
+	    for (Korisnik item : listaKorisnika){
 	        list.add(item);
+	        System.out.println(item.getIme());
 	    }
 	    
 	    
 	    for(int i=0;i<list.size();i++){
 	    	if(list.get(i).getEmail().equals(email)){
-	    		if(list.get(i).getPassword().equals(password))
+	    		if(list.get(i).getPassword().equals(password)){
 	    			uspesno = true; //ima ga u bazi
+	    			 System.out.println(list.get(i).getPassword());
+	    		}
 	    	}
 	    }
 		}
@@ -66,27 +74,21 @@ public class GuestController {
 	}
 	
 	@RequestMapping(value = "/register")
-	public synchronized void register(HttpServletResponse httpServletResponse, @ModelAttribute("name") String name, @ModelAttribute("email") String email,  @ModelAttribute("password") String password) throws IOException{
-		boolean uspesno = false;
-		
-		if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+	public synchronized void register(HttpServletResponse httpServletResponse, @ModelAttribute("name") String name, @ModelAttribute("lastname") String lastname,
+			@ModelAttribute("email") String email,  @ModelAttribute("password") String password) throws IOException{
 			
-			uspesno = false;	//nema ga u bazi
-		}else{
-		
-		Guest gost = new Guest(name, "", password, email);
-		guestService.saveGuest(gost);
-	   
-		uspesno = true;
+		if (!(name.isEmpty() || email.isEmpty() || password.isEmpty())) {				
+			Gost gost = new Gost(name, lastname, email, password, TipKorisnika.GOST);
+			korisnikService.saveKorisnik(gost);	
+			gostService.saveGost(gost);
 		}
-		
-		
+				
 		httpServletResponse.sendRedirect("/home.html");
 	}
 	
 	@RequestMapping(value = "/obrisi")
 	public synchronized String obrisi(){
-		guestService.deleteGuest((long) 2);
+		korisnikService.deleteKorisnik(2);
 		return "obrisao";
 	}
 }
