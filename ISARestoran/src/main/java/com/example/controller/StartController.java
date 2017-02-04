@@ -14,6 +14,6 @@ public class StartController {
 	
 	@RequestMapping("/")
 	public String startMetoda(){
-		return "home.html"; 
+		return "index.html"; 
 	}
 }

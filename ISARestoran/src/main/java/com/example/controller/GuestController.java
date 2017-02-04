@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -38,40 +41,36 @@ public class GuestController {
 	private GostService gostService;
     
 	
-	@RequestMapping(value = "/login")
-	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("username") String email, @ModelAttribute("password") String password) throws IOException{
-		boolean uspesno = false;
-		
-		if (email.isEmpty() || password.isEmpty()) {
-			
-			uspesno = false;	//nema ga u bazi
-			
-		}else{
+	@RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("email") String email, @ModelAttribute("password") String password) throws IOException{
+		boolean postoji = false;
+		System.out.println("loguje se: " + email + " " + password);
 		
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		ArrayList<Korisnik> list = new ArrayList<Korisnik>();
-	    for (Korisnik item : listaKorisnika){
+		for (Korisnik item : listaKorisnika){
 	        list.add(item);
-	        System.out.println(item.getIme());
 	    }
-	    
 	    
 	    for(int i=0;i<list.size();i++){
 	    	if(list.get(i).getEmail().equals(email)){
 	    		if(list.get(i).getPassword().equals(password)){
-	    			uspesno = true; //ima ga u bazi
-	    			 System.out.println(list.get(i).getPassword());
+	    			 System.out.println("imaga");
+	    			 postoji = true;
 	    		}
 	    	}
 	    }
-		}
 	    
-		if(uspesno){
-			httpServletResponse.sendRedirect("/restoran.html");
-			}else{
-			httpServletResponse.sendRedirect("/home.html");	
-			}
-	}
+	    if(postoji){
+	    	httpServletResponse.sendRedirect("/home.html");
+	    }else{
+	    	httpServletResponse.sendRedirect("/index.html");
+	    }
+		}
+	
+	//public synchronized void login(@RequestParam("email") String email, @RequestParam("password") String password) throws IOException{
+
+	
 	
 	@RequestMapping(value = "/register")
 	public synchronized void register(HttpServletResponse httpServletResponse, @ModelAttribute("name") String name, @ModelAttribute("lastname") String lastname,
