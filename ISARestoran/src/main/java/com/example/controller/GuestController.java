@@ -182,8 +182,12 @@ public class GuestController {
 		            return;
 		        }
 		
-		    Korisnik noviKorisnik = new Korisnik(name, lastname, email, password, TipKorisnika.GOST);
-			korisnikService.saveKorisnik(noviKorisnik);
+		    
+			
+			
+
+			//Korisnik noviKorisnik = new Korisnik(name, lastname, email, password, TipKorisnika.GOST);
+			//korisnikService.saveKorisnik(noviKorisnik);
 			
 			Gost gost = new Gost(name,lastname,email,password,TipKorisnika.GOST);
 			gost.setHashCode(hashCode);
