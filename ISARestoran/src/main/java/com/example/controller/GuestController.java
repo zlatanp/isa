@@ -9,21 +9,15 @@ import java.math.BigInteger;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.util.*;
-import java.io.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.mail.MailException;
-import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
@@ -55,6 +49,7 @@ public class GuestController {
 	@RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("email") String email, @ModelAttribute("password") String password) throws IOException{
 		boolean postoji = false;
+		Korisnik korisnikKojiSeLoguje = null;
 		System.out.println("loguje se: " + email + " " + password);
 		
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
@@ -68,10 +63,37 @@ public class GuestController {
 	    		if(list.get(i).getPassword().equals(password)){
 	    			 System.out.println("imaga");
 	    			 postoji = true;
+	    			 korisnikKojiSeLoguje = list.get(i);
 	    		}
 	    	}
 	    }
 	    
+
+	    //Uzimam tip korisnika koji se loguje i pitam da li je Gost.
+	    //Ako jeste gost onda proveravam da li je aktivirao profil preko mejla,
+	    //ako jeste onda se loguje uspesno, ako nije onda se ne moze ulogovati
+	
+	    if(korisnikKojiSeLoguje != null){ 
+	    	TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
+	    			    
+	    	switch (tip) {
+	    		case GOST:
+	    				Iterable<Gost> sviGosti = gostService.getAllGosti();
+	    				for (Gost item : sviGosti){
+	    					if(item.isActivated()){
+	    						postoji = true;
+	    					}else{
+	    						postoji = false;
+	    					}
+	    				 }
+	    			break;
+
+	    		default:
+	    			break;
+	    
+	    
+	    }
+	    }
 	    if(postoji){
 	    	httpServletResponse.sendRedirect("/home.html");
 	    }else{
@@ -144,9 +166,10 @@ public class GuestController {
 		            d_host = "smtp.gmail.com",
 		            d_port  = "465",
 		            m_to = email,
-		            m_subject = "Verify Restoran Account",
-		            m_text = name + " Thank you for registering to the Restoran website." +
-		            "To active your account please go on link: http://localhost:8080/active/"+ hashCode;
+		            m_subject = "Verify Restaurant Account",
+		            m_text = "Hi " + name + ",\t\n\t\nThank you for registering on our website.\t\n" +
+		            "To activate your account please go on link: http://localhost:8080/gost/active/"+ hashCode +
+		            "\t\n\t\nBest Regards,\t\nYour Restaurant.";
 		    Properties props = new Properties();
 		    props.put("mail.smtp.user", d_email);
 		    props.put("mail.smtp.host", d_host);
@@ -182,13 +205,7 @@ public class GuestController {
 		            return;
 		        }
 		
-		    
-			
-			
-
-			//Korisnik noviKorisnik = new Korisnik(name, lastname, email, password, TipKorisnika.GOST);
-			//korisnikService.saveKorisnik(noviKorisnik);
-			
+	
 			Gost gost = new Gost(name,lastname,email,password,TipKorisnika.GOST);
 			gost.setHashCode(hashCode);
 			gostService.saveGost(gost);
@@ -205,9 +222,21 @@ public class GuestController {
 
 	}
 	
-	@RequestMapping(value = "/obrisi")
-	public synchronized String obrisi(){
-		korisnikService.deleteKorisnik(2);
-		return "obrisao";
+	@RequestMapping(value = "/active/{code}",  method=RequestMethod.GET)
+	public synchronized void activateAccount(HttpServletResponse httpServletResponse, @PathVariable("code") String kod) throws IOException{
+		Iterable<Gost> listaGostiju = gostService.getAllGosti();
+		ArrayList<Gost> list = new ArrayList<Gost>();
+		for (Gost item : listaGostiju){
+	        list.add(item);
+	    }
+		
+		for (Gost gost : list) {
+			if(gost.getHashCode().equals(kod)){
+				gost.setActivated(true);
+				gostService.saveGost(gost);
+			}
+		}
+		
+		httpServletResponse.sendRedirect("/index.html");
 	}
 }
