@@ -9,9 +9,56 @@
 <script src="html/js/bootstrap.js"></script>
 <script src="html/js/bootstrap.min.js"></script>
 
+ <link rel="stylesheet" href="html/css/animate.css" type="text/css" />
+
+    <link rel="stylesheet" href="html/css/rmodal.css" type="text/css" />
+    <script type="text/javascript" src="html/js/rmodal.js"></script>
+
 <link rel="stylesheet" type="text/css" href="html/css/looknfeel.css">
 <meta charset="ISO-8859-1">
 <title>Restoran pocetna</title>
+<script type="text/javascript">
+        window.onload = function() {
+            var modal = new RModal(document.getElementById('modal'), {
+                //content: 'Abracadabra'
+                beforeOpen: function(next) {
+                    console.log('beforeOpen');
+                    next();
+                }
+                , afterOpen: function() {
+                    console.log('opened');
+                }
+
+                , beforeClose: function(next) {
+                    console.log('beforeClose');
+                    next();
+                }
+                , afterClose: function() {
+                    console.log('closed');
+                }
+                // , bodyClass: 'modal-open'
+                // , dialogClass: 'modal-dialog modal-dialog-lg'
+                // , dialogOpenClass: 'animated fadeIn'
+                // , dialogCloseClass: 'animated fadeOut'
+
+                // , focus: true
+                // , focusElements: ['input.form-control', 'textarea', 'button.btn-primary']
+
+                // , escapeClose: true
+            });
+
+            document.addEventListener('keydown', function(ev) {
+                modal.keydown(ev);
+            }, false);
+
+            document.getElementById('showModal').addEventListener("click", function(ev) {
+                ev.preventDefault();
+                modal.open();
+            }, false);
+
+            window.modal = modal;
+        }
+    </script>
 </head>
 <body>
 <div class="container">
@@ -43,7 +90,7 @@
             <label>Password</label>
             <input type="password" name="password">
             <button type="submit" onclick="return ulogujSe()">Sign In</button>
-            <a href="" onclick="zaboravioSifru()">Forgot Password?</a>
+            <a href="" id="showModal">Forgot Password?</a>
             </form>
             </div>
             <div class="social-login">
@@ -70,7 +117,7 @@
             <label>Confirm Password</label>
             <input type="password" name="password1Register">
             <button type="submit" onclick="return registrujSe()">Join now</button>
-            <p>By clicking Join now, you agree to Restoran's User Agreement, Privacy Policy, and Cookie Policy.</p>
+            <p>By clicking Join now, you agree to Restaurant's User Agreement, Privacy Policy, and Cookie Policy.</p>
             </form>
             </div>
             <div class="social-login">
@@ -90,7 +137,35 @@
     </div>
     </div>
     
+    <div id="modal" class="modal">
+        <div class="modal-dialog animated">
+            <div class="modal-content">
+                <form class="form-horizontal" method="get", action="gost/recover">
+                    <div class="modal-header">
+                        <strong>Forgot Password?</strong>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="dummyText" class="control-label col-xs-4">Enter your email adress and we'll send you password:</label>
+                            <div class="input-group col-xs-7">
+                                <input type="text" name="email" id="email" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-default" type="button" onclick="modal.close();">Cancel</button>
+                      	<button class="btn btn-primary" type="submit" onclick="modal.close();">Recover password</button> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <script>
+  
+    
     function ulogujSe(){
     	var i = document.getElementsByName('email');
     	var emailValue = i[0].value;
@@ -160,9 +235,7 @@
         }
     }
     
-    function zaboravioSifru(){
-    	
-    }
+    
     </script>
 
 </body>

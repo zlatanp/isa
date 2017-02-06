@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Gost;
@@ -108,8 +109,8 @@ public class GuestController {
 	@RequestMapping(value = "/register",method = {RequestMethod.POST})
 	public synchronized void register(HttpServletResponse httpServletResponse, @ModelAttribute("nameRegister") String name, @ModelAttribute("lastnameRegister") String lastname,
 			@ModelAttribute("emailRegister") String email,  @ModelAttribute("passwordRegister") String password, @ModelAttribute("password1Register") String passwordRepeat) throws IOException{
-		boolean uspesno = false;
 		
+		boolean uspesno = false;
 		System.out.println(name + lastname + email + password + passwordRepeat);
 		
 		
@@ -238,5 +239,68 @@ public class GuestController {
 		}
 		
 		httpServletResponse.sendRedirect("/index.html");
+	}
+	
+	@RequestMapping(value = "/recover",  method=RequestMethod.GET)
+	public synchronized void recoverPassword(HttpServletResponse httpServletResponse, @ModelAttribute("email") String mejl) throws IOException{
+		
+		System.out.println(mejl);
+		
+		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+		String password = "";
+		String name = "";
+		for (Korisnik item : listaKorisnika){
+	        if(item.getEmail().equals(mejl)){
+	        	password = item.getPassword();
+	        	name = item.getIme();
+	        	System.out.println("uso");
+	        }
+	    }
+		
+		String  d_email = "zlatanprecanica@gmail.com",
+	            d_uname = "Zlatan",
+	            d_password = "********",
+	            d_host = "smtp.gmail.com",
+	            d_port  = "465",
+	            m_to = mejl,
+	            m_subject = "Restaurant Password Recovery",
+	            m_text = "Hi " + name + ",\t\n\t\nYour password is: "+password+
+	            		"\t\n\t\nBest Regards,\t\nYour Restaurant.";
+	    Properties props = new Properties();
+	    props.put("mail.smtp.user", d_email);
+	    props.put("mail.smtp.host", d_host);
+	    props.put("mail.smtp.port", d_port);
+	    props.put("mail.smtp.starttls.enable","true");
+	    props.put("mail.smtp.debug", "true");
+	    props.put("mail.smtp.auth", "true");
+	    props.put("mail.smtp.socketFactory.port", d_port);
+	    props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+	    props.put("mail.smtp.socketFactory.fallback", "false");
+
+	    Authenticator auth = new SMTPAuthenticator();
+	    Session session = Session.getInstance(props, auth);
+	    session.setDebug(true);
+
+	    MimeMessage msg = new MimeMessage(session);
+	    try {
+	        msg.setSubject(m_subject);
+	        msg.setText(m_text);
+	        msg.setFrom(new InternetAddress(d_email));
+	        msg.addRecipient(Message.RecipientType.TO, new InternetAddress(m_to));
+
+	    Transport transport = session.getTransport("smtps");
+	            transport.connect(d_host, Integer.valueOf(d_port), d_uname, d_password);
+	            transport.sendMessage(msg, msg.getAllRecipients());
+	            transport.close();
+
+	        } catch (AddressException e) {
+	            e.printStackTrace();
+	            return;
+	        } catch (MessagingException e) {
+	            e.printStackTrace();
+	            return;
+	        }
+
+	    httpServletResponse.sendRedirect("/index.html");
 	}
 }
