@@ -49,31 +49,31 @@ public class GuestController {
 	@RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("email") String email, @ModelAttribute("password") String password) throws IOException{
 		boolean postoji = false;
+		boolean aktiviran = false;
 		Korisnik korisnikKojiSeLoguje = null;
 		System.out.println("loguje se: " + email + " " + password);
 		
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-		ArrayList<Korisnik> list = new ArrayList<Korisnik>();
-		for (Korisnik item : listaKorisnika){
-	        list.add(item);
-	    }
-	    
-	    for(int i=0;i<list.size();i++){
-	    	if(list.get(i).getEmail().equals(email)){
-	    		if(list.get(i).getPassword().equals(password)){
+		
+		for (Korisnik korisnik : listaKorisnika) {
+			if(korisnik.getEmail().equals(email)){
+	    		if(korisnik.getPassword().equals(password)){
 	    			 System.out.println("imaga");
 	    			 postoji = true;
-	    			 korisnikKojiSeLoguje = list.get(i);
+	    			 korisnikKojiSeLoguje = korisnik;
 	    		}
 	    	}
-	    }
+		}
+	    
+	   
 	    
 
 	    //Uzimam tip korisnika koji se loguje i pitam da li je Gost.
 	    //Ako jeste gost onda proveravam da li je aktivirao profil preko mejla,
 	    //ako jeste onda se loguje uspesno, ako nije onda se ne moze ulogovati
 	
-	    if(korisnikKojiSeLoguje != null){ 
+	    
+	    if(korisnikKojiSeLoguje != null && postoji){ 
 	    	TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
 	    			    
 	    	switch (tip) {
@@ -81,9 +81,9 @@ public class GuestController {
 	    				Iterable<Gost> sviGosti = gostService.getAllGosti();
 	    				for (Gost item : sviGosti){
 	    					if(item.isActivated()){
-	    						postoji = true;
+	    						aktiviran = true;
 	    					}else{
-	    						postoji = false;
+	    						aktiviran = false;
 	    					}
 	    				 }
 	    			break;
@@ -91,10 +91,10 @@ public class GuestController {
 	    		default:
 	    			break;
 	    
+	    	}
+	    }
 	    
-	    }
-	    }
-	    if(postoji){
+	    if(aktiviran){
 	    	httpServletResponse.sendRedirect("/home.html");
 	    }else{
 	    	httpServletResponse.sendRedirect("/index.html");

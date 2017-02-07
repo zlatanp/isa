@@ -24,9 +24,9 @@ var x = document.cookie;
 var delovi = x.split("=");
 var emailUlogovanog = delovi[1];
 
-if(emailUlogovanog.search("@")!=-1){
-	window.location.href="home.html";
-}
+// if(emailUlogovanog.search("@")!=-1){
+// 	window.location.href="home.html";
+// }
 
         window.onload = function() {
             var modal = new RModal(document.getElementById('modal'), {
@@ -156,7 +156,7 @@ if(emailUlogovanog.search("@")!=-1){
     <div id="modal" class="modal">
         <div class="modal-dialog animated">
             <div class="modal-content">
-                <form class="form-horizontal" method="get", action="gost/recover">
+                <form class="form-horizontal" method="get" action="gost/recover">
                     <div class="modal-header">
                         <strong>Forgot Password?</strong>
                     </div>

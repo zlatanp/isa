@@ -30,5 +30,31 @@ public class ProfilController {
 		
 		return k;
 	}
+	
+	@RequestMapping(value = "/edit", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized Korisnik izmeniProfil(@RequestParam("ime") String ime, @RequestParam("prezime") String prezime, @RequestParam("email") String email,
+			@RequestParam("password") String password, @RequestParam("password1") String password1){
+		
+		Korisnik k = new Korisnik();
+		
+		if(ime.isEmpty() || prezime.isEmpty() || email.isEmpty() || password.isEmpty() || password1.isEmpty()){
+			return k;
+		}else if(!password.equals(password1)){
+			return k;
+		}else{
+			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+			for (Korisnik item : listaKorisnika){
+		        if(item.getEmail().equals(email))
+		        	item.setIme(ime);
+					item.setPrezime(prezime);
+					item.setPassword(password);
+					korisnikService.saveKorisnik(item);
+					return item;
+		    }
+			return k;
+		}
+		
+	}
+
 
 }

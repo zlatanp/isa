@@ -20,6 +20,11 @@
 		var delovi = x.split("=");
 		var emailUlogovanog = delovi[1];
 		
+		if(emailUlogovanog.search("@")==-1){
+			$('.navbar').hide();
+			$('#glavniDiv').hide();
+    	}
+		
 	}
 </script>
 </head>
@@ -118,7 +123,7 @@
             data: {email : email},
     		 success: function(data){
             			console.log(data);
-            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button>');
+            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="return saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button>');
             			$('#desniDiv').show();	
     		 }
     	});
@@ -136,6 +141,56 @@
 		
 	}
 
+	
+	function saveDetails(){
+		var i = document.getElementById('FirstName');
+		var ime = i.value;
+		var j = document.getElementById('LastName');
+		var prezime = j.value;
+		var m = document.getElementById('Email');
+		var email = m.value;
+		var k = document.getElementById('password');
+		var password = k.value;
+		var l = document.getElementById('password1');
+		var password1 = l.value;
+		
+		if(ime == "" || prezime == "" || email == "" || password == "" || password1 == ""){
+			alert("You must enter all fields!");
+    		return false;
+		}else{
+			if(password.length <8){
+        		alert("Password must contain 8-30 characters!")
+        		return false;
+        	}
+        	if(password.length > 30){
+        		alert("Password must contain 8-30 characters!")
+        		return false;
+        	}
+        	
+        	if(password != password1){
+        		alert("Password does not match the confirm password!")
+        		return false;
+        	}
+        	
+        	$.ajax({ 
+                type: 'GET',
+                url: 'profile/edit',
+                dataType: 'json',
+                data: {ime : ime, prezime : prezime, email : email, password : password, password1 : password1},
+        		 success: function(data){
+                			console.log(data);
+                			location.reload();
+                			return true;
+        		 }
+        	});
+        	
+        	return true;
+        	
+		}
+		
+		
+		
+	}
 	
 </script>
 <div class="container"  style = "display: none; background-color: #E8E8E8" id="glavniDiv" >
