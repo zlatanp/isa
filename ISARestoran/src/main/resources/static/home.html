@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="html/css/bootstrap.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <script src="html/js/jquery-3.1.0.min.js"></script>
 <script src="html/js/jquery.min.js"></script>
+<script src="html/js/bootstrap.js"></script>
+<script src="html/js/bootstrap.min.js"></script>
+
+
+
 <meta charset="ISO-8859-1">
 
-<title>Insert title here</title>
+<title>Restaurant Home</title>
 
 <script>
 	function onload(){
@@ -13,13 +20,137 @@
 		var delovi = x.split("=");
 		var emailUlogovanog = delovi[1];
 		
-		
-		document.getElementById("user").innerHTML = "Dobrodosli : " +emailUlogovanog;
 	}
 </script>
 </head>
 <body onload="onload()">
-<h1 style="color: green">Hello! This is Welcome Page!</h1>
-<h2 id="user"></h2>
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="home.html">Restaurant</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li ><a href="home.html" >Home<span class="sr-only">(current)</span></a></li>
+<!--         <li><a href="#">Link</a></li> -->
+        <!-- <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li> -->
+      </ul>
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search Restaurants">
+        </div>
+        <button type="submit" class="btn btn-default">Search</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a onclick="profilKorisnika()" href="#">Profile</a></li>
+        <li><a onclick="izlogujSe()" href="#">Log Out</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<script>
+	function izlogujSe(){
+		var x = document.cookie;
+		var delovi = x.split("=");
+		var emailUlogovanog = delovi[1];
+		
+		if(emailUlogovanog.search("@")!=-1){
+			document.cookie =  "emailValue=" + "";
+    		window.location.href="index.html";
+    	}
+	}
+
+	
+	function profilKorisnika(){
+		var x = document.cookie;
+		var delovi = x.split("=");
+		var email = delovi[1];
+		var ime;
+		var prezime;
+		
+		if(email.search("@")!=-1){
+	     	$.ajax({ 
+	             type: 'GET',
+	             url: 'profile/gost',
+	             dataType: 'json',
+	             data: {email : email},
+	     		 success: function(data){
+	             			console.log(data);
+	             			document.getElementById("helloHeder").innerHTML = data.ime+" "+data.prezime;
+	             			ime = data.ime;
+	             			prezime = data.prezime;
+	            		}
+	     	});
+	     	$('#glavniDiv').show();
+	     	$('#desniDiv').hide();
+	     }
+	}
+	
+	function basicDetails(){
+		var x = document.cookie;
+		var delovi = x.split("=");
+		var email = delovi[1];
+		$.ajax({ 
+            type: 'GET',
+            url: 'profile/gost',
+            dataType: 'json',
+            data: {email : email},
+    		 success: function(data){
+            			console.log(data);
+            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button>');
+            			$('#desniDiv').show();	
+    		 }
+    	});
+		
+		
+	}
+	
+	function editDetails(){
+		$('#editDetails').hide();
+		$('#saveDetails').show();
+		$('#cancelDetails').show();
+		$('#tabela').append('<tr><td>Password: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Repeat password: </td><td><input style="border:none" type="password" id="password1"></td></tr><tr><td>New profile picture: </td><td><input  type="button" id="browse" value="Browse..."></td></tr>');
+		$('#FirstName').attr('readonly', false);
+		$('#LastName').attr('readonly', false);
+		
+	}
+
+	
+</script>
+<div class="container"  style = "display: none; background-color: #E8E8E8" id="glavniDiv" >
+  <h1 id="helloHeder"></h1>
+  <div class="row">
+    <div class="col-sm-3"  id="leviDiv" >
+   		<img src="html/profile.jpg" alt="Mountain View" style="width:260px;height:260px;">	
+   		<br>
+   		<br>
+      	<a href="#" onclick="basicDetails()">Basic Details</a><br>
+      	<a href="#" onclick="friends()">Friends</a>
+    </div>
+    <div class="col-sm-9"  id="desniDiv">
+    </div>
+  </div>
+</div>
 </body>
 </html>

@@ -16,8 +16,18 @@
 
 <link rel="stylesheet" type="text/css" href="html/css/looknfeel.css">
 <meta charset="ISO-8859-1">
-<title>Restoran pocetna</title>
+
+<title>Restaurant Index Page</title>
 <script type="text/javascript">
+
+var x = document.cookie;
+var delovi = x.split("=");
+var emailUlogovanog = delovi[1];
+
+if(emailUlogovanog.search("@")!=-1){
+	window.location.href="home.html";
+}
+
         window.onload = function() {
             var modal = new RModal(document.getElementById('modal'), {
                 //content: 'Abracadabra'
@@ -57,7 +67,13 @@
             }, false);
 
             window.modal = modal;
+            
+            
         }
+        
+        
+        	
+        
     </script>
 </head>
 <body>
