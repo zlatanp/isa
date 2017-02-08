@@ -47,7 +47,7 @@ public class GuestController {
     
 	
 	@RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void login(HttpServletResponse httpServletResponse, @ModelAttribute("email") String email, @ModelAttribute("password") String password) throws IOException{
+	public synchronized void login(HttpServletResponse response, @ModelAttribute("email") String email, @ModelAttribute("password") String password) throws IOException{
 		boolean postoji = false;
 		boolean aktiviran = false;
 		Korisnik korisnikKojiSeLoguje = null;
@@ -95,9 +95,9 @@ public class GuestController {
 	    }
 	    
 	    if(aktiviran){
-	    	httpServletResponse.sendRedirect("/home.html");
+	    	response.sendRedirect("/home.html");
 	    }else{
-	    	httpServletResponse.sendRedirect("/index.html");
+	    	response.sendRedirect("/index.html");
 	    }
 		}
 	

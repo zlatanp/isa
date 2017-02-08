@@ -2,34 +2,86 @@ package com.example.controller;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.example.beans.korisnici.Korisnik;
+import com.example.service.KorisnikService;
 
 @RestController
 @RequestMapping("/picture")
 public class UploadPicture {
-	private static final Logger logger = LoggerFactory.getLogger(UploadPicture.class);
+	
+	@Autowired
+	private KorisnikService korisnikService;
 
 	@RequestMapping(value = "/upload", method = {RequestMethod.POST})
-	public synchronized String uploadPicture(@RequestParam("file") MultipartFile file) throws IOException{
+	public synchronized void uploadPicture(@RequestParam("file") MultipartFile file, @RequestParam("email") String email) throws IOException{
 		
-			System.out.println("udjesli");
+			System.out.println("udjesli" + email);
 		
+			//Upis u fajl sistem, lokal
 			if (!file.isEmpty()) {
 				 BufferedImage src = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
-				 File destination = new File("C:/Users/ZlajoX/Documents/newImage.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
+				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
 				 ImageIO.write(src, "jpg", destination);
-				 return "usos";
+			}
+			
+			//Citanje fajla i upis u bazu
+			if(email!=null){
+				File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
+				byte[] fileContent = Files.readAllBytes(fi.toPath());
+			
+				Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+			
+				for (Korisnik korisnik : listaKorisnika) {
+						if(korisnik.getEmail().equals(email)){
+								korisnik.setSlika(fileContent);
+								korisnikService.saveKorisnik(korisnik);
+								
+						}
+				}
+			
+			}
+			
+			
+			
 	}
-	return "proso";		
+	
+	@ResponseBody
+	@RequestMapping(value = "/dajSliku", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public byte[] testphoto(HttpServletResponse response) throws IOException {
+		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+		byte[] slika = null;
+		
+		for (Korisnik korisnik : listaKorisnika) {
+				if(korisnik.getEmail().equals("zlajox@gmail.com")){
+						slika = korisnik.getSlika();
+				}
+		}
+		
+		byte[] encodedBytes = Base64.getEncoder().encode(slika);
+		
+//		response.setContentType("image/jpeg");
+//		ServletOutputStream responseOutputStream = response.getOutputStream();
+//		responseOutputStream.write(slika);
+//		responseOutputStream.flush();
+//		responseOutputStream.close();
+		
+		return encodedBytes;
 	}
 	
 	

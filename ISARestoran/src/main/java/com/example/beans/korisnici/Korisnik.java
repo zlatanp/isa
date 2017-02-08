@@ -40,8 +40,8 @@ public class Korisnik implements Serializable {
 	@Column(name = "tip", nullable = false)
 	protected TipKorisnika tipKorisnika;
 
-	@Column(name = "slika", nullable = true)
-	protected String slika;
+	@Column(name = "slika", nullable = true, columnDefinition = "LONGBLOB")
+	protected byte[] slika;
 	
 	public Korisnik() {
 		
@@ -106,11 +106,11 @@ public class Korisnik implements Serializable {
 		this.tipKorisnika = tipKorisnika;
 	}
 
-	public String getSlika() {
+	public byte[] getSlika() {
 		return slika;
 	}
 
-	public void setSlika(String slika) {
+	public void setSlika(byte[] slika) {
 		this.slika = slika;
 	}
 }
