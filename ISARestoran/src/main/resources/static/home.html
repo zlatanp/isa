@@ -143,12 +143,34 @@
 		$('#saveDetails').show();
 		$('#cancelDetails').show();
 		$('#tabela').append('<tr><td>Password: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Repeat password: </td><td><input style="border:none" type="password" id="password1"></td></tr>');
-		$('#zaUpload').html('<form method="POST" action="picture/upload" enctype="multipart/form-data">Upload new profile picture: <br><input type="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input type="submit" value="Upload"></form>');
+		$('#zaUpload').html('<form method="POST" action="picture/upload" enctype="multipart/form-data">Upload new profile picture: <br><input type="file" id="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input onclick="return proveraVelicine()" type="submit" value="Upload"></form>');
 		
 		$('#FirstName').attr('readonly', false);
 		$('#LastName').attr('readonly', false);
 		
 	}
+	
+	function proveraVelicine(){
+		 if (!window.FileReader) {
+		        alert("The file API isn't supported on this browser yet.");
+		        return false;
+		    }
+		 
+		 input = document.getElementById('file');
+		 file = input.files[0];
+		 
+		 if(!file){
+		       alert("Please select a file before clicking 'Upload'");
+		       return false;
+		 }else if(file.size>999998){
+			 alert("Max size of file must be less than 1MB!");
+			 return false;
+		 }else{
+			 return true;
+		 }
+		 
+	}
+		 
 
 	
 	function saveDetails(){

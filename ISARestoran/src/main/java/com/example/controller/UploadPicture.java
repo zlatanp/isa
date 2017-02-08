@@ -29,36 +29,34 @@ public class UploadPicture {
 	private KorisnikService korisnikService;
 
 	@RequestMapping(value = "/upload", method = {RequestMethod.POST})
-	public synchronized void uploadPicture(@RequestParam("file") MultipartFile file, @RequestParam("email") String email) throws IOException{
-		
-			System.out.println("udjesli" + email);
-		
-			//Upis u fajl sistem, lokal
-			if (!file.isEmpty()) {
+	public synchronized void uploadPicture(HttpServletResponse response, @RequestParam("file") MultipartFile file, @RequestParam("email") String email) throws IOException{
+	
+			
+			if (!file.isEmpty() && email.contains("@") && file.getSize()<999998) {
+				//Upis u fajl sistem, lokal
 				 BufferedImage src = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
 				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
 				 ImageIO.write(src, "jpg", destination);
+				 
+				//Citanje fajla i upis u bazu
+					
+					File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+				
+					Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+				
+					for (Korisnik korisnik : listaKorisnika) {
+							if(korisnik.getEmail().equals(email)){
+									korisnik.setSlika(fileContent);
+									korisnikService.saveKorisnik(korisnik);
+									
+							}
+					}
+				response.sendRedirect("/home.html");
+			}else{
+				response.sendRedirect("/home.html");
 			}
-			
-			//Citanje fajla i upis u bazu
-			if(email!=null){
-				File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
-				byte[] fileContent = Files.readAllBytes(fi.toPath());
-			
-				Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-			
-				for (Korisnik korisnik : listaKorisnika) {
-						if(korisnik.getEmail().equals(email)){
-								korisnik.setSlika(fileContent);
-								korisnikService.saveKorisnik(korisnik);
-								
-						}
-				}
-			
-			}
-			
-			
-			
+						
 	}
 	
 	@ResponseBody
