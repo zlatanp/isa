@@ -123,7 +123,7 @@
             data: {email : email},
     		 success: function(data){
             			console.log(data);
-            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="return saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button>');
+            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table><br><div id="zaUpload"></div><br></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="return saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button><br>');
             			$('#desniDiv').show();	
     		 }
     	});
@@ -135,7 +135,9 @@
 		$('#editDetails').hide();
 		$('#saveDetails').show();
 		$('#cancelDetails').show();
-		$('#tabela').append('<tr><td>Password: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Repeat password: </td><td><input style="border:none" type="password" id="password1"></td></tr><tr><td>New profile picture: </td><td><input  type="button" id="browse" value="Browse..."></td></tr>');
+		$('#tabela').append('<tr><td>Password: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Repeat password: </td><td><input style="border:none" type="password" id="password1"></td></tr>');
+		$('#zaUpload').html('<form method="POST" action="picture/upload" enctype="multipart/form-data">Upload new profile picture: <br><input type="file" name="file"><br><input type="submit" value="Upload"></form>');
+		
 		$('#FirstName').attr('readonly', false);
 		$('#LastName').attr('readonly', false);
 		
