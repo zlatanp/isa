@@ -66,7 +66,7 @@ public class UploadPicture {
 		byte[] slika = null;
 		
 		for (Korisnik korisnik : listaKorisnika) {
-				if(korisnik.getEmail().equals("zlajox@gmail.com")){
+				if(korisnik.getEmail().equals("jasmina.eminovski@gmail.com")){
 						slika = korisnik.getSlika();
 				}
 		}

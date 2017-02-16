@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="html/css/bootstrap.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+
+<script src="html/js/jquery-3.1.0.min.js"></script>
+<script src="html/js/jquery.min.js"></script>
+
+<script src="html/js/bootstrap.js"></script>
+<script src="html/js/bootstrap.min.js"></script>
+
+<script src="Scripts/Profile.js"></script>
+
+<meta charset="ISO-8859-1">
+<title>Menadzer sistema</title>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="adminPage.html">System management</a>
+			</div>
+
+			
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#" class="OpenNewRest">New restaurant</a></li>
+					<li><a href="#" class="OpenNewManForRest">New restaurant manager</a></li>
+					<li><a href="#" class="OpenNewSystemMan">New system manager</a></li>
+				</ul>
+				
+				<ul class="nav navbar-nav navbar-right">					
+					<li><a onclick="izlogujSe()" href="#">Log Out</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	
+	<div class="container formWrapper col-lg-offset-2" id="NewRest">
+		<div class="panel panel-default col-lg-8">
+			<div class="panel-heading">
+				<h4>New restaurant</h4>
+			</div>
+			<div class="panel-body">
+				<form id="NewRestForm">
+					<div class="form-group row">
+						<label class="col-1 col-form-label" for="restName">Reastaurant name: </label>
+						<div class="col-6"> 
+							<input class="form-control" name="name" type="text" id="restName">
+						</div>						
+					</div>
+					<div class="form-group row">
+						<label class="col-1 col-form-label" for="restType">Type: </label>
+						<div class="col-6"> 
+							<input class="form-control" name="type" type="text" id="restType">
+						</div>						
+					</div>
+					<div class="form-group row">
+						<label class="col-1 col-form-label" for="restAdrress">Address: </label>
+						<div class="col-6"> 
+							<input class="form-control" name="addr" type="text" id="restAdrress">
+						</div>						
+					</div>
+					<div class="form-group row">
+						<label class="col-1 col-form-label" for="restCity">City: </label>
+						<div class="col-6"> 
+							<input class="form-control" name="city" type="text" id="restCity">
+						</div>						
+					</div>
+					<div class="form-group row">
+						<button type="submit" class="btn btn-default col-lg-offset-5 col-lg-2">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="container formWrapper" id="NewManForRest">
+		<p>Ovde ide forma za novog menadzera restorana</p>
+	</div>
+	
+	<div class="container formWrapper" id="NewSystemMan">
+		<p>Ovde ide forma za novog menadzera</p>
+	</div>
+</body>
+</html>

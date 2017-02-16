@@ -8,16 +8,15 @@ import com.example.repository.GostRepository;
 import com.example.service.GostService;
 
 @Service
-public class GostServiceImpl implements GostService{
+public class GostServiceImpl implements GostService {
 
-	
 	private GostRepository gostRepository;
-	
-	 @Autowired
-	    public void setGuestRepository(GostRepository guestRepo) {
-	        this.gostRepository = guestRepo;
-	    } 
-	 
+
+	@Autowired
+	public void setGuestRepository(GostRepository guestRepo) {
+		this.gostRepository = guestRepo;
+	}
+
 	@Override
 	public Iterable<Gost> getAllGosti() {
 		return this.gostRepository.findAll();
