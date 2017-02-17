@@ -49,6 +49,7 @@ public class KorisnikController {
 		Korisnik korisnikKojiSeLoguje = null;
 		System.out.println("loguje se: " + email + " " + password);
 
+		System.out.println();
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 
 		for (Korisnik korisnik : listaKorisnika) {
