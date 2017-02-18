@@ -39,7 +39,7 @@ public class UploadPicture {
 				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
 				 ImageIO.write(src, "jpg", destination);
 				 
-				//Citanje fajla i upis ubazu
+				//Citanje fajla i upis u bazu
 					
 					File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
 					byte[] fileContent = Files.readAllBytes(fi.toPath());
