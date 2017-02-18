@@ -42,6 +42,7 @@ $(document).on(
 		"click",
 		".OpenNewRest",
 		function(e) {
+			$("#tipRestSel").find("option").remove();
 			$.ajax({
 				url : 'restoran/tipovi',
 				type : 'GET',
@@ -55,6 +56,21 @@ $(document).on(
 				}
 			});
 		});
+
+$(document).on("click", ".OpenNewManForRest", function(e){
+	$("#restoranSel").find("option").remove();
+	$.ajax({
+		url : 'restoran/dobaviRestorane',
+		type: 'GET',
+		dataType: 'JSON',
+		success: function(data){
+			var selektPolje = $("#restoranSel");
+			$.each(data, function(index, restoran){
+				selektPolje.append("<option value=\""+ restoran.id + "\">" + restoran.naziv + "</option>")
+			});
+		}
+	});
+});
 
 $(document).on("click", "#btnDodajRestoran", function(e) {
 	e.preventDefault();
@@ -70,7 +86,7 @@ $(document).on("click", "#btnDodajRestoran", function(e) {
 	noviRestoran["opis"] = $("#descriptionRest").val();
 	noviRestoran["vremeOD"] = $("#timepickerOD").val();
 	noviRestoran["vremeDO"] = $("#timepickerDO").val();
-	noviRestoran["tip"] = $("#tipRestSel").val();
+	noviRestoran["tip"] = $("#tipRestSel").val(); // id-restorana u kojem je zaposlen
 	registerRestoran(JSON.stringify(noviRestoran));
 });
 
@@ -86,6 +102,21 @@ $(document).on("click", "#btnDodajAdmina", function(e) {
 	noviAdmin["password"] = $("#imeAdm").val();
 	registerAdmin(JSON.stringify(noviAdmin));
 });
+
+$(document).on("click", "#btnDodajMenadzera", function(e){
+	e.preventDefault();
+	if(!validateFormMenadzer()){
+		return;
+	}
+	var noviMenadzer = new Object();
+	noviMenadzer["ime"] = $("#imeMen").val();
+	noviMenadzer["prezime"] = $("#przMen").val();
+	noviMenadzer["email"] = $("#mailMen").val();
+	noviMenadzer["password"] = $("#lozMen").val();
+	noviMenadzer["radi_u"] = $("#restoranSel").val();
+	registerMenadzer(JSON.stringify(noviMenadzer));
+});
+
 
 function registerRestoran(restoranJSON) {
 	$.ajax({
@@ -109,10 +140,35 @@ function registerAdmin(adminJSON) {
 		contentType : 'application/json; charset=UTF-8',
 		data : adminJSON,
 		success : function(ret) {
-			console.log(ret);
-			toastr.success("Uspešno registrovan novi menadžer sistema.");
-			$("#NewAdmForm")[0].reset();
-			$("#NewSystemMan").hide();
+			if(!ret){
+				toastr.error("Korisnik sa ovakvim emailom već postoji.");
+				$("#emailAdm").focus();
+				return;
+			}else {
+				toastr.success("Uspešno registrovan novi menadžer sistema.");
+				$("#NewAdmForm")[0].reset();
+				$("#NewSystemMan").hide();
+			}
+		}
+	});
+}
+
+function registerMenadzer(menadzerJSON){
+	$.ajax({
+		url: 'korisnik/registerMenadzer',
+		type: 'POST',
+		contentType: 'application/json; charset=UTF-8',
+		data: menadzerJSON,
+		success: function(ret){
+			if(!ret){
+				toastr.error("Korisnik sa ovakvim emailom već postoji!");
+				$("#mailMen").focus();
+				return;
+			}else{
+				toastr.success("Uspešno ste registrovali menadžera restorana.");
+				$("#NewMenForm")[0].reset();
+				$("#NewManForRest").hide();
+			}
 		}
 	});
 }
@@ -185,6 +241,43 @@ function validateFormAdmin() {
 	}
 	return true;
 }
+
+
+function validateFormMenadzer(){
+	if(!validateField($("#imeMen"))){
+		toastr.error("Niste uneli ime menadžera");
+		$("#imeMen").focus();
+		return false;
+	}
+	if(!validateField($("#przMen"))){
+		toastr.error("Niste uneli prezime menadžera");
+		$("#przMen").focus();
+		return false;
+	}
+	if(!validateField($("#mailMen"))){
+		toastr.error("Niste uneli email menadžera");
+		$("#mailMen").focus();
+		return false;
+	}
+	if(!validateField($("#lozMen"))){
+		toastr.error("Niste uneli lozinku za menadžera");
+		$("#lozMen").focus();
+		return false;
+	}
+	if(!validateField($("#lozMenRep"))){
+		toastr.error("Niste uneli ponovljenu lozinku za menadžera");
+		$("#lozMenRep").focus();
+		return false;
+	}
+	if (!compareTwoFields($("#lozMen"), $("#lozMenRep"))) {
+		$("#lozMenRep").focus();
+		$("#lozMen").focus();
+		toastr.error("Lozinke se ne poklapaju! Ponovite unos.")
+		return false;
+	}
+	return true;
+}
+
 
 function compareTwoFields(field1, field2) {
 	if (field1.val() != field2.val()) {

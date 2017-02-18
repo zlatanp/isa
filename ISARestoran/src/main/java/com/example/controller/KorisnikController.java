@@ -24,10 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
 import com.example.beans.korisnici.MenadzerSistema;
+import com.example.dto.korisnici.KorisnikDTO;
+import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.korisnici.MenadzerSistemaDTO;
 import com.example.enums.TipKorisnika;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
+import com.example.service.korisniciImpl.MenadzerService;
 import com.example.service.korisniciImpl.MenadzerSistemaService;
 
 @RestController
@@ -42,6 +45,9 @@ public class KorisnikController {
 
 	@Autowired
 	private MenadzerSistemaService menadzerSistemaService;
+	
+	@Autowired
+	private MenadzerService menadzerService;
 
 	@RequestMapping(value = "/login", method = { RequestMethod.POST }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized void login(HttpServletResponse response, @ModelAttribute("email") String email,
@@ -304,7 +310,29 @@ public class KorisnikController {
 	
 	@RequestMapping(value="/registerAdmin", method= RequestMethod.POST, consumes="application/json", produces="application/json")
 	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin){
-		menadzerSistemaService.create(admin);
-		return true;
+		Korisnik k = korisnikService.getKorisnikById(admin.getId());
+		if(k != null){
+			return false;
+		}else {
+			menadzerSistemaService.create(admin);
+			return true;
+		}
+	}
+	
+	@RequestMapping(value="/registerMenadzer", method= RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer){
+		boolean ovakavPostoji = false;
+		Iterable<Korisnik> sviKorisnici = korisnikService.getAllKorisnici();
+		for(Korisnik k : sviKorisnici){
+			if(k.getEmail().equals(menadzer.getEmail())){
+				ovakavPostoji = true;
+			}
+		}
+		if(!ovakavPostoji){
+			menadzerService.create(menadzer);
+			return true;
+		}else {
+			return false;
+		}
 	}
 }

@@ -1,5 +1,8 @@
 package com.example.service.restoranImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,5 +30,15 @@ public class RestoranService {
 		}else {
 			return null;
 		}
+	}
+	
+	public List<RestoranDTO> findAll(){
+		List<Restoran> restorani = restoranRepostitory.findAll();
+		List<RestoranDTO> restoraniDTO = new ArrayList<>();
+		for(Restoran r : restorani){
+			RestoranDTO restoranDTO = new RestoranDTO(r);
+			restoraniDTO.add(restoranDTO);
+		}
+		return restoraniDTO;
 	}
 }

@@ -65,7 +65,7 @@
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="name">Naziv: </label>
 						<div class="col-6">
-							<input required class="form-control" name="name" type="text"
+							<input required class="form-control input-sm" name="name" type="text"
 								id="nameRest">
 						</div>
 					</div>
@@ -73,14 +73,14 @@
 						<label class="col-1 col-form-label" for="address">Adresa:
 						</label>
 						<div class="col-6">
-							<input required class="form-control" name="address" type="text"
+							<input required class="form-control input-sm" name="address" type="text"
 								id="addressRest">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="city">Grad: </label>
 						<div class="col-6">
-							<input required class="form-control" name="city" type="text"
+							<input required class="form-control input-sm" name="city" type="text"
 								id="cityRest">
 						</div>
 					</div>
@@ -88,14 +88,14 @@
 						<label class="col-1 col-form-label" for="phone">Broj
 							telefona: </label>
 						<div class="col-6">
-							<input required class="form-control" name="phone" type="text"
+							<input required class="form-control input-sm" name="phone" type="text"
 								id="phoneRest">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="email">E-mail: </label>
 						<div class="col-6">
-							<input required class="form-control" name="email" type="email"
+							<input required class="form-control input-sm" name="email" type="email"
 								id="emailRest">
 						</div>
 					</div>
@@ -103,7 +103,7 @@
 						<label class="col-1 col-form-label" for="description">Opis:
 						</label>
 						<div class="col-6">
-							<input required class="form-control" name="description"
+							<input required class="form-control input-sm" name="description"
 								type="text" id="descriptionRest">
 						</div>
 					</div>
@@ -112,7 +112,7 @@
 							vreme od: </label>
 						<div class="col-6">
 							<div class="input-group bootstrap-timepicker">
-								<input id="timepickerOD" type="text" class="form-control"
+								<input id="timepickerOD" type="text" class="form-control input-sm"
 									name="vremeDO"> <span class="input-group-addon"><i
 									class="glyphicon glyphicon-time"></i></span>
 							</div>
@@ -123,7 +123,7 @@
 							vreme do: </label>
 						<div class="col-6">
 							<div class="input-group bootstrap-timepicker">
-								<input id="timepickerDO" type="text" class="form-control"
+								<input id="timepickerDO" type="text" class="form-control input-sm"
 									name="vremeDO"> <span class="input-group-addon"><i
 									class="glyphicon glyphicon-time"></i></span>
 							</div>
@@ -132,7 +132,7 @@
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="tip">Tip: </label>
 						<div class="col-6">
-							<select class="form-control" id="tipRestSel" name="tip">
+							<select class="form-control input-sm" id="tipRestSel" name="tip">
 
 							</select>
 						</div>
@@ -149,7 +149,54 @@
 
 
 	<div class="container formWrapper col-lg-offset-3 " id="NewManForRest">
-		<p>Ovde ide forma za novog menadzera restorana</p>
+		<div class="panel panel-default col-lg-6">
+			<div class="panel-heading">
+				<h4>Novi menadžer restorana</h4>
+			</div>
+			<div class="panel-body">
+				<form id="NewMenForm" class="form-horizontal">
+					<div class="form-group">
+						<label class="col-1 col-form-label" for="nameMen">Ime:</label>
+						<div class="col-5">
+							<input required class="form-control input-sm" type="text" name="nameMen" id="imeMen">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-1 col-form-label" for="lnameMen">Prezime:</label>
+						<div class="col-5">
+							<input required class="form-control input-sm" type="text" name="lnameMen" id="przMen">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-1 col-form-label" for="mailMen">Email:</label>
+						<div class="col-5">
+							<input required class="form-control input-sm" type="email" name="mailMen" id="mailMen">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-1 col-form-label" for="passMan">Lozinka:</label>
+						<div class="col-5">
+							<input required class="form-control input-sm" type="password" name="passMan" id="lozMen">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-1 col-form-label" for="passManRep">Ponovljena lozinka:</label>
+						<div class="col-5">
+							<input required class="form-control input-sm" type="password" name="passManRep" id="lozMenRep">
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Zaposlen u:</label>
+						<select title="Odaberite restoran" class="form-control" id="restoranSel" name="restoran">
+						
+						</select>
+					</div>
+					<div class="wrapper">
+						<button class="btn btn-default col-lg-offset-5 col-lg-2" id="btnDodajMenadzera">Registruj</button>
+					</div>
+				</form>
+			</div>
+		</div>
 	</div>
 
 	<div class="container formWrapper col-lg-offset-3" id="NewSystemMan">
@@ -162,28 +209,28 @@
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="nameAdm">Ime:</label>
 						<div class="col-6">
-							<input required class="form-control" type="text" name="nameAdm"
+							<input required class="form-control input-sm" type="text" name="nameAdm"
 								id="imeAdm">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="lnameAdm">Prezime:</label>
 						<div class="col-6">
-							<input required class="form-control" type="text" name="lnameAdm"
+							<input required class="form-control input-sm" type="text" name="lnameAdm"
 								id="przAdm">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="emailAdm">Email:</label>
 						<div class="col-6">
-							<input required class="form-control" type="email" name="emailAdm"
+							<input required class="form-control input-sm" type="email" name="emailAdm"
 								id="emailAdm">
 						</div>
 					</div>
 					<div class="form-group row">
 						<label class="col-1 col-form-label" for="passAdm">Lozinka:</label>
 						<div class="col-6">
-							<input class="form-control" type="password" name="passAdm"
+							<input class="form-control input-sm" type="password" name="passAdm"
 								id="passAdm">
 						</div>
 					</div>
@@ -191,7 +238,7 @@
 						<label class="col-1 col-form-label" for="passAdmRep">Ponovite
 							lozinku:</label>
 						<div class="col-6">
-							<input class="form-control" type="password" name="passAdmRep"
+							<input class="form-control input-sm" type="password" name="passAdmRep"
 								id="passAdmRep">
 						</div>
 					</div>

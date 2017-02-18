@@ -1,6 +1,7 @@
 package com.example.beans.restoran;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,9 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.enums.TipRestorana;
 import com.example.enums.TipValute;
 
@@ -55,6 +57,9 @@ public class Restoran implements Serializable {
 	
 	@Column(name = "valuta", nullable = false)
 	protected TipValute valuta;
+	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="radi_u")
+	protected Set<MenadzerRestorana> menadzeri;
 	
 	
 	public Restoran() {
