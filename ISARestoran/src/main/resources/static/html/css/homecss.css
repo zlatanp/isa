@@ -1,0 +1,6 @@
+#skrolable{
+    width: 30em;
+    overflow-x: auto;
+    white-space: nowrap;
+        }
+        
