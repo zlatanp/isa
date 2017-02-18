@@ -21,6 +21,7 @@ public class RestoranApplication {
 	public static void main(String[] args) {
 		System.out.println("a ");
 		System.out.println("babaaa");
+		System.out.println("davorbadrov");
 		SpringApplication.run(RestoranApplication.class, args);
 	}
 	
