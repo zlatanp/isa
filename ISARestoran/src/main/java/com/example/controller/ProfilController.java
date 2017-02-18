@@ -64,6 +64,7 @@ public class ProfilController {
 	@RequestMapping(value = "/trazi", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized ArrayList<Korisnik> traziPrijatelje(@RequestParam("kogaTrazim") String kogaTrazim){
 		
+		System.out.println(kogaTrazim);
 		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
 		
 		if(kogaTrazim.isEmpty()){
@@ -71,12 +72,21 @@ public class ProfilController {
 		}else{
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 			for (Korisnik item : listaKorisnika){
-		        if(kogaTrazim.contains(item.getIme()) || kogaTrazim.contains(item.getPrezime())){
+		        if(item.getIme().contains(kogaTrazim) || item.getPrezime().contains(kogaTrazim)){
 		        	korisnici.add(item);
 		        }
 		    }
 			return korisnici;
 		}
+		
+	}
+	
+	@RequestMapping(value = "/dodajPrijatelja", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void dodajPrijatelja(@RequestParam("email") String email){
+		
+		System.out.println("dodaj ovog zemu" +email);
+		
+		
 		
 	}
 

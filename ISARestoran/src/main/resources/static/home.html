@@ -258,6 +258,7 @@
     <div class="col-sm-9"  id="desniDiv">
     </div>
   </div>
+  
 </div>
 <script>
 function friends(){
@@ -271,7 +272,7 @@ function friends(){
         data: {email : email},
 		 success: function(data){
         			console.log(data);
-        			$('#desniDiv').html('<h3><i>Your friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="dajPrijateljeTrazi()" value="Search"><br><div id="skrolable">nekiskrolable kuracpalac</div></div>');
+        			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><table id="skrolable"></table></div>');
         			$('#desniDiv').show();	
 		 }
 	});
@@ -281,6 +282,11 @@ function dajPrijateljeTrazi(){
 	var polje = document.getElementsByName('staTrazim');
 	var kogaTrazim = polje[0].value;
 	
+	$('#skrolable').html('');
+	
+	if(kogaTrazim == ""){
+		alert("You must enter all fields!");
+	}
 	$.ajax({ 
         type: 'GET',
         url: 'profile/trazi',
@@ -288,11 +294,32 @@ function dajPrijateljeTrazi(){
         data: {kogaTrazim : kogaTrazim },
 		 success: function(data){
         			console.log(data);
-        			$('#desniDiv').html('<h3><i>Your friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="dajPrijateljeTrazi()" value="Search"><br><div id="skrolable">nekiskrolable kuracpalac</div></div>');
-        			$('#desniDiv').show();	
+        			if(data.length>0){
+        			for(var i=0;i<data.length;i++){
+        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" onclick="return dodajPrijatelja(\''+data[i].email+'\')" value="Dodaj prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+        			}	
+        			}else{
+        				$('#skrolable').html('<h3>Nothing found</h3>');
+                		
+        			}
 		 }
 	});
 	
+}
+
+function dodajPrijatelja(email){
+	alert(email);
+	
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/dodajPrijatelja',
+        dataType: 'json',
+        data: {email : email},
+		 success: function(data){
+        			console.log(data);
+        			alert("Uspesno dodat prijatelj!");	
+		 }
+	});
 }
 </script>
 </body>
