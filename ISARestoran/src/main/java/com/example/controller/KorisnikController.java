@@ -1,11 +1,13 @@
 package com.example.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import java.security.SecureRandom;
 import java.math.BigInteger;
+import java.nio.file.Files;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -55,7 +57,6 @@ public class KorisnikController {
 		for (Korisnik korisnik : listaKorisnika) {
 			if (korisnik.getEmail().equals(email)) {
 				if (korisnik.getPassword().equals(password)) {
-					System.out.println("imaga");
 					postoji = true;
 					korisnikKojiSeLoguje = korisnik;
 				}
@@ -145,30 +146,13 @@ public class KorisnikController {
 		// ako nije prosao sve provere povratak na pocetnu stranu (index)
 		if (uspesno) {
 
-			// this.templateMessage = new SimpleMailMessage();
-			//
-			// SimpleMailMessage msg = new
-			// SimpleMailMessage(this.templateMessage);
-			// msg.setTo(email);
-			// msg.setText(
-			// "Dear " + name
-			// + lastname
-			// + ", thank you for register. Your confirm link is
-			// http://localhost:8080/verify/"+ email);
-			// try{
-			// this.mailSender.send(msg);
-			// }
-			// catch (MailException ex) {
-			// // simply log it and go on...
-			// System.err.println(ex.getMessage());
-			// }
 			SecureRandom random = new SecureRandom();
 			String hashCode = new BigInteger(130, random).toString(32);
 
-			String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "********",
+			String d_email = "teamdev70@gmail.com", d_uname = "Zlatan", d_password = "restoran94",
 					d_host = "smtp.gmail.com", d_port = "465", m_to = email, m_subject = "Verify Restaurant Account",
 					m_text = "Hi " + name + ",\t\n\t\nThank you for registering on our website.\t\n"
-							+ "To activate your account please go on link: http://localhost:8080/gost/active/"
+							+ "To activate your account please go on link: http://localhost:8080/korisnik/active/"
 							+ hashCode + "\t\n\t\nBest Regards,\t\nYour Restaurant.";
 			Properties props = new Properties();
 			props.put("mail.smtp.user", d_email);
@@ -204,8 +188,13 @@ public class KorisnikController {
 				e.printStackTrace();
 				return;
 			}
+			
+			//Inicijalna slika korisnika
+			File fi = new File("src/main/resources/static/html/profilePic.jpg");
+			byte[] fileContent = Files.readAllBytes(fi.toPath());
 
 			Gost gost = new Gost(name, lastname, email, password, TipKorisnika.GOST);
+			gost.setSlika(fileContent);
 			gost.setHashCode(hashCode);
 			gostService.saveGost(gost);
 
@@ -244,7 +233,6 @@ public class KorisnikController {
 	public synchronized void recoverPassword(HttpServletResponse httpServletResponse,
 			@ModelAttribute("email") String mejl) throws IOException {
 
-		System.out.println(mejl);
 
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		String password = "";
@@ -253,11 +241,10 @@ public class KorisnikController {
 			if (item.getEmail().equals(mejl)) {
 				password = item.getPassword();
 				name = item.getIme();
-				System.out.println("uso");
 			}
 		}
 
-		String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "********",
+		String d_email = "teamdev70@gmail.com", d_uname = "Zlatan", d_password = "restoran94",
 				d_host = "smtp.gmail.com", d_port = "465", m_to = mejl, m_subject = "Restaurant Password Recovery",
 				m_text = "Hi " + name + ",\t\n\t\nYour password is: " + password
 						+ "\t\n\t\nBest Regards,\t\nYour Restaurant.";

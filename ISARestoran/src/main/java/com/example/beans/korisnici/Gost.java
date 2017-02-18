@@ -1,10 +1,16 @@
 package com.example.beans.korisnici;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.enums.TipKorisnika;
+
 
 
 @Entity
@@ -15,6 +21,9 @@ public class Gost extends Korisnik{
 
 	private boolean activated = false;
 	private String hashCode;
+	
+	@OneToMany(mappedBy="ja", fetch=FetchType.LAZY)
+	protected Set<Prijateljstvo> prijatelj_sa = new HashSet<Prijateljstvo>();
 	
 	public Gost() {
 		this.activated = false;
