@@ -308,13 +308,18 @@ function dajPrijateljeTrazi(){
 }
 
 function dodajPrijatelja(email){
+	
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var JAemail = delovi[1];
+	
 	alert(email);
 	
 	$.ajax({ 
         type: 'GET',
         url: 'profile/dodajPrijatelja',
         dataType: 'json',
-        data: {email : email},
+        data: {mojEmail : JAemail, prijateljevEmail : email},
 		 success: function(data){
         			console.log(data);
         			alert("Uspesno dodat prijatelj!");	

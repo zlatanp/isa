@@ -11,8 +11,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
+import com.example.beans.korisnici.Prijateljstvo;
+import com.example.enums.FriendshipStatus;
+import com.example.service.GostService;
 import com.example.service.KorisnikService;
+import com.example.service.PrijateljstvoService;
 
 @RestController
 @RequestMapping("/profile")
@@ -20,6 +25,12 @@ public class ProfilController {
 	
 	@Autowired
 	private KorisnikService korisnikService;
+	
+	@Autowired
+	private PrijateljstvoService prijateljstvoService;
+	
+	@Autowired
+	GostService gostService;
 	
 	@RequestMapping(value = "/gost", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized Korisnik mojProfil(@RequestParam("email") String email){
@@ -82,11 +93,37 @@ public class ProfilController {
 	}
 	
 	@RequestMapping(value = "/dodajPrijatelja", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void dodajPrijatelja(@RequestParam("email") String email){
+	public synchronized void dodajPrijatelja(@RequestParam("mojEmail") String mojEmail, @RequestParam("prijateljevEmail") String prijateljEmail){
 		
-		System.out.println("dodaj ovog zemu" +email);
+		System.out.println(mojEmail + prijateljEmail);
 		
+		Gost ja = null;
+		Gost mojPrijatelj = null;
+//		
+//		
+//		if(mojEmail.contains("@") && prijateljEmail.contains("@")){
+//		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+//		for (Korisnik item : listaKorisnika){
+//	        if(item.getEmail().contains(mojEmail)){
+//	        	ja = new Gost(item.getIme(), item.getPrezime(), item.getEmail(), item.getPassword(), item.getTipKorisnika());
+//	        }else if(item.getEmail().contains(prijateljEmail)){
+//	        	mojPrijatelj = new Gost(item.getIme(), item.getPrezime(), item.getEmail(), item.getPassword(), item.getTipKorisnika());
+//	        }
+//	    }
+//		Prijateljstvo p = new Prijateljstvo(ja, mojPrijatelj, FriendshipStatus.U_PROCEDURI);
+//		prijateljstvoService.savePrijateljstvo(p);
+//		}
+//		
+		Iterable<Gost> listaGostiju = gostService.getAllGosti();
+		for(Gost item : listaGostiju){
+			if(item.getEmail().equals(mojEmail))
+				ja = item;
+			if(item.getEmail().equals(prijateljEmail))
+				mojPrijatelj = item;
+		}
 		
+		Prijateljstvo p = new Prijateljstvo(ja, mojPrijatelj, FriendshipStatus.U_PROCEDURI);
+		prijateljstvoService.savePrijateljstvo(p);
 		
 	}
 
