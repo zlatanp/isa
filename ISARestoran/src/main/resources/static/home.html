@@ -3,6 +3,7 @@
 <head>
 <link rel="stylesheet" href="html/css/bootstrap.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="html/css/homecss.css" />
 <script src="html/js/jquery-3.1.0.min.js"></script>
 <script src="html/js/jquery.min.js"></script>
 <script src="html/js/bootstrap.js"></script>
@@ -258,5 +259,41 @@
     </div>
   </div>
 </div>
+<script>
+function friends(){
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var email = delovi[1];
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/gost',
+        dataType: 'json',
+        data: {email : email},
+		 success: function(data){
+        			console.log(data);
+        			$('#desniDiv').html('<h3><i>Your friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="dajPrijateljeTrazi()" value="Search"><br><div id="skrolable">nekiskrolable kuracpalac</div></div>');
+        			$('#desniDiv').show();	
+		 }
+	});
+}
+
+function dajPrijateljeTrazi(){
+	var polje = document.getElementsByName('staTrazim');
+	var kogaTrazim = polje[0].value;
+	alert(kogaTrazim);
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/trazi',
+        dataType: 'json',
+        data: {kogaTrazim : kogaTrazim },
+		 success: function(data){
+        			console.log(data);
+        			//$('#desniDiv').html('<h3><i>Your friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="dajPrijateljeTrazi()" value="Search"><br><div id="skrolable">nekiskrolable kuracpalac</div></div>');
+        			//$('#desniDiv').show();	
+		 }
+	});
+	
+}
+</script>
 </body>
 </html>

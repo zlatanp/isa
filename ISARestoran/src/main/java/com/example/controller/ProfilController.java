@@ -2,6 +2,8 @@ package com.example.controller;
 
 
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +57,25 @@ public class ProfilController {
 		        }
 		    }
 			return k;
+		}
+		
+	}
+	
+	@RequestMapping(value = "/trazi", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> traziPrijatelje(@RequestParam("kogaTrazim") String kogaTrazim){
+		
+		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
+		
+		if(kogaTrazim.isEmpty()){
+			return korisnici;
+		}else{
+			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+			for (Korisnik item : listaKorisnika){
+		        if(kogaTrazim.contains(item.getIme()) || kogaTrazim.contains(item.getPrezime())){
+		        	korisnici.add(item);
+		        }
+		    }
+			return korisnici;
 		}
 		
 	}

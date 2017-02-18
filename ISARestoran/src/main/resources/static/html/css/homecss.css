@@ -1,0 +1,8 @@
+#skrolable{
+            width: 1000px;
+            height: 190px;
+            overflow: auto;
+            overflow-y: hidden;
+            margin: 0 auto;
+            white-space: nowrap
+        }
