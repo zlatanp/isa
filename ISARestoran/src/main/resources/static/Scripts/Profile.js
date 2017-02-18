@@ -72,6 +72,7 @@ $(document).on("click", "#btnDodajRestoran", function(e){
 	registerRestoran(JSON.stringify(noviRestoran));
 });
 
+// neki komentar
 function registerRestoran(restoranJSON){
 	$.ajax({
 		url: 'restoran/register',
