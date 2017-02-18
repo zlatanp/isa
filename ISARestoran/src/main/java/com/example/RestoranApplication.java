@@ -20,7 +20,7 @@ public class RestoranApplication {
 	
 	public static void main(String[] args) {
 		System.out.println("a ");
-		System.out.println();
+		System.out.println("b");
 		SpringApplication.run(RestoranApplication.class, args);
 	}
 	
