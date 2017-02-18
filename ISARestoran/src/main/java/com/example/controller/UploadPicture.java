@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,11 +29,11 @@ public class UploadPicture {
 	@Autowired
 	private KorisnikService korisnikService;
 
-	@RequestMapping(value = "/upload", method = {RequestMethod.POST})
-	public synchronized void uploadPicture(HttpServletResponse response, @RequestParam("file") MultipartFile file, @RequestParam("email") String email) throws IOException{
+	@RequestMapping(value = "/upload/{email}", method = {RequestMethod.POST})
+	public synchronized void uploadPicture(HttpServletResponse response, @RequestParam("file") MultipartFile file, @PathVariable("email") String email) throws IOException{
 	
-			
-			if (!file.isEmpty() && email.contains("@") && file.getSize()<999998) {
+		String realMail = email + ".com";
+			if (!file.isEmpty() && realMail.contains("@") && file.getSize()<999998) {
 				//Upis u fajl sistem, lokal
 				 BufferedImage src = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
 				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
@@ -46,7 +47,7 @@ public class UploadPicture {
 					Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 				
 					for (Korisnik korisnik : listaKorisnika) {
-							if(korisnik.getEmail().equals(email)){
+							if(korisnik.getEmail().equals(realMail)){
 									korisnik.setSlika(fileContent);
 									korisnikService.saveKorisnik(korisnik);
 									
@@ -60,18 +61,22 @@ public class UploadPicture {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "/dajSliku", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public byte[] testphoto(HttpServletResponse response) throws IOException {
+	@RequestMapping(value = "/dajSliku/{email}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	public byte[] testphoto(HttpServletResponse response,  @PathVariable("email") String email) throws IOException {
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		byte[] slika = null;
 		
+		if(email.contains("@")){
+		String realEmail = email + ".com";
 		for (Korisnik korisnik : listaKorisnika) {
-				if(korisnik.getEmail().equals("jasmina.eminovski@gmail.com")){
+				if(korisnik.getEmail().equals(realEmail)){
 						slika = korisnik.getSlika();
 				}
 		}
+		}
 		
 		byte[] encodedBytes = Base64.getEncoder().encode(slika);
+		
 		
 //		response.setContentType("image/jpeg");
 //		ServletOutputStream responseOutputStream = response.getOutputStream();

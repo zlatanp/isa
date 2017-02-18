@@ -35,6 +35,7 @@ public class ProfilController {
 	public synchronized Korisnik izmeniProfil(@RequestParam("ime") String ime, @RequestParam("prezime") String prezime, @RequestParam("email") String email,
 			@RequestParam("password") String password, @RequestParam("password1") String password1){
 		
+		
 		Korisnik k = new Korisnik();
 		
 		if(ime.isEmpty() || prezime.isEmpty() || email.isEmpty() || password.isEmpty() || password1.isEmpty()){
@@ -44,12 +45,14 @@ public class ProfilController {
 		}else{
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 			for (Korisnik item : listaKorisnika){
-		        if(item.getEmail().equals(email))
+				System.out.println(item.getEmail());
+		        if(item.getEmail().equals(email)){
 		        	item.setIme(ime);
 					item.setPrezime(prezime);
 					item.setPassword(password);
 					korisnikService.saveKorisnik(item);
 					return item;
+		        }
 		    }
 			return k;
 		}
