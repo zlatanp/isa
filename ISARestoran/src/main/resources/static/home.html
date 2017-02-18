@@ -280,7 +280,7 @@ function friends(){
 function dajPrijateljeTrazi(){
 	var polje = document.getElementsByName('staTrazim');
 	var kogaTrazim = polje[0].value;
-	alert(kogaTrazim);
+	
 	$.ajax({ 
         type: 'GET',
         url: 'profile/trazi',

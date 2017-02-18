@@ -7,7 +7,7 @@ public class SMTPAuthenticator extends Authenticator {
 	public PasswordAuthentication getPasswordAuthentication()
     {
         String username = "zlatanprecanica@gmail.com";
-        String password = "zl@t@n0fk1ng";
+        String password = "*";
         return new PasswordAuthentication(username, password);
     }
 }

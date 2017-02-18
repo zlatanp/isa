@@ -149,7 +149,7 @@ public class KorisnikController {
 			SecureRandom random = new SecureRandom();
 			String hashCode = new BigInteger(130, random).toString(32);
 
-			String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "zl@t@n0fk1ng",
+			String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "*",
 					d_host = "smtp.gmail.com", d_port = "465", m_to = email, m_subject = "Verify Restaurant Account",
 					m_text = "Hi " + name + ",\t\n\t\nThank you for registering on our website.\t\n"
 							+ "To activate your account please go on link: http://localhost:8080/korisnik/active/"
