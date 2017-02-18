@@ -73,6 +73,7 @@ $(document).on("click", "#btnDodajRestoran", function(e){
 });
 
 // neki komentar
+// ovo je neki komentar
 function registerRestoran(restoranJSON){
 	$.ajax({
 		url: 'restoran/register',
