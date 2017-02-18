@@ -10,11 +10,13 @@ import java.math.BigInteger;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
 import com.example.beans.korisnici.MenadzerSistema;
+import com.example.dto.korisnici.MenadzerSistemaDTO;
 import com.example.enums.TipKorisnika;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
-import com.example.service.MenadzerSistemaService;
+import com.example.service.korisniciImpl.MenadzerSistemaService;
 
 @RestController
 @RequestMapping("/korisnik")
@@ -68,7 +71,7 @@ public class KorisnikController {
 
 		if (korisnikKojiSeLoguje != null && postoji) {
 			TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
-
+			System.out.println("Tip koji se loguje: "+ tip);
 			switch (tip) {
 			case GOST:
 				Iterable<Gost> sviGosti = gostService.getAllGosti();
@@ -81,7 +84,7 @@ public class KorisnikController {
 				}
 				break;
 			case MENADZERSISTEMA:
-				Iterable<MenadzerSistema> sviMenadzeri = menadzerSistemaService.getAllMenadzeriSistema();
+				Iterable<MenadzerSistema> sviMenadzeri = menadzerSistemaService.getAll();
 				for(MenadzerSistema m : sviMenadzeri){
 					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) && 
 							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
@@ -297,5 +300,11 @@ public class KorisnikController {
 		}
 
 		httpServletResponse.sendRedirect("/index.html");
+	}
+	
+	@RequestMapping(value="/registerAdmin", method= RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin){
+		menadzerSistemaService.create(admin);
+		return true;
 	}
 }

@@ -42,7 +42,7 @@ public class Korisnik implements Serializable {
 
 	@Column(name = "slika", nullable = true, columnDefinition = "LONGBLOB")
 	protected byte[] slika;
-	
+			
 	public Korisnik() {
 		
 	}
