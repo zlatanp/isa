@@ -65,7 +65,7 @@ public class UploadPicture {
 	public byte[] testphoto(HttpServletResponse response,  @PathVariable("email") String email) throws IOException {
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		byte[] slika = null;
-		
+		System.out.println(email);
 		if(email.contains("@")){
 		String realEmail = email + ".com";
 		for (Korisnik korisnik : listaKorisnika) {

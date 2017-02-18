@@ -1,5 +1,8 @@
 package com.example.service.korisniciImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +31,10 @@ public class MenadzerService {
 		return zaBazu;
 	}
 	
+	
+	public List<MenadzerRestorana> findAll(){
+		List<MenadzerRestorana> menadzeri = new ArrayList<>();
+		menadzeri = menadzerRepository.findAll();
+		return menadzeri;
+	}
 }

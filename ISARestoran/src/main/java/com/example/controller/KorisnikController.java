@@ -1,11 +1,13 @@
 package com.example.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
 import java.security.SecureRandom;
 import java.math.BigInteger;
+import java.nio.file.Files;
 
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -23,11 +25,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
+import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.beans.korisnici.MenadzerSistema;
+import com.example.dto.korisnici.GostDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.korisnici.MenadzerSistemaDTO;
 import com.example.enums.TipKorisnika;
+import com.example.enums.TypeEmail;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.korisniciImpl.MenadzerService;
@@ -55,6 +60,9 @@ public class KorisnikController {
 		boolean postoji = false;
 		boolean aktiviran = false;
 		boolean nasaoMenSistema = false;
+		boolean nasaoMenRest = false;
+		MenadzerSistemaDTO msDTO = new MenadzerSistemaDTO();
+		MenadzerDTO mrDTO = new MenadzerDTO();
 		Korisnik korisnikKojiSeLoguje = null;
 		System.out.println("loguje se: " + email + " " + password);
 
@@ -78,6 +86,7 @@ public class KorisnikController {
 		if (korisnikKojiSeLoguje != null && postoji) {
 			TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
 			System.out.println("Tip koji se loguje: "+ tip);
+			
 			switch (tip) {
 			case GOST:
 				Iterable<Gost> sviGosti = gostService.getAllGosti();
@@ -95,25 +104,43 @@ public class KorisnikController {
 					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) && 
 							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
 						nasaoMenSistema = true;
+						msDTO = new MenadzerSistemaDTO(m);
 					}
 				}
+				break;
+			
+			case MENADZERRESTORANA:
+				Iterable<MenadzerRestorana> sviMenadzeriRest = menadzerService.findAll();
+				for(MenadzerRestorana m : sviMenadzeriRest){
+					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) &&
+							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
+						nasaoMenRest = true;
+						mrDTO = new MenadzerDTO(m);
+					}
+				}
+				break;
+				
 			default:
 				break;
-
 			}
 		}
 
 		if (aktiviran) {
 			response.sendRedirect("/home.html");
+			
 		} else if (nasaoMenSistema){
-			response.sendRedirect("/adminPage.html");
+			if(msDTO.getIme().equals("admin")){
+				response.sendRedirect("/adminPage.html");
+			}else {
+				sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, msDTO);
+			}
+			
+		}else if (nasaoMenRest){
+			response.sendRedirect("/menadzerPage.html");
 		} else {
 			response.sendRedirect("/index.html");
 		}
 	}
-
-	// public synchronized void login(@RequestParam("email") String email,
-	// @RequestParam("password") String password) throws IOException{
 
 	@RequestMapping(value = "/register", method = { RequestMethod.POST })
 	public synchronized void register(HttpServletResponse httpServletResponse,
@@ -154,68 +181,19 @@ public class KorisnikController {
 		// ako nije prosao sve provere povratak na pocetnu stranu (index)
 		if (uspesno) {
 
-			// this.templateMessage = new SimpleMailMessage();
-			//
-			// SimpleMailMessage msg = new
-			// SimpleMailMessage(this.templateMessage);
-			// msg.setTo(email);
-			// msg.setText(
-			// "Dear " + name
-			// + lastname
-			// + ", thank you for register. Your confirm link is
-			// http://localhost:8080/verify/"+ email);
-			// try{
-			// this.mailSender.send(msg);
-			// }
-			// catch (MailException ex) {
-			// // simply log it and go on...
-			// System.err.println(ex.getMessage());
-			// }
 			SecureRandom random = new SecureRandom();
 			String hashCode = new BigInteger(130, random).toString(32);
-
-			String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "********",
-					d_host = "smtp.gmail.com", d_port = "465", m_to = email, m_subject = "Verify Restaurant Account",
-					m_text = "Hi " + name + ",\t\n\t\nThank you for registering on our website.\t\n"
-							+ "To activate your account please go on link: http://localhost:8080/gost/active/"
-							+ hashCode + "\t\n\t\nBest Regards,\t\nYour Restaurant.";
-			Properties props = new Properties();
-			props.put("mail.smtp.user", d_email);
-			props.put("mail.smtp.host", d_host);
-			props.put("mail.smtp.port", d_port);
-			props.put("mail.smtp.starttls.enable", "true");
-			props.put("mail.smtp.debug", "true");
-			props.put("mail.smtp.auth", "true");
-			props.put("mail.smtp.socketFactory.port", d_port);
-			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-			props.put("mail.smtp.socketFactory.fallback", "false");
-
-			Authenticator auth = new SMTPAuthenticator();
-			Session session = Session.getInstance(props, auth);
-			session.setDebug(true);
-
-			MimeMessage msg = new MimeMessage(session);
-			try {
-				msg.setSubject(m_subject);
-				msg.setText(m_text);
-				msg.setFrom(new InternetAddress(d_email));
-				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(m_to));
-
-				Transport transport = session.getTransport("smtps");
-				transport.connect(d_host, Integer.valueOf(d_port), d_uname, d_password);
-				transport.sendMessage(msg, msg.getAllRecipients());
-				transport.close();
-
-			} catch (AddressException e) {
-				e.printStackTrace();
-				return;
-			} catch (MessagingException e) {
-				e.printStackTrace();
-				return;
-			}
-
+					
 			Gost gost = new Gost(name, lastname, email, password, TipKorisnika.GOST);
 			gost.setHashCode(hashCode);
+			
+			File fi = new File("src/main/resources/static/html/profilePic.jpg");
+			byte[] fileContent = Files.readAllBytes(fi.toPath());
+			gost.setSlika(fileContent);
+			
+			GostDTO gostDTO = new GostDTO(gost);
+			sendEmailToNewUser(hashCode, TypeEmail.ACTIVATION, gostDTO);
+			
 			gostService.saveGost(gost);
 
 			httpServletResponse.sendRedirect("/index.html");
@@ -256,55 +234,39 @@ public class KorisnikController {
 		System.out.println(mejl);
 
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-		String password = "";
-		String name = "";
+		Korisnik zaRecover = new Korisnik();
 		for (Korisnik item : listaKorisnika) {
 			if (item.getEmail().equals(mejl)) {
-				password = item.getPassword();
-				name = item.getIme();
+				zaRecover = item;
 				System.out.println("uso");
 			}
 		}
-
-		String d_email = "zlatanprecanica@gmail.com", d_uname = "Zlatan", d_password = "********",
-				d_host = "smtp.gmail.com", d_port = "465", m_to = mejl, m_subject = "Restaurant Password Recovery",
-				m_text = "Hi " + name + ",\t\n\t\nYour password is: " + password
-						+ "\t\n\t\nBest Regards,\t\nYour Restaurant.";
-		Properties props = new Properties();
-		props.put("mail.smtp.user", d_email);
-		props.put("mail.smtp.host", d_host);
-		props.put("mail.smtp.port", d_port);
-		props.put("mail.smtp.starttls.enable", "true");
-		props.put("mail.smtp.debug", "true");
-		props.put("mail.smtp.auth", "true");
-		props.put("mail.smtp.socketFactory.port", d_port);
-		props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-		props.put("mail.smtp.socketFactory.fallback", "false");
-
-		Authenticator auth = new SMTPAuthenticator();
-		Session session = Session.getInstance(props, auth);
-		session.setDebug(true);
-
-		MimeMessage msg = new MimeMessage(session);
-		try {
-			msg.setSubject(m_subject);
-			msg.setText(m_text);
-			msg.setFrom(new InternetAddress(d_email));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(m_to));
-
-			Transport transport = session.getTransport("smtps");
-			transport.connect(d_host, Integer.valueOf(d_port), d_uname, d_password);
-			transport.sendMessage(msg, msg.getAllRecipients());
-			transport.close();
-
-		} catch (AddressException e) {
-			e.printStackTrace();
-			return;
-		} catch (MessagingException e) {
-			e.printStackTrace();
-			return;
+		TipKorisnika tipKorisnika = zaRecover.getTipKorisnika();
+		switch (tipKorisnika) {
+		case GOST:
+				Gost g = new Gost(zaRecover.getIme(), zaRecover.getPrezime(), zaRecover.getEmail(), 
+										zaRecover.getPassword(), TipKorisnika.GOST);
+				GostDTO gostDTO = new GostDTO(g);
+				sendEmailToNewUser("", TypeEmail.FORGOT_PASSWORD, gostDTO);
+			break;
+			
+		case MENADZERRESTORANA:
+				MenadzerRestorana m = new MenadzerRestorana(zaRecover.getIme(), zaRecover.getPrezime(), zaRecover.getEmail(), 
+										zaRecover.getPassword(), TipKorisnika.MENADZERRESTORANA);
+				MenadzerDTO menDTO = new MenadzerDTO(m);
+				sendEmailToNewUser("", TypeEmail.FORGOT_PASSWORD, menDTO);
+			break;
+		
+		case MENADZERSISTEMA:
+				MenadzerSistema ms = new MenadzerSistema(zaRecover.getIme(), zaRecover.getPrezime(), zaRecover.getEmail(), 
+										zaRecover.getPassword(), TipKorisnika.MENADZERSISTEMA);
+				MenadzerSistemaDTO msDTO = new MenadzerSistemaDTO(ms);
+				sendEmailToNewUser("", TypeEmail.FORGOT_PASSWORD, msDTO);
+				break;
+		default:
+			break;
 		}
-
+		
 		httpServletResponse.sendRedirect("/index.html");
 	}
 	
@@ -318,6 +280,7 @@ public class KorisnikController {
 			}
 		}		
 		if(!ovakavPostoji){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, admin);
 			menadzerSistemaService.create(admin);
 			return true;
 		}else {
@@ -335,10 +298,152 @@ public class KorisnikController {
 			}
 		}
 		if(!ovakavPostoji){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
 			menadzerService.create(menadzer);
 			return true;
 		}else {
 			return false;
 		}
 	}
+	
+	
+	public void sendEmailToNewUser(String hashcode, TypeEmail emailType, KorisnikDTO korisnik){
+		String userEmail = korisnik.getEmail();
+		String userName = korisnik.getIme();
+		String userPassword = korisnik.getPassword();
+		
+		String posiljalac = "teamdev70@gmail.com";
+		String passwordPosiljaoca = "restoran94";
+		String imePosiljaoca = "Restoran";
+		String host = "smtp.gmail.com";
+		String port = "465";
+		String subject = "";
+		String text = "";
+		
+		switch(emailType) {
+		
+		case ACTIVATION:
+			subject = "Activate restaurant account";
+			text = "Hi " + userName + ",\t\n\t\nThank you for registering on our website.\t\n"
+					+ "To activate your account please go on link: http://localhost:8080/korisnik/active/"
+					+ hashcode + "\t\n\t\nBest Regards,\t\nYour Restaurant.";
+			
+			Properties props = new Properties();
+			props.put("mail.smtp.user", posiljalac);
+			props.put("mail.smtp.host", host);
+			props.put("mail.smtp.port", port);
+			props.put("mail.smtp.starttls.enable", "true");
+			props.put("mail.smtp.debug", "true");
+			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.socketFactory.port", port);
+			props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.socketFactory.fallback", "false");
+			Authenticator auth = new SMTPAuthenticator();
+			Session session = Session.getInstance(props, auth);
+			session.setDebug(true);
+
+			MimeMessage msg = new MimeMessage(session);
+			try {
+				msg.setSubject(subject);
+				msg.setText(text);
+				msg.setFrom(new InternetAddress(posiljalac));
+				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
+
+				Transport transport = session.getTransport("smtps");
+				transport.connect(host, Integer.valueOf(port), imePosiljaoca, passwordPosiljaoca);
+				transport.sendMessage(msg, msg.getAllRecipients());
+				transport.close();
+
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return;
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				return;
+			}
+			break;
+
+		case CHANGE_PASSWORD:
+			subject = "Change password";
+			text = "Hi " + userName + ",\t\n\t\nYour password is: " + userPassword + ".\t\n"
+					+ "To change your password please go to link: http://localhost:8080/changePassword.html "+
+					"\t\n\t\nBest Regards,\t\nYour Restaurant.";
+			Properties props2 = new Properties();
+			props2.put("mail.smtp.user", posiljalac);
+			props2.put("mail.smtp.host", host);
+			props2.put("mail.smtp.port", port);
+			props2.put("mail.smtp.starttls.enable", "true");
+			props2.put("mail.smtp.debug", "true");
+			props2.put("mail.smtp.auth", "true");
+			props2.put("mail.smtp.socketFactory.port", port);
+			props2.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props2.put("mail.smtp.socketFactory.fallback", "false");
+			Authenticator auth2 = new SMTPAuthenticator();
+			Session session2 = Session.getInstance(props2, auth2);
+			session2.setDebug(true);
+
+			MimeMessage msg2 = new MimeMessage(session2);
+			try {
+				msg2.setSubject(subject);
+				msg2.setText(text);
+				msg2.setFrom(new InternetAddress(posiljalac));
+				msg2.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
+
+				Transport transport = session2.getTransport("smtps");
+				transport.connect(host, Integer.valueOf(port), imePosiljaoca, passwordPosiljaoca);
+				transport.sendMessage(msg2, msg2.getAllRecipients());
+				transport.close();
+
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return;
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				return;
+			}
+			
+			break;
+			
+		case FORGOT_PASSWORD:
+			subject = "Restaurant Password Recovery";
+			text = "Hi " + userName + ",\t\n\t\nYour password is: " + userPassword
+					+ "\t\n\t\nBest Regards,\t\nYour Restaurant.";
+			Properties props1 = new Properties();
+			props1.put("mail.smtp.user", posiljalac);
+			props1.put("mail.smtp.host", host);
+			props1.put("mail.smtp.port", port);
+			props1.put("mail.smtp.starttls.enable", "true");
+			props1.put("mail.smtp.debug", "true");
+			props1.put("mail.smtp.auth", "true");
+			props1.put("mail.smtp.socketFactory.port", port);
+			props1.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props1.put("mail.smtp.socketFactory.fallback", "false");
+			Authenticator auth1 = new SMTPAuthenticator();
+			Session session1 = Session.getInstance(props1, auth1);
+			session1.setDebug(true);
+
+			MimeMessage msg1 = new MimeMessage(session1);
+			try {
+				msg1.setSubject(subject);
+				msg1.setText(text);
+				msg1.setFrom(new InternetAddress(posiljalac));
+				msg1.addRecipient(Message.RecipientType.TO, new InternetAddress(userEmail));
+
+				Transport transport = session1.getTransport("smtps");
+				transport.connect(host, Integer.valueOf(port), imePosiljaoca, passwordPosiljaoca);
+				transport.sendMessage(msg1, msg1.getAllRecipients());
+				transport.close();
+
+			} catch (AddressException e) {
+				e.printStackTrace();
+				return;
+			} catch (MessagingException e) {
+				e.printStackTrace();
+				return;
+			}
+			break;
+		}
+	}
+	
+	
 }

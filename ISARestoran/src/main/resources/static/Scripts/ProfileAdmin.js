@@ -103,7 +103,7 @@ $(document).on("click", "#btnDodajAdmina", function(e) {
 	noviAdmin["ime"] = $("#imeAdm").val();
 	noviAdmin["prezime"] = $("#przAdm").val();
 	noviAdmin["email"] = $("#emailAdm").val();
-	noviAdmin["password"] = $("#imeAdm").val();
+	noviAdmin["password"] = $("#passAdm").val();
 	registerAdmin(JSON.stringify(noviAdmin));
 });
 
