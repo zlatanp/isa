@@ -21,6 +21,7 @@ public class RestoranApplication {
 	public static void main(String[] args) {
 		System.out.println("a ");
 		// prva izmena na 2.2.
+		// druga izmena za 2.2.
 		SpringApplication.run(RestoranApplication.class, args);
 	}
 	
