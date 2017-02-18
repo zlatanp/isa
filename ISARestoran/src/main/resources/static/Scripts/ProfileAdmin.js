@@ -29,11 +29,15 @@ $(document).ready(function() {
 	$(".OpenNewManForRest").on("click", function() {
 		$divsForHide.hide();
 		$("#NewManForRest").show();
+		var lozinka = makePassword();
+		$("#lozMen").val(lozinka);
 	});
 
 	$(".OpenNewSystemMan").on("click", function() {
 		$divsForHide.hide();
 		$("#NewSystemMan").show();
+		var lozinka = makePassword();
+		$("#passAdm").val(lozinka);
 	});
 
 });
