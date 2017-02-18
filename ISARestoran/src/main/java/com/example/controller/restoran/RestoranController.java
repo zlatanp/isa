@@ -42,6 +42,10 @@ public class RestoranController {
 		return true;
 	}
 	
+	@RequestMapping(value="/dobaviRestorane", method = RequestMethod.GET, produces="application/JSON")
+	public String dobaviRestorane() throws JsonProcessingException{
+		return objectMapper.writeValueAsString(restoranService.findAll());
+	}
 	
 	
 }

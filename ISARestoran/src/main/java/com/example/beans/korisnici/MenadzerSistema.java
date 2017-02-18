@@ -28,7 +28,4 @@ public class MenadzerSistema extends Korisnik {
 	public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
-	
-	
-
 }

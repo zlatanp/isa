@@ -11,7 +11,6 @@ import com.example.beans.restoran.Restoran;
 import com.example.enums.TipKorisnika;
 
 
-
 @Entity
 @Table(name = "menadzer_restorana")
 public class MenadzerRestorana extends Korisnik {
@@ -48,8 +47,4 @@ public class MenadzerRestorana extends Korisnik {
 		// TODO Auto-generated method stub
 		return super.equals(obj);
 	}
-	
-	
-	
-	
 }
