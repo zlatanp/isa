@@ -228,17 +228,17 @@ function validateFormAdmin() {
 		$("#passAdm").focus();
 		return false;
 	}
-	if (!validateField($("#passAdmRep"))) {
-		toastr.error("Niste uneli ponovljenu lozinku!");
-		$("#passAdmRep").focus();
-		return false;
-	}
-	if (!compareTwoFields($("#passAdmRep"), $("#passAdm"))) {
-		$("#passAdmRep").focus();
-		$("#passAdm").focus();
-		toastr.error("Ponovljena lozinka se ne poklapa. Ponovite unos!")
-		return false;
-	}
+//	if (!validateField($("#passAdmRep"))) {
+//		toastr.error("Niste uneli ponovljenu lozinku!");
+//		$("#passAdmRep").focus();
+//		return false;
+//	}
+//	if (!compareTwoFields($("#passAdmRep"), $("#passAdm"))) {
+//		$("#passAdmRep").focus();
+//		$("#passAdm").focus();
+//		toastr.error("Ponovljena lozinka se ne poklapa. Ponovite unos!")
+//		return false;
+//	}
 	return true;
 }
 
@@ -264,17 +264,17 @@ function validateFormMenadzer(){
 		$("#lozMen").focus();
 		return false;
 	}
-	if(!validateField($("#lozMenRep"))){
-		toastr.error("Niste uneli ponovljenu lozinku za menadžera");
-		$("#lozMenRep").focus();
-		return false;
-	}
-	if (!compareTwoFields($("#lozMen"), $("#lozMenRep"))) {
-		$("#lozMenRep").focus();
-		$("#lozMen").focus();
-		toastr.error("Lozinke se ne poklapaju! Ponovite unos.")
-		return false;
-	}
+//	if(!validateField($("#lozMenRep"))){
+//		toastr.error("Niste uneli ponovljenu lozinku za menadžera");
+//		$("#lozMenRep").focus();
+//		return false;
+//	}
+//	if (!compareTwoFields($("#lozMen"), $("#lozMenRep"))) {
+//		$("#lozMenRep").focus();
+//		$("#lozMen").focus();
+//		toastr.error("Lozinke se ne poklapaju! Ponovite unos.")
+//		return false;
+//	}
 	return true;
 }
 
@@ -293,4 +293,15 @@ function validateField(field) {
 	} else {
 		return true;
 	}
+}
+
+function makePassword()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
 }
