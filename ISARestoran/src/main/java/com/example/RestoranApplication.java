@@ -20,14 +20,7 @@ public class RestoranApplication {
 	
 	public static void main(String[] args) {
 		System.out.println("a ");
-
-		System.out.println("babaaa");
-		System.out.println("davorbadrov");
-		System.out.println("iz mog ficura poslednji");
-
-		System.out.println("baraba");
-		System.out.println("iz development grane");
-
+		// prva izmena na 2.2.
 		SpringApplication.run(RestoranApplication.class, args);
 	}
 	
