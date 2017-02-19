@@ -12,6 +12,7 @@ public abstract class KorisnikDTO {
 	public String password;
 	public TipKorisnika tip;
 	public byte[] slika;
+	public boolean promenioLozinku = false;
 	
 	public KorisnikDTO(){}
 
@@ -32,6 +33,7 @@ public abstract class KorisnikDTO {
 		this.prezime = k.getPrezime();
 		this.slika = k.getSlika();
 		this.tip = k.getTipKorisnika();
+		this.promenioLozinku = k.isPromenioLozinku();
 	}
 
 	public int getId() {
@@ -89,5 +91,13 @@ public abstract class KorisnikDTO {
 	public void setSlika(byte[] slika) {
 		this.slika = slika;
 	}
-	
+
+	public boolean isPromenioLozinku() {
+		return promenioLozinku;
+	}
+
+	public void setPromenioLozinku(boolean promenioLozinku) {
+		this.promenioLozinku = promenioLozinku;
+	}
+
 }

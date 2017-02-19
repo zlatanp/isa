@@ -27,6 +27,7 @@ import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
 import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.beans.korisnici.MenadzerSistema;
+import com.example.dto.hellpers.ChangePasswordDTO;
 import com.example.dto.korisnici.GostDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
@@ -37,6 +38,8 @@ import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.korisniciImpl.MenadzerService;
 import com.example.service.korisniciImpl.MenadzerSistemaService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/korisnik")
@@ -53,6 +56,9 @@ public class KorisnikController {
 	
 	@Autowired
 	private MenadzerService menadzerService;
+	
+	
+	private ObjectMapper objectMapper = new ObjectMapper();
 
 	@RequestMapping(value = "/login", method = { RequestMethod.POST }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized void login(HttpServletResponse response, @ModelAttribute("email") String email,
@@ -131,12 +137,19 @@ public class KorisnikController {
 		} else if (nasaoMenSistema){
 			if(msDTO.getIme().equals("admin")){
 				response.sendRedirect("/adminPage.html");
+			}else if(!msDTO.isPromenioLozinku()){
+				response.sendRedirect("/changePassword.html");
 			}else {
-				sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, msDTO);
+				response.sendRedirect("/adminPage.html");
 			}
 			
 		}else if (nasaoMenRest){
-			response.sendRedirect("/menadzerPage.html");
+			if(!mrDTO.isPromenioLozinku()){
+				response.sendRedirect("/changePassword.html");
+			}else {
+				response.sendRedirect("/menadzerPage.html");
+			}
+			
 		} else {
 			response.sendRedirect("/index.html");
 		}
@@ -306,6 +319,27 @@ public class KorisnikController {
 		}
 	}
 	
+	@RequestMapping(value="/changeFirstPass", method= RequestMethod.POST, consumes="application/json", produces="application/json")
+	public String changeFirstPassword(@RequestBody @Valid ChangePasswordDTO noviPass) throws JsonProcessingException{
+		KorisnikDTO korisnik = korisnikService.findByEmail(noviPass.getEmail());
+		TipKorisnika tipKorisnikaKojiMenja = korisnik.getTip();
+		boolean promenioPre = korisnik.isPromenioLozinku();
+		if(korisnik != null && !promenioPre){
+			KorisnikDTO updateKorisnik = korisnikService.updatePassword(korisnik.getEmail(), noviPass.getStara(), noviPass.getNova());
+			updateKorisnik.setTip(tipKorisnikaKojiMenja);
+			return objectMapper.writeValueAsString(updateKorisnik);
+		}
+		return "";
+		
+//		if(updateKorisnik == null)
+//			return "";
+		//updateLogovaniKorisnik(updateKorisnik);
+//		if(!promenioPre){
+//			return updateKorisnik.getTip().toString();
+//		}
+//		return "";
+		
+	}
 	
 	public void sendEmailToNewUser(String hashcode, TypeEmail emailType, KorisnikDTO korisnik){
 		String userEmail = korisnik.getEmail();
@@ -443,7 +477,5 @@ public class KorisnikController {
 			}
 			break;
 		}
-	}
-	
-	
+	}	
 }
