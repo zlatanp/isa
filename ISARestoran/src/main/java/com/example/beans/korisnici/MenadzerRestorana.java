@@ -21,6 +21,7 @@ public class MenadzerRestorana extends Korisnik {
 	@ManyToOne
 	@JoinColumn(name="radi_u", referencedColumnName= "id")
 	protected Restoran radi_u;
+	
 
 	public MenadzerRestorana() {
 	}

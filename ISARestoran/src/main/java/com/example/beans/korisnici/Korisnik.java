@@ -42,7 +42,11 @@ public class Korisnik implements Serializable {
 
 	@Column(name = "slika", nullable = true, columnDefinition = "LONGBLOB")
 	protected byte[] slika;
-			
+	
+	@Column(name= "passwordChanged")
+	protected boolean promenioLozinku = false;
+	
+	
 	public Korisnik() {
 		
 	}
@@ -113,4 +117,14 @@ public class Korisnik implements Serializable {
 	public void setSlika(byte[] slika) {
 		this.slika = slika;
 	}
+
+	public boolean isPromenioLozinku() {
+		return promenioLozinku;
+	}
+
+	public void setPromenioLozinku(boolean promenioLozinku) {
+		this.promenioLozinku = promenioLozinku;
+	}
+	
+	
 }
