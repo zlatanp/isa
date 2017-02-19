@@ -1,9 +1,8 @@
 package com.example.controller;
 
-
-
 import java.util.ArrayList;
 
+import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,110 +21,211 @@ import com.example.service.PrijateljstvoService;
 @RestController
 @RequestMapping("/profile")
 public class ProfilController {
-	
+
 	@Autowired
 	private KorisnikService korisnikService;
-	
+
 	@Autowired
 	private PrijateljstvoService prijateljstvoService;
-	
+
 	@Autowired
 	GostService gostService;
 	
-	@RequestMapping(value = "/gost", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized Korisnik mojProfil(@RequestParam("email") String email){
-		Korisnik k = new Korisnik();
-		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-		for (Korisnik item : listaKorisnika){
-	        if(item.getEmail().equals(email))
-	        	k = item;
-	    }
-		
-		return k;
+	@RequestMapping(value = "/gost", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized Korisnik profil(@RequestParam("email") String email) {
+        Korisnik k = new Korisnik();
+        Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+
+        for (Korisnik item : listaKorisnika) {
+            if (item.getEmail().equals(email))
+                k = item;
+        }
+        return k;
+
 	}
-	
-	@RequestMapping(value = "/edit", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized Korisnik izmeniProfil(@RequestParam("ime") String ime, @RequestParam("prezime") String prezime, @RequestParam("email") String email,
-			@RequestParam("password") String password, @RequestParam("password1") String password1){
+
+	@RequestMapping(value = "/svimojiprijateljibisurirasuti", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> svimojiprijateljibisurirasuti(@RequestParam("email") String email) {
+		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
+		
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+		for(Prijateljstvo p : pr){
+			if(p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+				prijateljiMoji.add(p.getMojprijatelj());
+			}else if(p.getMojprijatelj().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+				prijateljiMoji.add(p.getJa());
+			}
+		}
 		
 		
+		
+		return prijateljiMoji;
+	}
+
+	@RequestMapping(value = "/edit", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized Korisnik izmeniProfil(@RequestParam("ime") String ime, @RequestParam("prezime") String prezime,
+			@RequestParam("email") String email, @RequestParam("password") String password,
+			@RequestParam("password1") String password1) {
+
 		Korisnik k = new Korisnik();
-		
-		if(ime.isEmpty() || prezime.isEmpty() || email.isEmpty() || password.isEmpty() || password1.isEmpty()){
+
+		if (ime.isEmpty() || prezime.isEmpty() || email.isEmpty() || password.isEmpty() || password1.isEmpty()) {
 			return k;
-		}else if(!password.equals(password1)){
+		} else if (!password.equals(password1)) {
 			return k;
-		}else{
+		} else {
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-			for (Korisnik item : listaKorisnika){
+			for (Korisnik item : listaKorisnika) {
 				System.out.println(item.getEmail());
-		        if(item.getEmail().equals(email)){
-		        	item.setIme(ime);
+				if (item.getEmail().equals(email)) {
+					item.setIme(ime);
 					item.setPrezime(prezime);
 					item.setPassword(password);
 					korisnikService.saveKorisnik(item);
 					return item;
-		        }
-		    }
+				}
+			}
 			return k;
 		}
-		
-	}
-	
-	@RequestMapping(value = "/trazi", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized ArrayList<Korisnik> traziPrijatelje(@RequestParam("kogaTrazim") String kogaTrazim){
-		
-		System.out.println(kogaTrazim);
-		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
-		
-		if(kogaTrazim.isEmpty()){
-			return korisnici;
-		}else{
-			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-			for (Korisnik item : listaKorisnika){
-		        if(item.getIme().contains(kogaTrazim) || item.getPrezime().contains(kogaTrazim)){
-		        	korisnici.add(item);
-		        }
-		    }
-			return korisnici;
-		}
-		
-	}
-	
-	@RequestMapping(value = "/dodajPrijatelja", method = {RequestMethod.GET}, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void dodajPrijatelja(@RequestParam("mojEmail") String mojEmail, @RequestParam("prijateljevEmail") String prijateljEmail){
-		
-		System.out.println(mojEmail + prijateljEmail);
-		
-		Gost ja = null;
-		Gost mojPrijatelj = null;
-//		
-//		
-//		if(mojEmail.contains("@") && prijateljEmail.contains("@")){
-//		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-//		for (Korisnik item : listaKorisnika){
-//	        if(item.getEmail().contains(mojEmail)){
-//	        	ja = new Gost(item.getIme(), item.getPrezime(), item.getEmail(), item.getPassword(), item.getTipKorisnika());
-//	        }else if(item.getEmail().contains(prijateljEmail)){
-//	        	mojPrijatelj = new Gost(item.getIme(), item.getPrezime(), item.getEmail(), item.getPassword(), item.getTipKorisnika());
-//	        }
-//	    }
-//		Prijateljstvo p = new Prijateljstvo(ja, mojPrijatelj, FriendshipStatus.U_PROCEDURI);
-//		prijateljstvoService.savePrijateljstvo(p);
-//		}
-//		
-		Iterable<Gost> listaGostiju = gostService.getAllGosti();
-		for(Gost item : listaGostiju){
-			if(item.getEmail().equals(mojEmail))
-				ja = item;
-			if(item.getEmail().equals(prijateljEmail))
-				mojPrijatelj = item;
-		}
-		
-		Prijateljstvo p = new Prijateljstvo(ja, mojPrijatelj, FriendshipStatus.U_PROCEDURI);
-		prijateljstvoService.savePrijateljstvo(p);
-		
+
 	}
 
+	@RequestMapping(value = "/trazi", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> traziPrijatelje(@RequestParam("kogaTrazim") String kogaTrazim,
+			@RequestParam("email") String mojEmail) {
+
+		System.out.println(kogaTrazim + "mojemail: " + mojEmail);
+		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
+
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+
+		if (kogaTrazim.isEmpty()) {
+			return korisnici;
+		} else {
+			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+			for (Korisnik item : listaKorisnika) {
+				if (item.getIme().contains(kogaTrazim) || item.getPrezime().contains(kogaTrazim)) {
+					if (!item.getEmail().equals(mojEmail)) {
+						korisnici.add(item);
+					}
+				}
+			}
+
+			for (Prijateljstvo p : pr) {
+				for (int i = 0; i < korisnici.size(); i++) {
+					if((p.getJa().getEmail().equals(mojEmail) || p.getMojprijatelj().getEmail().equals(mojEmail)) && (p.getMojprijatelj().getEmail().equals(korisnici.get(i).getEmail()) || p.getJa().getEmail().equals(korisnici.get(i).getEmail()))){
+						if(p.getStatus().equals(FriendshipStatus.PRIJATELJI) || p.getStatus().equals(FriendshipStatus.U_PROCEDURI)){
+						korisnici.remove(i);
+						}
+					}
+				}
+			}
+
+			return korisnici;
+		}
+
+	}
+
+	@RequestMapping(value = "/dodajPrijatelja", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void dodajPrijatelja(@RequestParam("mojEmail") String mojEmail,
+			@RequestParam("prijateljevEmail") String prijateljEmail) {
+
+		System.out.println(mojEmail + prijateljEmail);
+
+		Gost ja = null;
+		Gost mojPrijatelj = null;
+
+		Iterable<Gost> listaGostiju = gostService.getAllGosti();
+		for (Gost item : listaGostiju) {
+			if (item.getEmail().equals(mojEmail))
+				ja = item;
+			if (item.getEmail().equals(prijateljEmail))
+				mojPrijatelj = item;
+		}
+
+		Prijateljstvo p = new Prijateljstvo(ja, mojPrijatelj, FriendshipStatus.U_PROCEDURI);
+		prijateljstvoService.savePrijateljstvo(p);
+
+	}
+
+	@RequestMapping(value = "/dajNotifikaciju", method = { RequestMethod.GET })
+	public synchronized boolean dajNotifikaciju(@RequestParam("mojEmail") String mojEmail) {
+
+		System.out.println(mojEmail);
+		boolean imaNotifikaciju = false;
+
+		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
+		if (svaPrijateljstva != null) {
+			for (Prijateljstvo p : svaPrijateljstva) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+					imaNotifikaciju = true;
+				}
+			}
+		}
+		return imaNotifikaciju;
+	}
+
+	@RequestMapping(value = "/dajLjude", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> dajLjudeKojiMeDodali(@RequestParam("email") String mojEmail) {
+
+		System.out.println(mojEmail);
+
+		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
+
+		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
+		if (svaPrijateljstva != null) {
+			for (Prijateljstvo p : svaPrijateljstva) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+					korisnici.add(p.getJa());
+				}
+			}
+		}
+
+		return korisnici;
+	}
+
+	@RequestMapping(value = "/odbaciPrijatelja", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void odbaciPrijatelja(@RequestParam("email") String mojEmail,
+			@RequestParam("kogaOdbacujem") String kogaOdbacujem) {
+
+		System.out.println(mojEmail);
+
+		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
+		if (svaPrijateljstva != null) {
+			for (Prijateljstvo p : svaPrijateljstva) {
+				if ((p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)) || (p.getMojprijatelj().getEmail().equals(kogaOdbacujem) && p.getJa().getEmail().equals(mojEmail))) {
+					p.setStatus(FriendshipStatus.NISU_PRIJATELJI);
+					prijateljstvoService.savePrijateljstvo(p);
+					break;
+				}
+			}
+		}
+
+	}
+	
+	@RequestMapping(value = "/prihvatiPrijatelja", method = {RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void prihvatiPrijatelja(@RequestParam("mojEmail") String mojEmail,@RequestParam("kogaDodajem") String kogaOdbacujem) {
+
+		System.out.println(mojEmail);
+
+		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
+		if (svaPrijateljstva != null) {
+			for (Prijateljstvo p : svaPrijateljstva) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+					p.setStatus(FriendshipStatus.PRIJATELJI);
+					prijateljstvoService.savePrijateljstvo(p);
+					break;
+				}
+			}
+		}
+
+	}
+	
+	
 
 }
