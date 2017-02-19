@@ -26,6 +26,20 @@
 			$('#glavniDiv').hide();
     	}
 		
+		if(emailUlogovanog.search("@")!=-1){
+	     	$.ajax({ 
+	             type: 'GET',
+	             url: 'profile/dajNotifikaciju',
+	             dataType: 'json',
+	             data: {mojEmail : emailUlogovanog},
+	     		 success: function(data){
+	             			console.log(data);
+	             			if(data == true)
+	             			$('#notifikacija').append('<a onclick="notifikacija()" href="#"><img src="html/css/notif.png" style="width:24px;height:24px;" /> Friend Request </a>');
+	            		}
+	     	});
+	     }
+		
 	}
 </script>
 </head>
@@ -47,19 +61,6 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li ><a href="home.html" >Home<span class="sr-only">(current)</span></a></li>
-<!--         <li><a href="#">Link</a></li> -->
-        <!-- <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li> -->
       </ul>
       <form class="navbar-form navbar-left">
         <div class="form-group">
@@ -68,6 +69,7 @@
         <button type="submit" class="btn btn-default">Search</button>
       </form>
       <ul class="nav navbar-nav navbar-right">
+      	<li id="notifikacija"></li>
         <li><a onclick="profilKorisnika()" href="#">Profile</a></li>
         <li><a onclick="izlogujSe()" href="#">Log Out</a></li>
       </ul>
@@ -111,6 +113,7 @@
 	            		}
 	     	});
 	     	$('#glavniDiv').show();
+	     	$('#leviDiv').show();
 	     	$('#desniDiv').hide();
 	     }
 	}
@@ -279,6 +282,10 @@ function friends(){
 }
 
 function dajPrijateljeTrazi(){
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var email = delovi[1];
+	
 	var polje = document.getElementsByName('staTrazim');
 	var kogaTrazim = polje[0].value;
 	
@@ -291,7 +298,7 @@ function dajPrijateljeTrazi(){
         type: 'GET',
         url: 'profile/trazi',
         dataType: 'json',
-        data: {kogaTrazim : kogaTrazim },
+        data: {kogaTrazim : kogaTrazim, email : email },
 		 success: function(data){
         			console.log(data);
         			if(data.length>0){
@@ -313,16 +320,63 @@ function dodajPrijatelja(email){
 	var delovi = x.split("=");
 	var JAemail = delovi[1];
 	
-	alert(email);
 	
 	$.ajax({ 
         type: 'GET',
         url: 'profile/dodajPrijatelja',
         dataType: 'json',
         data: {mojEmail : JAemail, prijateljevEmail : email},
-		 success: function(data){
+        complete: function(data){
         			console.log(data);
         			alert("Uspesno dodat prijatelj!");	
+		 }
+	});
+}
+
+function notifikacija(){
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var email = delovi[1];
+	
+	$('#desniDiv').html("");
+	
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/dajLjude',
+        dataType: 'json',
+        data: {email : email},
+		 success: function(data){
+        			console.log(data);
+        			if(data.length>0){
+        				$('#glavniDiv').show();
+        				$('#leviDiv').hide();
+        				document.getElementById("helloHeder").innerHTML = "";
+            			for(var i=0;i<data.length;i++){
+            				$('#desniDiv').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'&nbsp;&nbsp;</h3></td><td><input type="button" onclick="return prihvatiPrijatelja(\''+data[i].email+'\')" value="Prihvati prijatelja" />&nbsp;</td><td><input type="button" onclick="return odbaciPrijatelja(\''+data[i].email+'\')" value="Odbaci" /></td></tr><tr><td><br><br></td></tr>');
+            				$('#desniDiv').show();
+            			}	
+            			}else{
+            				$('#desniDiv').html('<h3>Nothing found</h3>');
+                    		
+            			}	
+		 }
+	});
+}
+
+function odbaciPrijatelja(emailKogPrijatelja){
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var email = delovi[1];
+	
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/odbaciPrijatelja',
+        dataType: 'json',
+        data: {email : email, kogaOdbacujem : emailKogPrijatelja},
+        complete: function(data){
+        			console.log(data);
+        			alert("Zahtev za prijateljstvo odbijen!");	
+        			location.reload();
 		 }
 	});
 }
