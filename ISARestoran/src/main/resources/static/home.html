@@ -61,7 +61,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li ><a href="home.html" >Home<span class="sr-only">(current)</span></a></li>
-         <li ><a href="#" >Svi restorani<span class="sr-only">(current)</span></a></li>
+         <li ><a onclick="sviRestorani()" href="#" >Svi restorani<span class="sr-only">(current)</span></a></li>
       </ul>
 <!--       <form class="navbar-form navbar-left"> -->
 <!--         <div class="form-group"> -->
@@ -472,7 +472,7 @@ function sortPoImenu(){
 	    data: {email : email},
 		 success: function(data){
 	    			console.log(data);
-	    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu(\''+email+'\')" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu(\''+email+'\')" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
+	    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
 	    			$('#desniDiv').show();
 	    			if(data.length>0){
 	    				$('#glavniDiv').show();
@@ -501,7 +501,7 @@ function sortPoImenu(){
 		    data: {email : email},
 			 success: function(data){
 		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu(\''+email+'\')" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu(\''+email+'\')" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
 		    			$('#desniDiv').show();
 		    			if(data.length>0){
 		    				$('#glavniDiv').show();
@@ -518,6 +518,29 @@ function sortPoImenu(){
 		});
 	}
 
+	function sviRestorani(){
+		$.ajax({ 
+		    type: 'GET',
+		    url: 'restoran/dobaviRestorane',
+		    dataType: 'json',
+			 success: function(data){
+		    			console.log(data);
+		    			$('#desniDiv').html('<h3><i>All Restaurants</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Restaurant"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').show();
+		    			if(data.length>0){
+		    				$('#glavniDiv').show();
+		    				$('#leviDiv').hide();
+		    				document.getElementById("helloHeder").innerHTML = "";
+		        			for(var i=0;i<data.length;i++){
+		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezervisi" /></td></tr><tr><td><br><br></td></tr>');
+		        			}	
+		        			}else{
+		        				$('#skrolable').html('<h3>Nothing found</h3>');
+		                		
+		        			}
+			 }
+		});
+	}
 </script>
 </body>
 </html>
