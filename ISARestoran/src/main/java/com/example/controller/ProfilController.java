@@ -30,9 +30,22 @@ public class ProfilController {
 
 	@Autowired
 	GostService gostService;
-
+	
 	@RequestMapping(value = "/gost", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized ArrayList<Korisnik> mojProfil(@RequestParam("email") String email) {
+	public synchronized Korisnik profil(@RequestParam("email") String email) {
+        Korisnik k = new Korisnik();
+        Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+
+        for (Korisnik item : listaKorisnika) {
+            if (item.getEmail().equals(email))
+                k = item;
+        }
+        return k;
+
+	}
+
+	@RequestMapping(value = "/svimojiprijateljibisurirasuti", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> svimojiprijateljibisurirasuti(@RequestParam("email") String email) {
 		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
 		
 		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
@@ -184,8 +197,7 @@ public class ProfilController {
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
-				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)
-						&& (p.getStatus().equals(FriendshipStatus.U_PROCEDURI) || p.getStatus().equals(FriendshipStatus.PRIJATELJI))) {
+				if ((p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)) || (p.getMojprijatelj().getEmail().equals(kogaOdbacujem) && p.getJa().getEmail().equals(mojEmail))) {
 					p.setStatus(FriendshipStatus.NISU_PRIJATELJI);
 					prijateljstvoService.savePrijateljstvo(p);
 					break;
