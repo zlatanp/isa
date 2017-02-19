@@ -303,7 +303,7 @@ function dajPrijateljeTrazi(){
         			console.log(data);
         			if(data.length>0){
         			for(var i=0;i<data.length;i++){
-        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" onclick="return dodajPrijatelja(\''+data[i].email+'\')" value="Dodaj prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return dodajPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Dodaj prijatelja" /></td></tr><tr><td><br><br></td></tr>');
         			}	
         			}else{
         				$('#skrolable').html('<h3>Nothing found</h3>');
@@ -314,7 +314,7 @@ function dajPrijateljeTrazi(){
 	
 }
 
-function dodajPrijatelja(email){
+function dodajPrijatelja(email,broj){
 	
 	var x = document.cookie;
 	var delovi = x.split("=");
@@ -328,7 +328,8 @@ function dodajPrijatelja(email){
         data: {mojEmail : JAemail, prijateljevEmail : email},
         complete: function(data){
         			console.log(data);
-        			alert("Uspesno dodat prijatelj!");	
+        			alert("Uspesno dodat prijatelj!");
+        			$('#'+broj+'').attr("disabled", true);
 		 }
 	});
 }

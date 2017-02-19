@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.util.ArrayList;
 
+import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -77,18 +78,30 @@ public class ProfilController {
 		System.out.println(kogaTrazim + "mojemail: " + mojEmail);
 		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
 
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+
 		if (kogaTrazim.isEmpty()) {
 			return korisnici;
 		} else {
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 			for (Korisnik item : listaKorisnika) {
 				if (item.getIme().contains(kogaTrazim) || item.getPrezime().contains(kogaTrazim)) {
-					System.out.println(item.getEmail());
 					if (!item.getEmail().equals(mojEmail)) {
 						korisnici.add(item);
 					}
 				}
 			}
+
+			for (Prijateljstvo p : pr) {
+				for (int i = 0; i < korisnici.size(); i++) {
+					if((p.getJa().getEmail().equals(mojEmail) || p.getMojprijatelj().getEmail().equals(mojEmail)) && (p.getMojprijatelj().getEmail().equals(korisnici.get(i).getEmail()) || p.getJa().getEmail().equals(korisnici.get(i).getEmail()))){
+						if(p.getStatus().equals(FriendshipStatus.PRIJATELJI) || p.getStatus().equals(FriendshipStatus.U_PROCEDURI)){
+						korisnici.remove(i);
+						}
+					}
+				}
+			}
+
 			return korisnici;
 		}
 
@@ -117,25 +130,25 @@ public class ProfilController {
 
 	}
 
-	@RequestMapping(value = "/dajNotifikaciju", method = {RequestMethod.GET })
+	@RequestMapping(value = "/dajNotifikaciju", method = { RequestMethod.GET })
 	public synchronized boolean dajNotifikaciju(@RequestParam("mojEmail") String mojEmail) {
 
 		System.out.println(mojEmail);
-		boolean imaNotifikaciju= false;
-
+		boolean imaNotifikaciju = false;
 
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
-				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
 					imaNotifikaciju = true;
 				}
 			}
 		}
 		return imaNotifikaciju;
 	}
-	
-	@RequestMapping(value = "/dajLjude", method = {RequestMethod.GET },produces = MediaType.APPLICATION_JSON_VALUE)
+
+	@RequestMapping(value = "/dajLjude", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized ArrayList<Korisnik> dajLjudeKojiMeDodali(@RequestParam("email") String mojEmail) {
 
 		System.out.println(mojEmail);
@@ -145,33 +158,35 @@ public class ProfilController {
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
-				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
 					korisnici.add(p.getJa());
 				}
 			}
 		}
-		
+
 		return korisnici;
 	}
-	
-	@RequestMapping(value = "/odbaciPrijatelja", method = {RequestMethod.GET },produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void odbaciPrijatelja(@RequestParam("email") String mojEmail, @RequestParam("kogaOdbacujem") String kogaOdbacujem) {
+
+	@RequestMapping(value = "/odbaciPrijatelja", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void odbaciPrijatelja(@RequestParam("email") String mojEmail,
+			@RequestParam("kogaOdbacujem") String kogaOdbacujem) {
 
 		System.out.println(mojEmail);
 
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
-				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem) && p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
 					p.setStatus(FriendshipStatus.NISU_PRIJATELJI);
 					prijateljstvoService.savePrijateljstvo(p);
 					break;
 				}
 			}
 		}
-		
-		
-		
+
 	}
 
 }
