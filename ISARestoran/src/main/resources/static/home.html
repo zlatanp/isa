@@ -276,7 +276,15 @@ function friends(){
 		 success: function(data){
         			console.log(data);
         			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><table id="skrolable"></table></div>');
-        			$('#desniDiv').show();	
+        			$('#desniDiv').show();
+        			if(data.length>0){
+            			for(var i=0;i<data.length;i++){
+            				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obrisi prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+            			}	
+            			}else{
+            				$('#skrolable').html('<h3>Nothing found</h3>');
+                    		
+            			}
 		 }
 	});
 }
@@ -380,6 +388,44 @@ function odbaciPrijatelja(emailKogPrijatelja){
         			location.reload();
 		 }
 	});
+}
+
+function  prihvatiPrijatelja(email) {
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var mojEmail = delovi[1];
+	
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/prihvatiPrijatelja',
+        dataType: 'json',
+        data: {mojEmail : mojEmail, kogaDodajem : email},
+        complete: function(data){
+        			console.log(data);
+        			alert("Zahtev za prijateljstvo prihvacen!");	
+        			location.reload();
+		 }
+	});
+}
+
+function ukloniPrijatelja(email,broj){
+	
+	var x = document.cookie;
+	var delovi = x.split("=");
+	var Jemail = delovi[1];
+	
+	$.ajax({ 
+        type: 'GET',
+        url: 'profile/odbaciPrijatelja',
+        dataType: 'json',
+        data: {email : Jemail, kogaOdbacujem : email},
+        complete: function(data){
+        			console.log(data);
+        			alert("Prijatelj uspesno uklonjen!");	
+        			$('#'+broj+'').attr("disabled", true);
+		 }
+	});
+	
 }
 </script>
 </body>

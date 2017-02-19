@@ -32,15 +32,21 @@ public class ProfilController {
 	GostService gostService;
 
 	@RequestMapping(value = "/gost", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized Korisnik mojProfil(@RequestParam("email") String email) {
-		Korisnik k = new Korisnik();
-		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-		for (Korisnik item : listaKorisnika) {
-			if (item.getEmail().equals(email))
-				k = item;
+	public synchronized ArrayList<Korisnik> mojProfil(@RequestParam("email") String email) {
+		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
+		
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+		for(Prijateljstvo p : pr){
+			if(p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+				prijateljiMoji.add(p.getMojprijatelj());
+			}else if(p.getMojprijatelj().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+				prijateljiMoji.add(p.getJa());
+			}
 		}
-
-		return k;
+		
+		
+		
+		return prijateljiMoji;
 	}
 
 	@RequestMapping(value = "/edit", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -179,7 +185,7 @@ public class ProfilController {
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
 				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)
-						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+						&& (p.getStatus().equals(FriendshipStatus.U_PROCEDURI) || p.getStatus().equals(FriendshipStatus.PRIJATELJI))) {
 					p.setStatus(FriendshipStatus.NISU_PRIJATELJI);
 					prijateljstvoService.savePrijateljstvo(p);
 					break;
@@ -188,5 +194,26 @@ public class ProfilController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/prihvatiPrijatelja", method = {RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void prihvatiPrijatelja(@RequestParam("mojEmail") String mojEmail,@RequestParam("kogaDodajem") String kogaOdbacujem) {
+
+		System.out.println(mojEmail);
+
+		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
+		if (svaPrijateljstva != null) {
+			for (Prijateljstvo p : svaPrijateljstva) {
+				if (p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)
+						&& p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+					p.setStatus(FriendshipStatus.PRIJATELJI);
+					prijateljstvoService.savePrijateljstvo(p);
+					break;
+				}
+			}
+		}
+
+	}
+	
+	
 
 }
