@@ -38,7 +38,6 @@ function promeniLozinku(newPassword){
 				$("#PromeniLozinkuForm")[0].reset();
 				return;
 			}else {
-				toastr.success("Uspešno ste promenili lozinku.")
 				var tip = ret.tip;
 				preusmeriGa(tip);
 			}

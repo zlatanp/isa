@@ -194,7 +194,22 @@ public class Restoran implements Serializable {
 	public void setValuta(TipValute valuta) {
 		this.valuta = valuta;
 	}
-	
-	
-	
+
+
+	public TipRestorana getTipRestorana() {
+		return tipRestorana;
+	}
+
+	public void setTipRestorana(TipRestorana tipRestorana) {
+		this.tipRestorana = tipRestorana;
+	}
+
+	public Set<MenadzerRestorana> getMenadzeri() {
+		return menadzeri;
+	}
+
+	public void setMenadzeri(Set<MenadzerRestorana> menadzeri) {
+		this.menadzeri = menadzeri;
+	}
+		
 }

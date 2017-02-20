@@ -32,12 +32,14 @@ import com.example.dto.korisnici.GostDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.korisnici.MenadzerSistemaDTO;
+import com.example.dto.restoran.RestoranDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TypeEmail;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.korisniciImpl.MenadzerService;
 import com.example.service.korisniciImpl.MenadzerSistemaService;
+import com.example.service.restoranImpl.RestoranService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -57,6 +59,8 @@ public class KorisnikController {
 	@Autowired
 	private MenadzerService menadzerService;
 	
+	@Autowired
+	private RestoranService restoranService;
 	
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -303,21 +307,23 @@ public class KorisnikController {
 	
 	@RequestMapping(value="/registerMenadzer", method= RequestMethod.POST, consumes="application/json", produces="application/json")
 	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer){
+		KorisnikDTO k = korisnikService.findByEmail(menadzer.email);
 		boolean ovakavPostoji = false;
-		Iterable<Korisnik> sviKorisnici = korisnikService.getAllKorisnici();
-		for(Korisnik k : sviKorisnici){
-			if(k.getEmail().equals(menadzer.getEmail())){
-				ovakavPostoji = true;
-			}
+		if(k != null){
+			ovakavPostoji = true;
 		}
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
 			menadzerService.create(menadzer);
+			RestoranDTO restoran = restoranService.findById(menadzer.radi_u);
+			restoran.getMenadzeri().add(menadzer);
+			restoranService.updateRestoran(restoran, menadzer.email);
 			return true;
 		}else {
 			return false;
 		}
 	}
+	
 	
 	@RequestMapping(value="/changeFirstPass", method= RequestMethod.POST, consumes="application/json", produces="application/json")
 	public String changeFirstPassword(@RequestBody @Valid ChangePasswordDTO noviPass) throws JsonProcessingException{
@@ -329,16 +335,7 @@ public class KorisnikController {
 			updateKorisnik.setTip(tipKorisnikaKojiMenja);
 			return objectMapper.writeValueAsString(updateKorisnik);
 		}
-		return "";
-		
-//		if(updateKorisnik == null)
-//			return "";
-		//updateLogovaniKorisnik(updateKorisnik);
-//		if(!promenioPre){
-//			return updateKorisnik.getTip().toString();
-//		}
-//		return "";
-		
+		return "";	
 	}
 	
 	public void sendEmailToNewUser(String hashcode, TypeEmail emailType, KorisnikDTO korisnik){

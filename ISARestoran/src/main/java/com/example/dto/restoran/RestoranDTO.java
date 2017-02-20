@@ -1,8 +1,14 @@
 package com.example.dto.restoran;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.beans.restoran.Restoran;
+import com.example.dto.korisnici.MenadzerDTO;
 import com.example.enums.TipRestorana;
 import com.example.enums.TipValute;
+
 
 public class RestoranDTO {
 
@@ -16,7 +22,8 @@ public class RestoranDTO {
 	public String vremeOD;
 	public String vremeDO;
 	public TipRestorana tip;
-	public TipValute valuta;
+	public TipValute valuta;	
+	public List<MenadzerDTO> menadzeri;
 	
 	public RestoranDTO() {
 		
@@ -52,6 +59,10 @@ public class RestoranDTO {
 		this.vremeDO = r.getRadnoVremeDo();
 		this.tip = r.getRestaurantType();
 		this.valuta = r.getValuta();
+		this.menadzeri = new ArrayList<>();
+		for(MenadzerRestorana m : r.getMenadzeri()){
+			this.menadzeri.add(new MenadzerDTO(m));
+		}
 	}
 
 	public int getId() {
@@ -141,4 +152,13 @@ public class RestoranDTO {
 	public void setValuta(TipValute valuta) {
 		this.valuta = valuta;
 	}
+
+	public List<MenadzerDTO> getMenadzeri() {
+		return menadzeri;
+	}
+
+	public void setMenadzeri(List<MenadzerDTO> menadzeri) {
+		this.menadzeri = menadzeri;
+	}
+
 }
