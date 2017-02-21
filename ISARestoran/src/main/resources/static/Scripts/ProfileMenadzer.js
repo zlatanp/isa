@@ -1,3 +1,5 @@
+var restoran = null;
+
 function izlogujSe() {
 	var x = document.cookie;
 	var delovi = x.split("=");
@@ -70,9 +72,13 @@ $(document).ready(function(){
  				$("#telTD").html(data.telefon);
  				$("#emailTD").html(data.email);
  				$("#tipTD").html(data.tip);
+ 				$('#radnoVremeTD').text(data.vremeOD + ' -- ' + data.vremeDO);
+ 				setMap(data.adresa + ', ' + data.grad + ', Srbija');
+ 				restoran = data;
  			}
         }
 	});
+	
 });
 
 function upisiPodatke(data) {
@@ -120,11 +126,10 @@ $(document).on("click", "#btnSacuvajIzm", function(e){
 	restoranZaIzmenu.vremeDO = $("#vremeDORest").val();
 	restoranZaIzmenu.tip = $("#tipRestSel").val();
 	restoranZaIzmenu.valuta= $("#valutaRestorana").text();
-	//restoranZaIzmenu["emailManadzera"] = emailLogovanog;
-	//restoranZaIzmenu["menadzeri"] = new Array();
 	console.log(JSON.stringify(restoranZaIzmenu));
 	sacuvajIzmene(JSON.stringify(restoranZaIzmenu));
 });
+
 
 function sacuvajIzmene(restoran){
 	var cookie = document.cookie;
@@ -136,15 +141,9 @@ function sacuvajIzmene(restoran){
 		data: restoran,
 		contentType : 'application/json; charset=UTF-8',
 		success: function(ret){
-			//alert(ret);
 			if(ret){
 				alert("Uspešno ste izmenili podatke o restoranu!");
 				location.reload();
-//				console.log(ret);
-//				$("#tipRest").show();
-//				$("#tipRestSel").hide();
-//				$(".inputRest").attr("readonly", true);
-				//upisiPodatke(ret);
 			}else {
 				toastr.error("Došlo je do greške!");
 			}
@@ -196,4 +195,43 @@ function validateField(field) {
 	} else {
 		return true;
 	}
+}
+
+$(document).on("click", "#jelaHref", function(e){
+	e.preventDefault();
+	window.location.replace("jelovnik.html?" + restoran.id);
+});
+
+$(document).on("click", "#picaHref", function(e){
+	e.preventDefault();
+	window.location.replace("kartaPica.html?" + restoran.id);
+});
+
+$(document).on("click", "#picaHref", function(e){
+	e.preventDefault();
+	window.location.replace("sedenje.html?" + restoran.id);
+});
+
+function setMap(address){
+	var geocoder = new google.maps.Geocoder();
+
+	geocoder.geocode({'address': address}, function(results,status){
+	
+	if (status == google.maps.GeocoderStatus.OK){
+		var location = results[0].geometry.location;
+		var map_options = {
+				center :  location,
+				zoom : 14
+		}
+		
+		var addressMap = new google.maps.Map(document.getElementById('container-map'),map_options);
+		
+		var marker = new google.maps.Marker({
+			position: location,
+			map: addressMap
+		})
+		
+		
+	}
+});
 }

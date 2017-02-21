@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="html/css/toastr.css" />
+<link rel="stylesheet" href="Styles/Site.css" />
+<link href='http://fonts.googleapis.com/css?family=Cookie'
+	rel='stylesheet' type='text/css'>
+
+
+<script src="html/js/jquery-3.1.0.min.js"></script>
+<script src="html/js/jquery.min.js"></script>
+
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="html/js/bootstrap-select.js"></script>
+<script src="html/js/bootstrap-timepicker.js"></script>
+<script src="html/js/toastr.js"></script>
+
+<script src="Scripts/Jelovnik.js"></script>
+
+<title>Jelovnik</title>
+</head>
+<body id="menadzerBody">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="menadzerPage.html">Restaurant
+					management</a>
+			</div>
+
+
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#" class="OpenUpdateRest">Početna</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Usluge <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="jelovnik.html">Jelovnik</a></li>
+							<li><a href="kartaPica.html">Karta pića</a></li>
+							<li><a href="sednje.html">Konfiguracija sedenja</a></li>
+						</ul></li>
+					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
+					<li><a href="#" class="OpenPonude">Nabavke</a></li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Profil</a></li>
+					<li><a onclick="izlogujSe()" href="#">Odjavite se</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="logoDiv">
+		<h2 id="logo"></h2>
+		<h3 id="opis"></h3>
+	</div>
+
+	<div class="row-content jelovnikDiv col-lg-6">
+		<div id="glavni_tab" class="tab-pane fade in active">
+			<form class="form-inline white-bg" role="form" action="#">
+				<div class="form-group">
+					<h4>Unesite naziv jela:</h4>
+					<input class="form-control" type="text" id="ime_pretraga">
+				</div>
+				<br> <br>
+				<div class="form-group">
+					<button id="traziJela" type="button" class="btn btn-success">
+						Traži jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+					&nbsp;
+					<button id="prikaziJela" type="button" class="btn btn-default">
+						Prikaži sva jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+				</div>
+			</form>
+			<br>
+			<hr />
+			<!-- Ovo treba ukloniti kod GOSTA -->
+
+			<div class="row" style="margin-left: 2px">
+				<button id="dugmeDodaj" data-toggle="modal" data-target="#modalJelo"
+					type="button" class="btn btn-success">
+					Dodaj jelo <span class="glyphicon glyphicon-plus"></span>
+				</button>
+			</div>
+			<br>
+			<div class="row">
+				<div class="" id="cards_jela"></div>
+			</div>
+		</div>
+	</div>
+
+
+	<div id="modalJelo" class="modal" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h4>Dodavanje novog jela</h4>
+				</div>
+				<div class="modal-body">
+					<form id="DodajJelo" method="post" action="#"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Naziv:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="text"
+										name="naziv" id="nazivJela">
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

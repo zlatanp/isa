@@ -61,6 +61,11 @@ public class Restoran implements Serializable {
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="radi_u")
 	protected Set<MenadzerRestorana> menadzeri;
 	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="restoran")
+	protected Set<Jelo> jelovnik;
+	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="restoran")
+	protected Set<Pice> kartaPica;
 	
 	public Restoran() {
 	}

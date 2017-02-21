@@ -89,5 +89,11 @@ div#divInfo{
 }
 
 .td{
-	width: 80%;
+	width: 70%;
+}
+
+div.jelovnikDiv{
+	margin-left: 350px;
+	margin-right: auto;
+	background: rgba(204, 204, 179, 0.6);
 }

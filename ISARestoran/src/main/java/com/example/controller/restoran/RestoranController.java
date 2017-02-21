@@ -3,6 +3,8 @@ package com.example.controller.restoran;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.beans.restoran.Restoran;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.RestoranDTO;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
+import com.example.service.restoranImpl.JeloService;
 import com.example.service.restoranImpl.RestoranService;
+import com.example.utilities.FileHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +36,43 @@ public class RestoranController {
 	@Autowired
 	private KorisnikService korisnikService;
 	
+	@Autowired
+	private JeloService jeloService;
+	
+	@Autowired
+	private ServletContext servletContext;
+	
 	private ObjectMapper objectMapper = new ObjectMapper();
+	
+	private static final String restorani_folder = "\\slike\\restorani\\";
+	private static final String jela_folder = "\\slike\\jela\\";
+	private static final String pica_folder = "\\slike\\pica\\";
+	private static int photo_num_restorani, photo_num_pica, photo_num_jela = 1;
+	
+	
+	//odmah posle dependency-injectiona se izvrsava
+	//za mogucnost uploada fajla
+	@PostConstruct
+	private void init(){
+		int max = FileHelper.getMaxFileName(servletContext.getRealPath("")+ restorani_folder);
+		if(max > photo_num_restorani){
+			photo_num_restorani = max;
+		}
+		photo_num_restorani++;
+		
+		max = FileHelper.getMaxFileName(servletContext.getRealPath("")+ jela_folder);
+		if(max > photo_num_jela){
+			photo_num_jela = max;
+		}
+		photo_num_jela++;
+		
+		max = FileHelper.getMaxFileName(servletContext.getRealPath("")+ pica_folder);
+		if(max > photo_num_pica){
+			photo_num_pica = max;
+		}
+		photo_num_pica++;
+	}
+	
 	
 	@RequestMapping(value="/tipovi", method = RequestMethod.GET, produces = "application/JSON")
 	public String tipovi() throws JsonProcessingException{
@@ -69,6 +108,16 @@ public class RestoranController {
 	public boolean updateRestoran(@RequestBody @Valid RestoranDTO restoran, @PathVariable("email") String email) throws JsonProcessingException{
 		String realEmail = email + ".com";
 		return restoranService.updateRestoran(restoran, realEmail);	
+	}
+	
+	@RequestMapping(value="/restoranProfil/{id}", method= RequestMethod.GET, produces = "application/json")
+	public String getRestoran(@PathVariable("id") int id) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(restoranService.findById(id));
+	}
+	
+	@RequestMapping(value="/getJela/{id}", method= RequestMethod.GET, produces = "application/json")
+	public String getJela(@PathVariable("id") int idRestorana) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(jeloService.findAll(idRestorana));
 	}
 	
 }
