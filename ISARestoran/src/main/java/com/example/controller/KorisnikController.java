@@ -89,6 +89,7 @@ public class KorisnikController {
 			}
 		}
 
+		// ovdee menjam
 		// Uzimam tip korisnika koji se loguje i pitam da li je Gost.
 		// Ako jeste gost onda proveravam da li je aktivirao profil preko mejla,
 		// ako jeste onda se loguje uspesno, ako nije onda se ne moze ulogovati

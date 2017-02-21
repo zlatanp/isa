@@ -71,13 +71,17 @@ public class JeloService {
 		return jelaDTO;
 	}
 	
-	public JeloDTO create(JeloDTO jelo, String email){
+	public JeloDTO create(JeloDTO jelo, String email){		
 		MenadzerRestorana men = menadzerRepository.findByEmail(email);
-		if(men == null)
+		if(men == null){
+			System.out.println("JaSam1");
 			return null;
+		}
 		Restoran r = men.getRadi_u();
-		if(r == null)
+		if(r == null){
+			System.out.println("JaSam2");
 			return null;
+		}
 		Date datum = new Date();
 		Cena cena = new Cena(jelo.getCena(), datum, null);
 		TipJela tip = jelo.tipJela;
@@ -88,5 +92,13 @@ public class JeloService {
 		}
 		jeloZaBazu = jeloRepository.save(jeloZaBazu);
 		return new JeloDTO(jeloZaBazu, null);		
+	}
+	
+	public void namestiSliku(int id, String slika){
+		Jelo jelo = jeloRepository.findById(id);
+		if(jelo == null)
+			return;
+		jelo.setSlika(slika);
+		jeloRepository.save(jelo);
 	}
 }

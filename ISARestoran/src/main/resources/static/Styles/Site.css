@@ -92,6 +92,10 @@ div#divInfo{
 	width: 70%;
 }
 
+div#logoDiv{
+	margin-bottom: -1%;
+}
+
 div.jelovnikDiv{
 	margin-left: 350px;
 	margin-right: auto;
