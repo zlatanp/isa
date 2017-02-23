@@ -71,6 +71,10 @@ public class RestoranController {
 		photo_num_restorani++;
 		
 		max = FileHelper.getMaxFileName(servletContext.getRealPath("")+ jela_folder);
+		String stajeovo = servletContext.getRealPath("")+ jela_folder;
+		System.out.println("kontekst: " + servletContext.getContextPath());
+		System.out.println("sta je ovo:s "+ stajeovo);
+		
 		if(max > photo_num_jela){
 			photo_num_jela = max;
 		}
@@ -130,31 +134,50 @@ public class RestoranController {
 		return objectMapper.writeValueAsString(jeloService.findAll(idRestorana));
 	}
 	
+	@RequestMapping(value="/getJelo", method= RequestMethod.POST, consumes="application/json", produces = "application/json")
+	public String getJelo(@RequestBody @Valid JeloDTO jelo) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(jeloService.findById(jelo.id));
+	}
+	
+	@RequestMapping(value="/obrisiJelo", method = RequestMethod.POST, consumes="application/json")
+	public boolean obrisiJelo(@RequestBody @Valid JeloDTO jelo){
+		return jeloService.delete(jelo);
+	}
+	
 	@RequestMapping(value="/dodajJelo/{email}", method = RequestMethod.POST)
 	public boolean dodajJelo(@PathVariable("email") String managerEmail, @RequestParam(value="uploadfile", required=false) MultipartFile uploadfile, @RequestParam(value= "jelo") String jeloJSON) throws JsonParseException, JsonMappingException, IOException{
-		
 		String realEmail = managerEmail + ".com";
-		System.out.println("ovde1");
 		KorisnikDTO k = korisnikService.findByEmail(realEmail);
 		if(k.tip != TipKorisnika.MENADZERRESTORANA || k == null){
-			System.out.println("ovde2");
 			return false;
 		}
 		JeloDTO jelo = objectMapper.readValue(jeloJSON, JeloDTO.class);
 		JeloDTO zaBazu = jeloService.create(jelo, realEmail);
 		if(zaBazu == null){
-			System.out.println("ovde3");
 			return false;
 		}			
 		if(!jelo.slika.equals("")){
 			if(!(sacuvajSliku(zaBazu.id, uploadfile).equals(""))){ // ako je uspesno sacuvao sliku
 				return true;
-			}else {
-				System.out.println("ovde4");
+			}else {				
 				return false;
 			}
 		}
 		return true;		
+	}
+	
+	@RequestMapping(value="/izmeniJelo", method = RequestMethod.POST)
+	public boolean izmeniJelo(@RequestParam(value="uploadfile", required=false) MultipartFile uploadfile, @RequestParam(value= "jelo") String jeloJSON) throws JsonParseException, JsonMappingException, IOException{		
+		JeloDTO jelo = objectMapper.readValue(jeloJSON, JeloDTO.class);
+		JeloDTO zaBazu = jeloService.update(jelo);			
+		if(!jelo.slika.equals("")){
+			if(!(sacuvajSliku(zaBazu.id, uploadfile).equals(""))){
+				return true;
+			}else {				
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public String sacuvajSliku(int id, MultipartFile uploadSlika){

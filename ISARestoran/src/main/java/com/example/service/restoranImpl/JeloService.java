@@ -101,4 +101,36 @@ public class JeloService {
 		jelo.setSlika(slika);
 		jeloRepository.save(jelo);
 	}
+	
+	public JeloDTO update(JeloDTO jelo){
+		Jelo j = jeloRepository.findById(jelo.id);
+		if(j == null){
+			System.out.println("ovde");
+		}
+		if(j.trenutnaCena().getIznos() != jelo.cena){
+			Date date = new Date();
+			Cena cena = new Cena(jelo.getCena(), date, null);
+			for(Cena c : j.getCene()){
+				if(c.getDatumDo() == null){
+					c.setDatumDo(date);
+				}
+			}
+			j.getCene().add(cena);
+		}
+		j.setNaziv(jelo.naziv);
+		j.setOpis(jelo.opis);
+		j.setKlasa(jelo.klasaJela);
+		j.setTip(jelo.tipJela);
+		j = jeloRepository.save(j);
+		return new JeloDTO(j, null);
+	}
+	
+	public boolean delete(JeloDTO jelo){
+		Jelo jeloIzBaze = jeloRepository.findById(jelo.id);
+		if(jeloIzBaze == null)
+			return false;
+		jeloIzBaze.setObrisano(true);
+		jeloRepository.save(jeloIzBaze);
+		return true;
+	}
 }

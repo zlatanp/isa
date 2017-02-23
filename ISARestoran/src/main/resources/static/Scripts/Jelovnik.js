@@ -120,12 +120,12 @@ function napraviKarticuZaJelo(jelo){
 	}
 	karticeJela++;
 	html += '<div class="col-md-4">' + 
-				'<div class="card text-center my-card" style="margin-top:2%;">' +
+				'<div class="card text-center my-card" style="margin-top:2%;border-style:solid;border-width:2px;background-color:#ccff99">' +
 					'<div class="card-block">' +
-						'<h3 class="card-title trunc-name"><a id="editid' + jelo.id + '" class="otvoriModal2">' + jelo.naziv + '</a></h3>' +
+						'<h3 class="card-title"><a id="editid' + jelo.id + '" class="EditDijalogOpen" href="#" style="color:#003300">' + jelo.naziv + '</a></h3>' +				
 					'</div>'+
-					'<img src="/restoran/slike/jela/default_jelo.jpg" width="180" height="180" >' +
-					'<div class="card-block trunc-2-lines">'+
+					'<img src="../../../slike/jela/' + jelo.slika + '"width="180" height="180" >' +
+					'<div class="card-block">'+
 						jelo.opis +
 					'</div>'+
 					'<div class="card-block">'+
@@ -140,15 +140,91 @@ function napraviKarticuZaJelo(jelo){
 							jelo.brojOcena + ' reviews' +
 						'</div>'+
 						'<br>'+
-						'<h4 class="cena-jela pull-right" style="text-align:left;">'+
+						'<h4 class="pull-right" style="text-align:left;">'+
 							valuta + ' ' + jelo.cena +
 						'</h4>'+
+						'<br>'+ '<br>'+ 
+						'<h4 class="pull-right" style="text-align:left;"><a id="obrisime' + jelo.id + '" class="ObrisiDijalogOpen" href="#"><i class="glyphicon glyphicon-trash"></i></a></h4>'+
 					'</div>' +
 				'</div>'+
 			'</div>';
 	
 	return html;		
 }
+
+$(document).on("click", ".ObrisiDijalogOpen", function(e){
+	e.preventDefault();
+	$("#obrisiJeloModal").appendTo("body").modal("show");
+	var id = $(".ObrisiDijalogOpen").prop("id");
+	var idPravi = id.split("obrisime")[1];
+	$("#idJelaZaDelete").text(idPravi);
+});
+
+$(document).on("click", ".EditDijalogOpen", function(e){
+	e.preventDefault();
+	$('#izmeniJeloModal').appendTo("body").modal('show');
+});
+
+$(document).on("click", "#btnOdustaniDelete", function(e){
+	e.preventDefault();
+	$('#obrisiJeloModal').modal('toggle');
+});
+
+$(document).on("click", "#btnPotvrdiDelete", function(e){
+	e.preventDefault();
+	var id = $("#idJelaZaDelete").text();
+	var jelo = new Object();
+	jelo['id'] = id;
+	$.ajax({
+		url: 'restoran/obrisiJelo',
+		type: 'POST',
+		contentType: "application/json; charset=utf-8",
+		data: JSON.stringify(jelo),	
+		dataType: 'json',
+		success: function(ret) {
+			if(!ret){
+				toastr.error("Došlo je do greške prilikom brisanja!");
+				return;
+			}else {
+				toastr.success("Jelo je uspešno obrisano");
+				$('#obrisiJeloModal').modal('toggle');
+				getJela(restoranID);
+			}
+		}
+	});
+})
+
+$(document).click(function(event){
+	var idTarget = event.target.id;
+	if(idTarget.startsWith("editid")){
+		var idJela = idTarget.split("editid")[1]; //editid2
+		var naziv = document.getElementById("nazivJela2");
+		var opis = document.getElementById("opisJela2");
+		var klasa = document.getElementById("klasaJelaSel2");
+		var tip = document.getElementById("tipJelaSel2");
+		var cena = document.getElementById("cenaJela2");
+		var id2 = document.getElementById("Id2");
+		var jeloZaIzmenu = new Object();
+		jeloZaIzmenu['id'] = idJela;
+		$.ajax({
+			url: 'restoran/getJelo',
+			type: 'POST',
+			dataType: 'json',
+			contentType: "application/json",
+			data: JSON.stringify(jeloZaIzmenu),
+			success: function(ret){
+				naziv.value = ret.naziv;
+				opis.value = ret.opis;
+				cena.value = ret.cena;
+				klasa.value = ret.klasaJela;
+				tip.value = ret.tipJela;
+				id2.value = ret.id;
+			}
+		});
+	}
+	
+});
+
 
 
 
@@ -183,6 +259,49 @@ function izlogujSe() {
 $("#dugmeDodaj").on("click", function(e){
 	e.preventDefault();
 	$('#modalJelo').appendTo("body").modal('show');
+});
+
+$(document).on("click", "#btnIzmeniJelo", function(e){
+	e.preventDefault();
+	if(!validateUpdateJeloForm()){
+		return;
+	}
+	var jeloUpdate = new Object();
+	var id = $("#Id2").val();
+	var naziv = $("#nazivJela2").val();
+	var cena = $("#cenaJela2").val();
+	var opis = $("#opisJela2").val();
+	var klasa = $("#klasaJelaSel2").val();
+	var tip = $("#tipJelaSel2").val();
+	var slikaString = "";
+	var slika = $("#slikaJela2");
+	var file = null;
+	if(slika.val() != ""){
+		file = slika.get(0).files[0];
+		if (file != null && !file.type.match('image.*')){
+			toastr.warrning("Pogrešan format fajla. Morate odabrati sliku!");
+			return;
+		}
+		slikaString = "1";
+	}
+	
+	if(!isNumber(cena)){
+		toastr.error("Cena mora biti decimalan broj1!");
+		return;
+	}
+	if(parseFloat(cena)<=0){
+		toastr.error("Cena mora biti pozitivan broj2!");
+		return;
+	}	
+	jeloUpdate['id'] = id;
+	jeloUpdate['naziv'] = naziv;
+	jeloUpdate['opis'] = opis;
+	jeloUpdate['cena'] = cena;
+	jeloUpdate['klasaJela'] = klasa;
+	jeloUpdate['tipJela'] = tip;
+	jeloUpdate['slika'] = slikaString;
+	alert(JSON.stringify(jeloUpdate));
+	izmeniJelo(JSON.stringify(jeloUpdate), file);
 });
 
 $(document).on("click", "#btnDodajJelo", function(e){
@@ -229,13 +348,41 @@ $(document).on("click", "#btnDodajJelo", function(e){
 	dodajNovoJelo(JSON.stringify(novoJelo), file);
 });
 
+function izmeniJelo(jeloJSON, file){
+	var formdata = new FormData();
+	formdata.append("uploadfile", file);
+	formdata.append("jelo", jeloJSON);
+	$.ajax({
+		url: 'restoran/izmeniJelo',
+		type: 'POST',
+		async: false,
+		contentType: 'application/json; charset=utf-8',
+		data: formdata,
+		dataType: 'JSON',
+		xhr: function() { 
+			var myXhr = $.ajaxSettings.xhr();
+			return myXhr;
+		},
+		cache: false,
+		contentType: false,
+		processData: false,	
+	    success: function(ret){
+	    	if(!ret){
+	    		toastr.error("Došlo je do greške prilikom izmene jela!");
+				return;
+	    	}else {
+	    		toastr.success("Jelo je uspešno izmenjeno!");
+				$("#izmeniJeloModal").modal("toggle");
+				getJela(restoranID);
+	    	}
+	    }
+	});
+}
+
 function dodajNovoJelo(novoJelo, file){
-	alert(novoJelo);
-	alert(file);
 	var formdata = new FormData();
 	formdata.append("uploadfile", file);
 	formdata.append("jelo", novoJelo);
-	console.log(formdata);
 	$.ajax({
 		url: 'restoran/dodajJelo/'+emailLogovanog,
 		type: 'POST',
@@ -252,10 +399,10 @@ function dodajNovoJelo(novoJelo, file){
 		processData: false,	
 	    success: function(ret){
 	    	if(!ret){
-	    		toastr.error("Došlo je do greške prilikom dodavanja!");
+	    		toastr.error("Došlo je do greške prilikom dodavanja jela!");
 				return;
 	    	}else {
-	    		toastr.info("Jelo uspesno dodano!");
+	    		toastr.success("Jelo je uspešno dodato!");
 				$("#modalJelo").modal("toggle");
 				getJela(restoranID);
 	    	}
@@ -281,6 +428,25 @@ function validateJeloForm(){
 	if(!validateField($("#opisJela"))){
 		toastr.error("Unestie opis jela!")
 		$("#opisJela").focus();
+		return false;
+	}
+	return true;
+}
+
+function validateUpdateJeloForm(){
+	if(!validateField($("#nazivJela2"))){
+		toastr.error("Unesite naziv jela!")
+		$("#nazivJela2").focus();
+		return false;
+	}
+	if(!validateField($("#opisJela2"))){
+		toastr.error("Unesite opis jela!")
+		$("#opisJela2").focus();
+		return false;
+	}
+	if(!validateField($("#cenaJela2"))){
+		toastr.error("Unesite cenu jela!")
+		$("#cenaJela2").focus();
 		return false;
 	}
 	return true;
