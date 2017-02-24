@@ -1,6 +1,8 @@
 package com.example.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import com.example.enums.FriendshipStatus;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.PrijateljstvoService;
+import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/profile")
@@ -30,35 +33,35 @@ public class ProfilController {
 
 	@Autowired
 	GostService gostService;
-	
+
 	@RequestMapping(value = "/gost", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized Korisnik profil(@RequestParam("email") String email) {
-        Korisnik k = new Korisnik();
-        Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+		Korisnik k = new Korisnik();
+		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 
-        for (Korisnik item : listaKorisnika) {
-            if (item.getEmail().equals(email))
-                k = item;
-        }
-        return k;
+		for (Korisnik item : listaKorisnika) {
+			if (item.getEmail().equals(email))
+				k = item;
+		}
+		return k;
 
 	}
 
-	@RequestMapping(value = "/svimojiprijateljibisurirasuti", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/svimojiprijateljibisurirasuti", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized ArrayList<Korisnik> svimojiprijateljibisurirasuti(@RequestParam("email") String email) {
 		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
-		
+
 		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
-		for(Prijateljstvo p : pr){
-			if(p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+		for (Prijateljstvo p : pr) {
+			if (p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
 				prijateljiMoji.add(p.getMojprijatelj());
-			}else if(p.getMojprijatelj().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)){
+			} else if (p.getMojprijatelj().getEmail().equals(email)
+					&& p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
 				prijateljiMoji.add(p.getJa());
 			}
 		}
-		
-		
-		
+
 		return prijateljiMoji;
 	}
 
@@ -113,9 +116,12 @@ public class ProfilController {
 
 			for (Prijateljstvo p : pr) {
 				for (int i = 0; i < korisnici.size(); i++) {
-					if((p.getJa().getEmail().equals(mojEmail) || p.getMojprijatelj().getEmail().equals(mojEmail)) && (p.getMojprijatelj().getEmail().equals(korisnici.get(i).getEmail()) || p.getJa().getEmail().equals(korisnici.get(i).getEmail()))){
-						if(p.getStatus().equals(FriendshipStatus.PRIJATELJI) || p.getStatus().equals(FriendshipStatus.U_PROCEDURI)){
-						korisnici.remove(i);
+					if ((p.getJa().getEmail().equals(mojEmail) || p.getMojprijatelj().getEmail().equals(mojEmail))
+							&& (p.getMojprijatelj().getEmail().equals(korisnici.get(i).getEmail())
+									|| p.getJa().getEmail().equals(korisnici.get(i).getEmail()))) {
+						if (p.getStatus().equals(FriendshipStatus.PRIJATELJI)
+								|| p.getStatus().equals(FriendshipStatus.U_PROCEDURI)) {
+							korisnici.remove(i);
 						}
 					}
 				}
@@ -197,7 +203,9 @@ public class ProfilController {
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
 			for (Prijateljstvo p : svaPrijateljstva) {
-				if ((p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem)) || (p.getMojprijatelj().getEmail().equals(kogaOdbacujem) && p.getJa().getEmail().equals(mojEmail))) {
+				if ((p.getMojprijatelj().getEmail().equals(mojEmail) && p.getJa().getEmail().equals(kogaOdbacujem))
+						|| (p.getMojprijatelj().getEmail().equals(kogaOdbacujem)
+								&& p.getJa().getEmail().equals(mojEmail))) {
 					p.setStatus(FriendshipStatus.NISU_PRIJATELJI);
 					prijateljstvoService.savePrijateljstvo(p);
 					break;
@@ -206,9 +214,11 @@ public class ProfilController {
 		}
 
 	}
-	
-	@RequestMapping(value = "/prihvatiPrijatelja", method = {RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void prihvatiPrijatelja(@RequestParam("mojEmail") String mojEmail,@RequestParam("kogaDodajem") String kogaOdbacujem) {
+
+	@RequestMapping(value = "/prihvatiPrijatelja", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized void prihvatiPrijatelja(@RequestParam("mojEmail") String mojEmail,
+			@RequestParam("kogaDodajem") String kogaOdbacujem) {
 
 		System.out.println(mojEmail);
 
@@ -225,7 +235,174 @@ public class ProfilController {
 		}
 
 	}
+
+	@RequestMapping(value = "/sortPoImenu", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> sortPoImenu(@RequestParam("email") String email) {
+		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
+
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+		for (Prijateljstvo p : pr) {
+			if (p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
+				prijateljiMoji.add(p.getMojprijatelj());
+			} else if (p.getMojprijatelj().getEmail().equals(email)
+					&& p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
+				prijateljiMoji.add(p.getJa());
+			}
+		}
+
+		ArrayList<Korisnik> prijateljiSortiraniPoImenu = new ArrayList<Korisnik>();
+
+		ArrayList<String> svaslova = new ArrayList<String>();
+		svaslova.add("A");
+		svaslova.add("a");
+		svaslova.add("B");
+		svaslova.add("b");
+		svaslova.add("C");
+		svaslova.add("c");
+		svaslova.add("D");
+		svaslova.add("d");
+		svaslova.add("E");
+		svaslova.add("e");
+		svaslova.add("F");
+		svaslova.add("f");
+		svaslova.add("G");
+		svaslova.add("g");
+		svaslova.add("H");
+		svaslova.add("h");
+		svaslova.add("I");
+		svaslova.add("i");
+		svaslova.add("J");
+		svaslova.add("j");
+		svaslova.add("K");
+		svaslova.add("k");
+		svaslova.add("L");
+		svaslova.add("l");
+		svaslova.add("M");
+		svaslova.add("m");
+		svaslova.add("N");
+		svaslova.add("n");
+		svaslova.add("O");
+		svaslova.add("o");
+		svaslova.add("P");
+		svaslova.add("p");
+		svaslova.add("Q");
+		svaslova.add("q");
+		svaslova.add("R");
+		svaslova.add("r");
+		svaslova.add("S");
+		svaslova.add("s");
+		svaslova.add("T");
+		svaslova.add("t");
+		svaslova.add("U");
+		svaslova.add("u");
+		svaslova.add("V");
+		svaslova.add("v");
+		svaslova.add("W");
+		svaslova.add("w");
+		svaslova.add("X");
+		svaslova.add("x");
+		svaslova.add("Y");
+		svaslova.add("y");
+		svaslova.add("Z");
+		svaslova.add("z");
+
+		int k = 0;
+		for (int j = 0; j < svaslova.size(); j += 2) {
+			for (int i = 0; i < prijateljiMoji.size(); i++) {
+				if (prijateljiMoji.get(i).getIme().startsWith(svaslova.get(j))
+						|| prijateljiMoji.get(i).getIme().startsWith(svaslova.get(j + 1))) {
+					prijateljiSortiraniPoImenu.add(prijateljiMoji.get(i));
+
+				}
+			}
+		}
+
+		return prijateljiSortiraniPoImenu;
+	}
 	
-	
+	@RequestMapping(value = "/sortPoPrezimenu", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<Korisnik> sortPoPrezimenu(@RequestParam("email") String email) {
+		ArrayList<Korisnik> prijateljiMoji = new ArrayList<Korisnik>();
+
+		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
+		for (Prijateljstvo p : pr) {
+			if (p.getJa().getEmail().equals(email) && p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
+				prijateljiMoji.add(p.getMojprijatelj());
+			} else if (p.getMojprijatelj().getEmail().equals(email)
+					&& p.getStatus().equals(FriendshipStatus.PRIJATELJI)) {
+				prijateljiMoji.add(p.getJa());
+			}
+		}
+
+		ArrayList<Korisnik> prijateljiSortiraniPrezimen = new ArrayList<Korisnik>();
+
+		ArrayList<String> svaslova = new ArrayList<String>();
+		svaslova.add("A");
+		svaslova.add("a");
+		svaslova.add("B");
+		svaslova.add("b");
+		svaslova.add("C");
+		svaslova.add("c");
+		svaslova.add("D");
+		svaslova.add("d");
+		svaslova.add("E");
+		svaslova.add("e");
+		svaslova.add("F");
+		svaslova.add("f");
+		svaslova.add("G");
+		svaslova.add("g");
+		svaslova.add("H");
+		svaslova.add("h");
+		svaslova.add("I");
+		svaslova.add("i");
+		svaslova.add("J");
+		svaslova.add("j");
+		svaslova.add("K");
+		svaslova.add("k");
+		svaslova.add("L");
+		svaslova.add("l");
+		svaslova.add("M");
+		svaslova.add("m");
+		svaslova.add("N");
+		svaslova.add("n");
+		svaslova.add("O");
+		svaslova.add("o");
+		svaslova.add("P");
+		svaslova.add("p");
+		svaslova.add("Q");
+		svaslova.add("q");
+		svaslova.add("R");
+		svaslova.add("r");
+		svaslova.add("S");
+		svaslova.add("s");
+		svaslova.add("T");
+		svaslova.add("t");
+		svaslova.add("U");
+		svaslova.add("u");
+		svaslova.add("V");
+		svaslova.add("v");
+		svaslova.add("W");
+		svaslova.add("w");
+		svaslova.add("X");
+		svaslova.add("x");
+		svaslova.add("Y");
+		svaslova.add("y");
+		svaslova.add("Z");
+		svaslova.add("z");
+
+		
+		
+		for (int j = 0; j < svaslova.size(); j += 2) {
+			for (int i = 0; i < prijateljiMoji.size(); i++) {
+				if (prijateljiMoji.get(i).getPrezime().startsWith(svaslova.get(j))
+						|| prijateljiMoji.get(i).getPrezime().startsWith(svaslova.get(j + 1))) {
+					prijateljiSortiraniPrezimen.add(prijateljiMoji.get(i));
+
+				}
+			}
+		}
+
+		return prijateljiSortiraniPrezimen;
+	}
 
 }
