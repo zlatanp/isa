@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <link rel="stylesheet" href="html/css/bootstrap.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" href="html/css/homecss.css" />
@@ -13,7 +14,7 @@
 
 <meta charset="ISO-8859-1">
 
-<title>Restaurant Home</title>
+<title>Restoran početna</title>
 
 <script>
 	function onload(){
@@ -35,7 +36,7 @@
 	     		 success: function(data){
 	             			console.log(data);
 	             			if(data == true)
-	             			$('#notifikacija').append('<a onclick="notifikacija()" href="#"><img src="html/css/notif.png" style="width:24px;height:24px;" /> Friend Request </a>');
+	             			$('#notifikacija').append('<a onclick="notifikacija()" href="#"><img src="html/css/notif.png" style="width:24px;height:24px;" /> Zahtev za prijateljstvo </a>');
 	            		}
 	     	});
 	     }
@@ -44,42 +45,47 @@
 </script>
 </head>
 <body onload="onload()">
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="home.html">Restaurant</a>
-    </div>
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="home.html">Restoran</a>
+			</div>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
-        <li ><a href="home.html" >Home<span class="sr-only">(current)</span></a></li>
-         <li ><a onclick="sviRestorani()" href="#" >Svi restorani<span class="sr-only">(current)</span></a></li>
-      </ul>
-<!--       <form class="navbar-form navbar-left"> -->
-<!--         <div class="form-group"> -->
-<!--           <input type="text" class="form-control" placeholder="Search Restaurants"> -->
-<!--         </div> -->
-<!--         <button type="submit" class="btn btn-default">Search</button> -->
-<!--       </form> -->
-      <ul class="nav navbar-nav navbar-right">
-      	<li id="notifikacija"></li>
-        <li><a onclick="profilKorisnika()" href="#">Profile</a></li>
-        <li><a onclick="pocetnaFrends()" href="#">Friends</a></li>
-        <li><a onclick="izlogujSe()" href="#">Log Out</a></li>
-      </ul>
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container-fluid -->
-</nav>
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="home.html">Početna<span class="sr-only">(current)</span></a></li>
+					<li><a onclick="sviRestorani()" href="#">Svi restorani<span
+							class="sr-only">(current)</span></a></li>
+				</ul>
+				<!--       <form class="navbar-form navbar-left"> -->
+				<!--         <div class="form-group"> -->
+				<!--           <input type="text" class="form-control" placeholder="Search Restaurants"> -->
+				<!--         </div> -->
+				<!--         <button type="submit" class="btn btn-default">Search</button> -->
+				<!--       </form> -->
+				<ul class="nav navbar-nav navbar-right">
+					<li id="notifikacija"></li>
+					<li><a onclick="profilKorisnika()" href="#">Moj profil</a></li>
+					<li><a onclick="pocetnaFrends()" href="#">Prijatelji</a></li>
+					<li><a onclick="izlogujSe()" href="#">Izloguj se</a></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
 
-<script>
+	<script>
 	function izlogujSe(){
 		var x = document.cookie;
 		var delovi = x.split("=");
@@ -131,7 +137,7 @@
             data: {email : email},
     		 success: function(data){
             			console.log(data);
-            			$('#desniDiv').html('<h3><i>Basic Details</i></h3><br><table id="tabela" border="1" ><tr><td>First name: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Last name: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table><br><div id="zaUpload"></div><br></br><button id="editDetails" onclick="editDetails()">Edit basic details</button><button id="saveDetails" onclick="return saveDetails()" style = "display: none">Save Details</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Cancel</button><br></br>');
+            			$('#desniDiv').html('<h3><i>Osnovni podaci</i></h3><br><table id="tabela" border="1" ><tr><td>Ime: </td><td><input style="border:none" readonly type="text" id="FirstName" value="'+data.ime+'"></td></tr><tr><td>Prezime: </td><td><input readonly style="border:none" type="text" id="LastName" value="'+data.prezime+'"></td></tr><tr><td>Email adresa: </td><td><input readonly style="border:none" type="text" id="Email" value="'+data.email+'"></td></tr></table><br><div id="zaUpload"></div><br></br><button id="editDetails" onclick="editDetails()">Izmeni osnovne podatke</button><button id="saveDetails" onclick="return saveDetails()" style = "display: none">Sačuvaj</button>&nbsp;<button id="cancelDetails" onclick="basicDetails()" style = "display: none">Odustani od izmena</button><br></br>');
             			$('#desniDiv').show();	
     		 }
     	});
@@ -150,8 +156,8 @@
 		$('#editDetails').hide();
 		$('#saveDetails').show();
 		$('#cancelDetails').show();
-		$('#tabela').append('<tr><td>Password: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Repeat password: </td><td><input style="border:none" type="password" id="password1"></td></tr>');
-		$('#zaUpload').html('<form method="POST" action="picture/upload/'+email+'" enctype="multipart/form-data">Upload new profile picture: <br><input type="file" id="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input onclick="return proveraVelicine()" type="submit" value="Upload"></form>');
+		$('#tabela').append('<tr><td>Nova šifra: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Ponovljena nova šifra: </td><td><input style="border:none" type="password" id="password1"></td></tr>');
+		$('#zaUpload').html('<form method="POST" action="picture/upload/'+email+'" enctype="multipart/form-data">Dodaj novu profilnu sliku: <br><input type="file" id="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input onclick="return proveraVelicine()" type="submit" value="Učitaj"></form>');
 		
 		$('#FirstName').attr('readonly', false);
 		$('#LastName').attr('readonly', false);
@@ -160,7 +166,7 @@
 	
 	function proveraVelicine(){
 		 if (!window.FileReader) {
-		        alert("The file API isn't supported on this browser yet.");
+		        alert("Pretraživač ne omogućava učitavanje slika!");
 		        return false;
 		    }
 		 
@@ -168,10 +174,10 @@
 		 file = input.files[0];
 		 
 		 if(!file){
-		       alert("Please select a file before clicking 'Upload'");
+		       alert("Morate izabrati sliku pre pritiskanja 'Učitaj'");
 		       return false;
 		 }else if(file.size>999998){
-			 alert("Max size of file must be less than 1MB!");
+			 alert("Maksimalna veličina slike mora biti manja od 1MB!");
 			 return false;
 		 }else{
 			 return true;
@@ -195,20 +201,20 @@
 		var password1 = l.value;
 		
 		if(ime == "" || prezime == "" || email == "" || password == "" || password1 == ""){
-			alert("You must enter all fields!");
+			alert("Morate uneti sva polja!");
     		return false;
 		}else{
 			if(password.length <8){
-        		alert("Password must contain 8-30 characters!")
+        		alert("Šifra mora biti duža od 8 karaktera!")
         		return false;
         	}
         	if(password.length > 30){
-        		alert("Password must contain 8-30 characters!")
+        		alert("Šifra mora da bude između 8-30 karaktera!")
         		return false;
         	}
         	
         	if(password != password1){
-        		alert("Password does not match the confirm password!")
+        		alert("Nova šifra i ponovljena se ne podudaraju!")
         		return false;
         	}
         	
@@ -250,22 +256,20 @@
 	
 	
 </script>
-<div class="container"  style = "display: none; background-color: #E8E8E8" id="glavniDiv" >
-  <h1 id="helloHeder"></h1>
-  <div class="row">
-    <div class="col-sm-3"  id="leviDiv" >
-   		<div id="mestoZaSliku"></div>	
-   		<br>
-   		<br>
-      	<a href="#" onclick="basicDetails()">Basic Details</a><br>
-      	<a href="#" onclick="friends()">Friends</a>
-    </div>
-    <div class="col-sm-9"  id="desniDiv">
-    </div>
-  </div>
-  
-</div>
-<script>
+	<div class="container" style="display: none; background-color: #E8E8E8"
+		id="glavniDiv">
+		<h1 id="helloHeder"></h1>
+		<div class="row">
+			<div class="col-sm-3" id="leviDiv">
+				<div id="mestoZaSliku"></div>
+				<br> <br> <a href="#" onclick="basicDetails()">Osnovni
+					podaci</a><br> <a href="#" onclick="friends()">Prijatelji</a>
+			</div>
+			<div class="col-sm-9" id="desniDiv"></div>
+		</div>
+
+	</div>
+	<script>
 function friends(){
 	var x = document.cookie;
 	var delovi = x.split("=");
@@ -277,14 +281,14 @@ function friends(){
         data: {email : email},
 		 success: function(data){
         			console.log(data);
-        			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><table id="skrolable"></table></div>');
+        			$('#desniDiv').html('<h3><i>Prijatelji</i></h3><br><div><input name="staTrazim" type="text" placeholder="Traži prijatelje"><input type="button" onclick="return dajPrijateljeTrazi()" value="Traži"><br><br><table id="skrolable"></table></div>');
         			$('#desniDiv').show();
         			if(data.length>0){
             			for(var i=0;i<data.length;i++){
-            				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obrisi prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+            				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obriši prijatelja" /></td></tr><tr><td><br><br></td></tr>');
             			}	
             			}else{
-            				$('#skrolable').html('<h3>Nothing found</h3>');
+            				$('#skrolable').html('<h3>Ništa nije pronađeno</h3>');
                     		
             			}
 		 }
@@ -302,7 +306,7 @@ function dajPrijateljeTrazi(){
 	$('#skrolable').html('');
 	
 	if(kogaTrazim == ""){
-		alert("You must enter all fields!");
+		alert("Morate uneti nešto u pretragu!");
 	}
 	$.ajax({ 
         type: 'GET',
@@ -316,7 +320,7 @@ function dajPrijateljeTrazi(){
         				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return dodajPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Dodaj prijatelja" /></td></tr><tr><td><br><br></td></tr>');
         			}	
         			}else{
-        				$('#skrolable').html('<h3>Nothing found</h3>');
+        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
                 		
         			}
 		 }
@@ -338,7 +342,7 @@ function dodajPrijatelja(email,broj){
         data: {mojEmail : JAemail, prijateljevEmail : email},
         complete: function(data){
         			console.log(data);
-        			alert("Uspesno dodat prijatelj!");
+        			alert("Uspešno dodat prijatelj!");
         			$('#'+broj+'').attr("disabled", true);
 		 }
 	});
@@ -367,7 +371,7 @@ function notifikacija(){
             				$('#desniDiv').show();
             			}	
             			}else{
-            				$('#desniDiv').html('<h3>Nothing found</h3>');
+            				$('#desniDiv').html('<h3>Ništa nije pronađeno!</h3>');
                     		
             			}	
 		 }
@@ -404,7 +408,7 @@ function  prihvatiPrijatelja(email) {
         data: {mojEmail : mojEmail, kogaDodajem : email},
         complete: function(data){
         			console.log(data);
-        			alert("Zahtev za prijateljstvo prihvacen!");	
+        			alert("Zahtev za prijateljstvo prihvaćen!");	
         			location.reload();
 		 }
 	});
@@ -423,7 +427,7 @@ function ukloniPrijatelja(email,broj){
         data: {email : Jemail, kogaOdbacujem : email},
         complete: function(data){
         			console.log(data);
-        			alert("Prijatelj uspesno uklonjen!");	
+        			alert("Prijatelj uspešno uklonjen!");	
         			$('#'+broj+'').attr("disabled", true);
 		 }
 	});
@@ -442,7 +446,7 @@ $.ajax({
     data: {email : email},
 	 success: function(data){
     			console.log(data);
-    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
+    			$('#desniDiv').html('<h3><i>Prijatelji</i></h3><br><div><input name="staTrazim" type="text" placeholder="Traži prijatelje"><input type="button" onclick="return dajPrijateljeTrazi()" value="Traži"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
     			$('#desniDiv').show();
     			$('#glavniDiv').show();
 				$('#leviDiv').hide();
@@ -450,10 +454,10 @@ $.ajax({
     			if(data.length>0){
     				document.getElementById("helloHeder").innerHTML = "";
         			for(var i=0;i<data.length;i++){
-        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obrisi prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Ukloni prijatelja" /></td></tr><tr><td><br><br></td></tr>');
         			}	
         			}else{
-        				$('#skrolable').html('<h3>Nothing found</h3>');
+        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
                 		
         			}
 	 }
@@ -472,17 +476,17 @@ function sortPoImenu(){
 	    data: {email : email},
 		 success: function(data){
 	    			console.log(data);
-	    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
+	    			$('#desniDiv').html('<h3><i>Prijatelji</i></h3><br><div><input name="staTrazim" type="text" placeholder="Traži prijatelje"><input type="button" onclick="return dajPrijateljeTrazi()" value="Traži"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
 	    			$('#desniDiv').show();
 	    			if(data.length>0){
 	    				$('#glavniDiv').show();
 	    				$('#leviDiv').hide();
 	    				document.getElementById("helloHeder").innerHTML = "";
 	        			for(var i=0;i<data.length;i++){
-	        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obrisi prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+	        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Ukloni prijatelja" /></td></tr><tr><td><br><br></td></tr>');
 	        			}	
 	        			}else{
-	        				$('#skrolable').html('<h3>Nothing found</h3>');
+	        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 	                		
 	        			}
 		 }
@@ -501,17 +505,17 @@ function sortPoImenu(){
 		    data: {email : email},
 			 success: function(data){
 		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>Friends</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Friends"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').html('<h3><i>Prijatelji</i></h3><br><div><input name="staTrazim" type="text" placeholder="Traži prijatelje"><input type="button" onclick="return dajPrijateljeTrazi()" value="Traži"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><a href="#" onclick="sortPoPrezimenu()" > Sortiraj po prezimenu</a><br><br><table  id="skrolable"></table></div>');
 		    			$('#desniDiv').show();
 		    			if(data.length>0){
 		    				$('#glavniDiv').show();
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Obrisi prijatelja" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img src="data:image/jpg;base64,' + data[i].slika + '" style="width:100px;height:100px;" /></td><td><h3>'+data[i].ime+'&nbsp;'+ data[i].prezime+'</h3></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].email+'\',\''+i+'\')" value="Ukloni prijatelja" /></td></tr><tr><td><br><br></td></tr>');
 		        			}	
 		        			}else{
-		        				$('#skrolable').html('<h3>Nothing found</h3>');
+		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 		                		
 		        			}
 			 }
@@ -519,27 +523,143 @@ function sortPoImenu(){
 	}
 
 	function sviRestorani(){
+		var cars = new Array();
+		var imaga = false;
 		$.ajax({ 
 		    type: 'GET',
 		    url: 'restoran/dobaviRestorane',
 		    dataType: 'json',
 			 success: function(data){
 		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>All Restaurants</i></h3><br><div><input name="staTrazim" type="text" placeholder="Search Restaurant"><input type="button" onclick="return dajPrijateljeTrazi()" value="Search"><br><br><a onclick="sortPoImenu()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><p>Traži po vrsti: <select onchange="traziPoVrsti()" id="vrstaRestorana"></select></p><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').show();
+		    			if(data.length>0){
+		    				$('#glavniDiv').show();
+		    				$('#leviDiv').hide();
+		    				
+		    				document.getElementById("helloHeder").innerHTML = "";
+		        			for(var i=0;i<data.length;i++){
+		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        			
+		        				if(cars.length < 1){
+			    					cars.push(String(data[0].tip));
+			    					
+			    				}else{
+		        				
+		        						for(var w =0;w<cars.length;w++){
+		        							if(cars[w] === String(data[i].tip)){
+		        								imaga = true;
+		        							}
+		        						}
+		        						
+		        						if(imaga === false){
+		        							imaga = false;
+		        							cars.push(String(data[i].tip));
+		        						}
+			    				}
+		        			}	
+		        			}else{
+		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
+		                		
+		        			}
+		    			$('#vrstaRestorana').append($("<option></option>").attr("value","izaberi").text("Izaberi tip za selekciju po vrsti"));
+		    			for(var p=0;p<cars.length;p++){
+       					 $('#vrstaRestorana').append($("<option></option>").attr("value",cars[p]).text(cars[p])); 
+       					 console.log(cars[p]);
+       				}
+			 }
+		});
+	}
+	
+	function sortPoImenuRestorane(){
+		$.ajax({ 
+		    type: 'GET',
+		    url: 'restoran/sortirajrestoranepoimenu',
+		    dataType: 'json',
+			 success: function(data){
+				 $('#skrolable').html('');
+		    			console.log(data);
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
 		    			$('#desniDiv').show();
 		    			if(data.length>0){
 		    				$('#glavniDiv').show();
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezervisi" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			}	
 		        			}else{
-		        				$('#skrolable').html('<h3>Nothing found</h3>');
+		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 		                		
 		        			}
 			 }
 		});
+	}
+	
+	function dajRestoraneTrazi(){
+		var r = document.getElementsByName('staTrazimR');
+		var naziv = r[0].value;
+		
+		if(naziv != ""){
+		
+		$.ajax({ 
+		    type: 'GET',
+		    url: 'restoran/trazirestoran',
+		    dataType: 'json',
+		    data: {tekst : naziv},
+			 success: function(data){
+				 $('#skrolable').html('');
+		    			console.log(data);
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restorane"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').show();
+		    			if(data.length>0){
+		    				$('#glavniDiv').show();
+		    				$('#leviDiv').hide();
+		    				document.getElementById("helloHeder").innerHTML = "";
+		        			for(var i=0;i<data.length;i++){
+		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        			}	
+		        			}else{
+		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
+		                		
+		        			}
+			 }
+		});
+		}
+	}
+	
+	function traziPoVrsti(){
+		var i = document.getElementById('vrstaRestorana');
+		var selektovanog = i.options[i.selectedIndex].value;
+		
+		if(selektovanog === "izaberi"){
+			return;
+		}else{
+			$.ajax({ 
+			    type: 'GET',
+			    url: 'restoran/dobaviRestorane',
+			    dataType: 'json',
+				 success: function(data){
+			    			console.log(data);
+			    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><br><table  id="skrolable"></table></div>');
+			    			$('#desniDiv').show();
+			    			if(data.length>0){
+			    				$('#glavniDiv').show();
+			    				$('#leviDiv').hide();
+			    				
+			    				document.getElementById("helloHeder").innerHTML = "";
+			        			for(var i=0;i<data.length;i++){
+			        				if(String(data[i].tip) === selektovanog)
+			        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+			        			}
+			        		}else{
+			        			$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
+			                		
+			        		}
+			    			
+			        	}
+			   });
+	}
 	}
 </script>
 </body>
