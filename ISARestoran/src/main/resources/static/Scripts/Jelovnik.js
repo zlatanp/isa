@@ -46,11 +46,12 @@ function uzmiJela(){
 }
 
 function getRestoran(id){
+	console.log("get restoran id:" + id)
 	$.ajax({
 		url: 'restoran/restoranProfil/' + id,
 		type: 'GET',
 		dataType: 'json',
-		//async: false, 				//izvrsi ovaj ajax poziv pre svega ostalog
+		async: false, 				//izvrsi ovaj ajax poziv pre svega ostalog
 		success: function(retVal){
 			if (retVal != "" && retVal != null){
 				$("#logo").text(retVal.naziv);
@@ -64,11 +65,12 @@ function getRestoran(id){
 					valuta = "€";
 			}else{
 				alert("upao ovde");
-				window.location.replace('not_found.html');
+				window.location.replace("notFound.html");
 			}
 		},
 		error: function(){
-			window.location.replace('not_found.html');
+			window.location.replace("notFound.html");
+					
 		}
 	});	
 }
@@ -81,14 +83,14 @@ function getJela(idRestorana){
 		success: function(retVal){
 			if(retVal == null){
 				alert("nema jela");
-				window.location.replace('not_found.html');
+				window.location.replace("notFound.html");
 				return;
 			}else {
 				prikaziJela(retVal);
 			}
 		},
 		error: function(){
-			window.location.replace('not_found.html');
+			window.location.replace("notFound.html");
 		}		
 	});
 }
@@ -151,6 +153,32 @@ function napraviKarticuZaJelo(jelo){
 	
 	return html;		
 }
+
+$(document).on("click", "#btnTraziJela", function(e){
+	e.preventDefault();
+	var zaTrazenje = new Object();
+	zaTrazenje.val1 = $("#imeZaPretragu").val();
+	zaTrazenje.val2 = "";
+	console.log(zaTrazenje.val1);
+	if (/\S/.test(zaTrazenje.val1) || /\S/.test(zaTrazenje.val2)){
+		$.ajax({
+			url: 'restoran/traziJelo/' + restoranID,
+			type: 'POST',
+			contentType: 'application/json',
+			dataType: 'json',
+			data: JSON.stringify(zaTrazenje),
+			success: function(retVal){
+				prikaziJela(retVal);
+			}
+		});		
+	}
+});
+
+$(document).on("click", "#btnPrikaziJela", function(){
+	if(restoranID != null){
+		getJela(restoranID);
+	}
+});
 
 $(document).on("click", ".ObrisiDijalogOpen", function(e){
 	e.preventDefault();

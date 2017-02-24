@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.JeloDTO;
@@ -204,4 +205,26 @@ public class RestoranController {
 		}
 	}
 	
+	@RequestMapping(value="/traziJelo/{id}", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public String traziJelo( @RequestBody @Valid CompareStringsDTO zaTrazenje, @PathVariable("id") int idRestorana) throws JsonProcessingException{
+		String[] delovi = zaTrazenje.getVal1().split(" ");
+		String retVal = "";
+		List<JeloDTO> jela = new ArrayList<JeloDTO>();	
+		if(delovi.length == 0){
+			retVal = "";
+		}else if(delovi.length == 1){
+			String prva = delovi[0];
+			String druga = "";
+			jela = jeloService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(jela);
+		}else if(delovi.length == 2){
+			String prva = delovi[0];
+			String druga = delovi[1];
+			jela = jeloService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(jela);
+		}
+		return retVal;
+	}
+
+
 }

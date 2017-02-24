@@ -71,6 +71,33 @@ public class JeloService {
 		return jelaDTO;
 	}
 	
+	public List<JeloDTO> findByParameters(String v1, String v2, int idRestorana){
+		
+		Restoran r = restoranRepository.findOne(idRestorana);
+		if(r == null){
+			return null;
+		}
+		List<Jelo> svaJela = jeloRepository.findAll();
+		List<JeloDTO> filter = new ArrayList<JeloDTO>();
+		
+		
+		for(Jelo jelo : svaJela){
+			if(jelo.getRestoran() == r){
+				if(v2.equals("")){
+					if(jelo.getNaziv().toLowerCase().contains(v1.toLowerCase())){
+						filter.add(new JeloDTO(jelo, null));
+					}
+				}else {
+					if(jelo.getNaziv().toLowerCase().contains(v1.toLowerCase()) || jelo.getNaziv().toLowerCase().contains(v2.toLowerCase()) ){
+						filter.add(new JeloDTO(jelo, null));
+					}
+				}
+			}
+		}
+		return filter;	
+	}
+	
+	
 	public JeloDTO create(JeloDTO jelo, String email){		
 		MenadzerRestorana men = menadzerRepository.findByEmail(email);
 		if(men == null){
