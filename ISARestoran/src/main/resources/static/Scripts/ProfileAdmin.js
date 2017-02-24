@@ -41,11 +41,8 @@ $(document).ready(function() {
 	});
 
 });
-
-$(document).on(
-		"click",
-		".OpenNewRest",
-		function(e) {
+ 
+$(document).on("click", ".OpenNewRest", function(e) {
 			$("#tipRestSel").find("option").remove();
 			$.ajax({
 				url : 'restoran/tipovi',
@@ -54,8 +51,7 @@ $(document).on(
 				success : function(data) {
 					var selektPolje = $("#tipRestSel");
 					$.each(data, function(index, tip) {
-						selektPolje.append("<option value=\"" + tip + "\">"
-								+ tip + "</option>");
+						selektPolje.append("<option value=\"" + tip + "\">"	+ tip + "</option>");
 					});
 				}
 			});

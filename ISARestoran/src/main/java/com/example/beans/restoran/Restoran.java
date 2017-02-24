@@ -61,6 +61,11 @@ public class Restoran implements Serializable {
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="radi_u")
 	protected Set<MenadzerRestorana> menadzeri;
 	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="restoran")
+	protected Set<Jelo> jelovnik;
+	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="restoran")
+	protected Set<Pice> kartaPica;
 	
 	public Restoran() {
 	}
@@ -194,7 +199,22 @@ public class Restoran implements Serializable {
 	public void setValuta(TipValute valuta) {
 		this.valuta = valuta;
 	}
-	
-	
-	
+
+
+	public TipRestorana getTipRestorana() {
+		return tipRestorana;
+	}
+
+	public void setTipRestorana(TipRestorana tipRestorana) {
+		this.tipRestorana = tipRestorana;
+	}
+
+	public Set<MenadzerRestorana> getMenadzeri() {
+		return menadzeri;
+	}
+
+	public void setMenadzeri(Set<MenadzerRestorana> menadzeri) {
+		this.menadzeri = menadzeri;
+	}
+		
 }

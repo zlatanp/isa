@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link
+	href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="html/css/toastr.css" />
+<link rel="stylesheet" href="Styles/Site.css" />
+<link href='http://fonts.googleapis.com/css?family=Cookie'
+	rel='stylesheet' type='text/css'>
+<link
+	href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+	rel="stylesheet">
+
+<script src="html/js/jquery-3.1.0.min.js"></script>
+<script src="html/js/jquery.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="html/js/bootstrap-select.js"></script>
+<script src="html/js/bootstrap-timepicker.js"></script>
+<script src="html/js/toastr.js"></script>
+
+<script src="Scripts/Jelovnik.js"></script>
+
+<title>Jelovnik</title>
+<style>
+.my-card {
+	padding-bottom: 35px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+</style>
+</head>
+<body id="menadzerBody">
+
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="menadzerPage.html">Restaurant
+					management</a>
+			</div>
+
+
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#" class="OpenUpdateRest">Početna</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Usluge <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="jelovnik.html">Jelovnik</a></li>
+							<li><a href="kartaPica.html">Karta pića</a></li>
+							<li><a href="sednje.html">Konfiguracija sedenja</a></li>
+						</ul></li>
+					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
+					<li><a href="#" class="OpenPonude">Nabavke</a></li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Profil</a></li>
+					<li><a onclick="izlogujSe()" href="#">Odjavite se</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="logoDiv">
+		<h2 id="logo"></h2>
+		<h3 id="opis"></h3>
+	</div>
+
+	<div class="row-content jelovnikDiv col-lg-6">
+		<div id="glavni_tab" class="tab-pane fade in active">
+				<div class="form-group col-lg-5">
+					<h4>Unesite naziv jela:</h4>
+					<input class="form-control" type="text" id="imeZaPretragu">
+				</div>
+				<br> <br>
+				<div class="form-group">
+					<button id="btnTraziJela" type="button" class="btn btn-success">
+						Traži jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+					&nbsp;
+					<button id="btnPrikaziJela" type="button" class="btn btn-default">
+						Prikaži sva jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+				</div>
+			<br>
+			<hr />
+			<!-- Ovo treba ukloniti kod GOSTA -->
+
+			<div class="row" style="margin-left: 2px">
+				<button id="dugmeDodaj" data-toggle="modal" data-target="#modalJelo"
+					type="button" class="btn btn-success">
+					Dodaj jelo <span class="glyphicon glyphicon-plus"></span>
+				</button>
+			</div>
+			<br>
+			<div class="row">
+				<div class="" id="cards_jela"></div>
+			</div>
+		</div>
+	</div>
+
+	<!--  MODAL DODAJ JELO -->
+	<div id="modalJelo" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Dodavanje novog jela</h4>
+				</div>
+				<div class="modal-body">
+					<form id="DodajJelo" method="post" action="#"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Naziv:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="text"
+										name="naziv" id="nazivJela">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Klasa jela:</label>
+								<div class="col-sm-8">
+									<select id="klasaJelaSel" class="form-control">
+										<option value="PREDJELO">Predjelo</option>
+										<option value="SUPA">Supa</option>
+										<option value="GLAVNO_JELO">Glavno jelo</option>
+										<option value="DEZERT">Dezert</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Tip jela:</label>
+								<div class="col-sm-8">
+									<select id="tipJelaSel" class="form-control">
+										<option value="KUVANO">Kuvano</option>
+										<option value="PECENO">Pečeno</option>
+										<option value="ROSTILJ">Roštilj</option>
+										<option value="SALATA">Salata</option>
+										<option value="KOLAC">Kolač</option>
+										<option value="TORTA">Torta</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Cena:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="text"
+										name="cena" id="cenaJela">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Opis:</label>
+								<div class="col-sm-8">
+									<textarea required name="opisJela" rows="4" cols="35"
+										id="opisJela"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Slika:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="file"
+										name="slika" id="slikaJela">
+								</div>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-success col-lg-offset-4"
+									id="btnDodajJelo">Dodaj jelo</button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--  MODAL IZMENI JELO -->
+	<div id="izmeniJeloModal" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Izmena jela</h4>
+				</div>
+				<div class="modal-body">
+					<form action="#" class="form-horizontal" method="post"
+						id="IzmeniJeloForm">
+						<fieldset>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Naziv:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="text"
+										name="naziv" id="nazivJela2">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Klasa jela:</label>
+								<div class="col-sm-8">
+									<select id="klasaJelaSel2" class="form-control">
+										<option value="PREDJELO">Predjelo</option>
+										<option value="SUPA">Supa</option>
+										<option value="GLAVNO_JELO">Glavno jelo</option>
+										<option value="DEZERT">Dezert</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Tip jela:</label>
+								<div class="col-sm-8">
+									<select id="tipJelaSel2" class="form-control">
+										<option value="KUVANO">Kuvano</option>
+										<option value="PECENO">Pečeno</option>
+										<option value="ROSTILJ">Roštilj</option>
+										<option value="SALATA">Salata</option>
+										<option value="KOLAC">Kolač</option>
+										<option value="TORTA">Torta</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Cena:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="text"
+										name="cena" id="cenaJela2">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Opis:</label>
+								<div class="col-sm-8">
+									<textarea required name="opisJela" rows="4" cols="35"
+										id="opisJela2"></textarea>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Slika:</label>
+								<div class="col-sm-8">
+									<input required class="pull-right form-control" type="file"
+										name="slika" id="slikaJela2">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input required id="Id2" class="pull-right form-control"
+										type="hidden" name="Id">
+								</div>
+							</div>
+							<div class="form-group">
+								<button class="btn btn-success col-lg-offset-4"
+									id="btnIzmeniJelo">Izmeni jelo</button>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!--  MODAL OBRISI JELO -->
+	<div id="obrisiJeloModal" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Brisanje jela</h4>
+				</div>
+				<div class="modal-body">
+					<p align="center">Da li želite da obrišete ovo jelo? </p>
+					<label id="idJelaZaDelete" style="display:none"></label>
+					<button class="btn btn-success" id="btnPotvrdiDelete">Da</button>
+					<button class="btn btn-danger pull-right" id="btnOdustaniDelete">Ne</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
