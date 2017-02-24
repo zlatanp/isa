@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-timepicker.css" />
 <link rel="stylesheet" href="html/css/toastr.css" />
@@ -15,10 +16,14 @@
 <script src="html/js/jquery-3.1.0.min.js"></script>
 <script src="html/js/jquery.min.js"></script>
 
-<script src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script
+	src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
 <script src="html/js/bootstrap-select.js"></script>
 <script src="html/js/bootstrap-timepicker.js"></script>
@@ -74,37 +79,46 @@
 		<h3 id="opis"></h3>
 	</div>
 
-	<div class="container hideMe" id="divInfo">
+	<div class="container hideMe col-lg-10" id="divInfo">
 		<table id="tableInfo">
 			<tr>
-				<th>Tip:</th>
-				<td class="td" id="tipTD"></td>
-			</tr>
-			<tr>
-				<th>Adresa:</th>
-				<td class="td" id="adrTD"></td>
-			</tr>
-			<tr>
-				<th>Grad:</th>
-				<td class="td" id="gradTD"></td>
-			</tr>
-			<tr>
-				<th>Telefon:</th>
-				<td class="td" id="telTD"></td>
-			</tr>
-			<tr>
-				<th>E-mail:</th>
-				<td class="td" id="emailTD"></td>
-			</tr>
-			<tr>
-				<th>Radno vreme:</th>
-				<td class="td" id="radnoVremeTD"></td>
+				<td>
+				   <table>
+					<tr>
+						<th>Tip:</th>
+						<td class="td" id="tipTD"></td>
+					</tr>
+					<tr>
+						<th>Adresa:</th>
+						<td class="td" id="adrTD"></td>
+					</tr>
+					<tr>
+						<th>Grad:</th>
+						<td class="td" id="gradTD"></td>
+					</tr>
+					<tr>
+						<th>Telefon:</th>
+						<td class="td" id="telTD"></td>
+					</tr>
+					<tr>
+						<th>E-mail:</th>
+						<td class="td" id="emailTD"></td>
+					</tr>
+					<tr>
+						<th>Radno vreme:</th>
+						<td class="td" id="radnoVremeTD"></td>
+					</tr>
+				</table>
+				</td>
+				<td>&nbsp;</td>
+				<td>
+					<img src="/slike/restorani/restoran.jpg" style="width:100px;height:auto"/>
+				</td>
 			</tr>
 		</table>
-		<div class="col-md-6" style="padding:10px">
+		<div class="col-md-6" style="padding: 10px">
 			<div id="container-map" style="height: 185px;"></div>
 		</div>
-		
 	</div>
 
 	<div class="container col-lg-6 col-lg-offset-3 hideMe" id="divRestoran">

@@ -77,7 +77,7 @@ public class JeloService {
 		if(r == null){
 			return null;
 		}
-		List<Jelo> svaJela = jeloRepository.findAll();
+		List<Jelo> svaJela = jeloRepository.findByRestoran(r);
 		List<JeloDTO> filter = new ArrayList<JeloDTO>();
 		
 		
