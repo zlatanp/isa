@@ -1,12 +1,187 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="html/css/toastr.css" />
+<link rel="stylesheet" href="Styles/Site.css" />
+<link href='http://fonts.googleapis.com/css?family=Cookie'
+	rel='stylesheet' type='text/css'>
+
+<script src="html/js/jquery-3.1.0.min.js"></script>
+<script src="html/js/jquery.min.js"></script>
+
+<script src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<script src="html/js/bootstrap-select.js"></script>
+<script src="html/js/bootstrap-timepicker.js"></script>
+<script src="html/js/toastr.js"></script>
+
+<script src="Scripts/ProfileMenadzer.js"></script>
+
+<title>Menadžer restorana</title>
 </head>
-<body>
-	<p> Dobrodoso menadzeru</p>
-	<p> Promena </p>
-<!-- 	josjedankompit -->
+<body id="menadzerBody">
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="menadzerPage.html">Restaurant
+					management</a>
+			</div>
+
+
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="#" class="OpenUpdateRest">Izmeni restoran</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Usluge <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" id="jelaHref">Jelovnik</a></li>
+							<li><a href="#" id="picaHref">Karta pića</a></li>
+							<li><a href="#" id="sedenjeHref">Konfiguracija sedenja</a></li>
+						</ul></li>
+					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
+					<li><a href="#" class="OpenPonude">Ponude</a></li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="#">Profil</a></li>
+					<li><a onclick="izlogujSe()" href="#">Odjavite se</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div id="logoDiv">
+		<h2 id="logo"></h2>
+		<h3 id="opis"></h3>
+	</div>
+
+	<div class="container hideMe" id="divInfo">
+		<table id="tableInfo">
+			<tr>
+				<th>Tip:</th>
+				<td class="td" id="tipTD"></td>
+			</tr>
+			<tr>
+				<th>Adresa:</th>
+				<td class="td" id="adrTD"></td>
+			</tr>
+			<tr>
+				<th>Grad:</th>
+				<td class="td" id="gradTD"></td>
+			</tr>
+			<tr>
+				<th>Telefon:</th>
+				<td class="td" id="telTD"></td>
+			</tr>
+			<tr>
+				<th>E-mail:</th>
+				<td class="td" id="emailTD"></td>
+			</tr>
+			<tr>
+				<th>Radno vreme:</th>
+				<td class="td" id="radnoVremeTD"></td>
+			</tr>
+		</table>
+		<div class="col-md-6" style="padding:10px">
+			<div id="container-map" style="height: 185px;"></div>
+		</div>
+		
+	</div>
+
+	<div class="container col-lg-6 col-lg-offset-3 hideMe" id="divRestoran">
+		<p id="idRestorana"></p>
+		<p id="valutaRestorana"></p>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 id="nazivRestorana"></h3>
+			</div>
+			<div class="panel-body">
+				<form id="editRestoranForm" class="form-horizontal">
+					<div class="form-group">
+						<label>Naziv: </label> <input readonly="readonly" id="nazivRest"
+							type="text" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Opis: </label> <input readonly="readonly" id="opisRest"
+							type="text" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Telefon: </label> <input readonly="readonly" id="telRest"
+							type="text" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Email: </label> <input readonly="readonly" id="emailRest"
+							type="email" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Adresa: </label> <input readonly="readonly" id="adrRest"
+							type="text" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Grad: </label> <input readonly="readonly" id="gradRest"
+							type="text" class="input-sm form-control inputRest">
+					</div>
+					<div class="form-group">
+						<label>Tip: </label> <input readonly="readonly" id="tipRest"
+							type="text" class="input-sm form-control"> <select
+							class="form-control input-sm" id="tipRestSel">
+
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Radno vreme OD: </label>
+						<div class="input-group bootstrap-timepicker">
+							<input readonly="readonly" id="vremeODRest" type="text"
+								class="form-control input-sm inputRest" name="vremeDO">
+							<span class="input-group-addon"><i
+								class="glyphicon glyphicon-time"></i></span>
+						</div>
+					</div>
+					<div class="form-group">
+						<label>Radno vreme DO: </label>
+						<div class="input-group bootstrap-timepicker">
+							<input readonly="readonly" id="vremeDORest" type="text"
+								class="form-control input-sm inputRest" name="vremeDO">
+							<span class="input-group-addon"><i
+								class="glyphicon glyphicon-time"></i></span>
+						</div>
+					</div>
+					<div class="wrapper">
+						<button class="btn btn-default col-lg-offset-5" id="btnIzmeniRest">Izmeni</button>
+						<button class="btn btn-success col-lg-offset-5" id="btnSacuvajIzm">Sačuvaj
+							izmene</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<div class="container hideMe" id="divZaposleni">
+		<p>Ovde treba da radi sa zaposlenima</p>
+	</div>
+
+	<div class="container hideMe" id="divPonude">
+		<p>Ovde treba da radi sa ponudama</p>
+	</div>
+
 </body>
 </html>
