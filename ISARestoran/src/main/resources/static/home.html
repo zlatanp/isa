@@ -347,9 +347,26 @@ var grad;
 					<img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>
 				</td>
 			</tr>
+			<tr>
+			<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<button class="btn btn-success col-lg-offset-5">Pogledaj jelovnik</button>
+					
+				</td>
+				<td>
+				<button class="btn btn-success col-lg-offset-5">Pogledaj kartu pića</button>
+					
+				</td>
+				<td>
+					<button class="btn btn-success col-lg-offset-5">Rezerviši</button>
+					
+				</td>
+			</tr>
 		</table>
-		<div class="col-md-6" style="padding: 10px">
-			<div id="dajmapumesto" style="height: 185px;"></div>
+		<div class="col-md-8" style="padding: 10px">
+			<div id="dajmapumesto" style="height: 200px;"></div>
 		</div>
 	</div>
 
@@ -706,7 +723,9 @@ function sortPoImenu(){
 	 				$("#radnoVremeTD").text(data.vremeOD + ' -- ' + data.vremeDO);
 	 				var putanjaSlike = "../../../slike/restorani/"+data.slika;
 	 				$("#slikaRestImg").attr("src", putanjaSlike);
+	 				//console.data
 	 				setMap(data.adresa + ', ' + data.grad + ', Srbija');
+	 				
 	 				//restoran = data;
 	 			}
 	        }
