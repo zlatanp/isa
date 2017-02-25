@@ -1,10 +1,6 @@
 package com.example.controller;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +15,6 @@ import com.example.enums.FriendshipStatus;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.PrijateljstvoService;
-import com.mysql.fabric.xmlrpc.base.Array;
 
 @RestController
 @RequestMapping("/profile")
