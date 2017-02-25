@@ -79,7 +79,7 @@ public class ProfilController {
 		} else {
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 			for (Korisnik item : listaKorisnika) {
-				System.out.println(item.getEmail());
+				
 				if (item.getEmail().equals(email)) {
 					item.setIme(ime);
 					item.setPrezime(prezime);
@@ -97,7 +97,7 @@ public class ProfilController {
 	public synchronized ArrayList<Korisnik> traziPrijatelje(@RequestParam("kogaTrazim") String kogaTrazim,
 			@RequestParam("email") String mojEmail) {
 
-		System.out.println(kogaTrazim + "mojemail: " + mojEmail);
+		
 		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
 		
 		String realText = kogaTrazim.toLowerCase();
@@ -139,8 +139,7 @@ public class ProfilController {
 	public synchronized void dodajPrijatelja(@RequestParam("mojEmail") String mojEmail,
 			@RequestParam("prijateljevEmail") String prijateljEmail) {
 
-		System.out.println(mojEmail + prijateljEmail);
-
+		
 		Gost ja = null;
 		Gost mojPrijatelj = null;
 
@@ -160,7 +159,7 @@ public class ProfilController {
 	@RequestMapping(value = "/dajNotifikaciju", method = { RequestMethod.GET })
 	public synchronized boolean dajNotifikaciju(@RequestParam("mojEmail") String mojEmail) {
 
-		System.out.println(mojEmail);
+		
 		boolean imaNotifikaciju = false;
 
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
@@ -178,7 +177,7 @@ public class ProfilController {
 	@RequestMapping(value = "/dajLjude", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized ArrayList<Korisnik> dajLjudeKojiMeDodali(@RequestParam("email") String mojEmail) {
 
-		System.out.println(mojEmail);
+		
 
 		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
 
@@ -200,7 +199,7 @@ public class ProfilController {
 	public synchronized void odbaciPrijatelja(@RequestParam("email") String mojEmail,
 			@RequestParam("kogaOdbacujem") String kogaOdbacujem) {
 
-		System.out.println(mojEmail);
+		
 
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
@@ -222,7 +221,7 @@ public class ProfilController {
 	public synchronized void prihvatiPrijatelja(@RequestParam("mojEmail") String mojEmail,
 			@RequestParam("kogaDodajem") String kogaOdbacujem) {
 
-		System.out.println(mojEmail);
+		
 
 		Iterable<Prijateljstvo> svaPrijateljstva = prijateljstvoService.getAllPrijateljstva();
 		if (svaPrijateljstva != null) {
