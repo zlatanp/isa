@@ -32,6 +32,7 @@
 <script>
 var ipadresa;
 var grad;
+var restoranIDE;
 
 
 	function onload(){
@@ -352,19 +353,44 @@ var grad;
 			</tr>
 			<tr>
 				<td>
-					<button class="btn btn-success col-lg-offset-5">Pogledaj jelovnik</button>
+					<div id="pogledajJelovnik"></div>
 					
 				</td>
 				<td>
-				<button class="btn btn-success col-lg-offset-5">Pogledaj kartu pića</button>
-					
+				<div id="pogledajPicovnik"></div>
 				</td>
 				<td>
-					<button class="btn btn-success col-lg-offset-5">Rezerviši</button>
-					
+				<div id="pogledajRezervisi"></div>
 				</td>
 			</tr>
 		</table>
+		
+		<div id="jelaipica" style="display: none;">
+		<br>
+			<div class="row-content jelovnikDiv col-lg-8">
+		<div id="glavni_tab" class="tab-pane fade in active">
+				<div class="form-group col-lg-5">
+					<h4>Unesite naziv jela:</h4>
+					<input class="form-control" type="text" id="imeZaPretragu">
+				</div>
+				<br> <br>
+				<div class="form-group">
+					<button id="btnTraziJela" type="button" class="btn btn-success">
+						Traži jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+					&nbsp;
+					<button id="btnPrikaziJela" onclick="pogledajJelovnik(restoranIDE)" type="button" class="btn btn-default">
+						Prikaži sva jela <span class="glyphicon glyphicon-search"></span>
+					</button>
+				</div>
+			<br>
+			<hr />
+			<div class="row">
+				<div class="" id="cards_jela"></div>
+			</div>
+		</div>
+	</div>
+		</div>
 		<div class="col-md-8" style="padding: 10px">
 			<div id="dajmapumesto" style="height: 200px;"></div>
 		</div>
@@ -699,11 +725,13 @@ function sortPoImenu(){
 			 }
 		});
 	}
+
+	var valuta = null;
 	
 	function dajStranicuRestorana(idRestorana){
 		document.getElementById('restoranProfil').style.display = 'block';
 		document.getElementById('glavniDiv').style.display = 'none';
-		
+		restoranIDE = idRestorana;
 		$.ajax({	     
 			type: 'GET',
 			url: 'restoran/dajRestoranSaId', 
@@ -712,6 +740,9 @@ function sortPoImenu(){
 	        success: function(data){
 	 			console.log(data);
 	 			if(data != null){
+	 				$("#pogledajJelovnik").html('');
+	 				$("#pogledajPicovnik").html('');
+	 				$("#pogledajRezervisi").html('');
 	 				upisiPodatke(data);
 	 				$("#logo").text(data.naziv);
 	 				$("#opis").text(data.opis);
@@ -725,12 +756,20 @@ function sortPoImenu(){
 	 				$("#slikaRestImg").attr("src", putanjaSlike);
 	 				//console.data
 	 				setMap(data.adresa + ', ' + data.grad + ', Srbija');
-	 				
-	 				//restoran = data;
+	 				$("#pogledajJelovnik").append('<button class="btn btn-success col-lg-offset-5" onclick="pogledajJelovnik(\''+data.id+'\')">Pogledaj jelovnik</button>');
+	 				$("#pogledajPicovnik").append('<button class="btn btn-success col-lg-offset-5" onclick="pogledajPicovnik(\''+data.id+'\')">Pogledaj kartu pića</button>');
+	 				$("#pogledajRezervisi").append('<button class="btn btn-success col-lg-offset-5" onclick="rezervisemRestoran(\''+data.id+'\')">Rezerviši</button>');
+	 				if(data.valuta=="DOLAR")
+						valuta = "$";
+					if(data.valuta=="DINAR")
+						valuta = "RSD";
+					if(data.valuta=="EVRO")
+						valuta = "€";
 	 			}
 	        }
 		});
 	}
+
 	
 	function upisiPodatke(data) {
 		$("#nazivRestorana").text(data.naziv);
@@ -767,6 +806,135 @@ function sortPoImenu(){
 			})
 		}
 	});
+	}
+	
+	function pogledajJelovnik(id){
+		document.getElementById('jelaipica').style.display = 'block';
+		getJela(id);
+	}
+	
+	function getJela(idRestorana){
+		$.ajax({
+			type: 'GET',
+			url: 'restoran/getJela/' + idRestorana,
+			dataType: 'JSON',
+			success: function(retVal){
+				if(retVal == null){
+					window.location.replace("notFound.html");
+					return;
+				}else {
+					prikaziJela(retVal);
+				}
+			},
+			error: function(){
+				window.location.replace("notFound.html");
+			}		
+		});
+	}
+
+	function prikaziJela(jela){
+		var divJela = $("#cards_jela");
+		karticeJela = 0;
+		divJela.empty();
+		var speed = 0;
+		$.each(jela, function(index, k){
+			var jeloCard = napraviKarticuZaJelo(k);
+			var novi_div = "<div></div>";
+			divJela.append(novi_div);
+			var a = divJela.children().last();
+			a.hide();
+			a.append(jeloCard);
+			a.delay(speed).fadeIn('fast');
+			speed+=200;
+		});
+	}
+
+	function napraviKarticuZaJelo(jelo){
+		var html = "";
+		if (karticeJela % 3 == 0){
+			if (karticeJela != 0){
+				html += '</div>';
+			}
+			html += '<div class="row-content">';
+		}
+		karticeJela++;
+		html += '<div class="col-md-4">' + 
+					'<div class="card text-center my-card" style="margin-top:2%;border-style:solid;border-width:2px;background-color:#ccff99">' +
+						'<div class="card-block">' +
+							'<h3 class="card-title">' + jelo.naziv + '</h3>' +				
+						'</div>'+
+						'<img src="../../../slike/jela/' + jelo.slika + '"width="180" height="180" >' +
+						'<div class="card-block">'+
+							jelo.opis +
+						'</div>'+
+						'<div class="card-block">'+
+							'<div class="zvezdiceJelo pull-right">'+
+								'<p>' + convertScoreToStars(jelo.ocena) + '</p>' +
+							'</div>'+
+							'<h5 style="text-align:left;">'+
+								jelo.klasaJela +
+							'</h5>'+
+							'<br>'+
+							'<div class="reviewsJelo pull-right">'+
+								jelo.brojOcena + ' reviews' +
+							'</div>'+
+							'<br>'+
+							'<h4 class="pull-right" style="text-align:left;">'+
+								valuta + ' ' + jelo.cena +
+							'</h4>'+
+							'<br>'+ '<br>'+		
+						'</div>' +
+					'</div>'+
+				'</div>';
+		
+		return html;		
+	}
+	
+	function convertScoreToStars(score){
+		if (score < 0 || score > 5)
+			return "";
+		var text = '';
+		var rounded = Math.round(score*2)/2;
+		for (i = 1; i <= 5; i++){
+			rounded -= 1;
+			if (rounded == -0.5)
+				text += '<i class="icon-star-half-full"></i>';
+			else if (rounded >= 0)
+				text += '<i class="icon-star"></i>';
+			else if (rounded < 0.5)
+				text += '<i class="icon-star-empty"></i>';
+		}
+		return text;
+	}
+	
+	$(document).on("click", "#btnTraziJela", function(e){
+		e.preventDefault();
+		var zaTrazenje = new Object();
+		zaTrazenje.val1 = $("#imeZaPretragu").val();
+		zaTrazenje.val2 = "";
+		console.log(zaTrazenje.val1);
+		if (/\S/.test(zaTrazenje.val1) || /\S/.test(zaTrazenje.val2)){
+			$.ajax({
+				url: 'restoran/traziJelo/' + restoranIDE,
+				type: 'POST',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(zaTrazenje),
+				success: function(retVal){
+					prikaziJela(retVal);
+				}
+			});		
+		}
+	});
+	
+	function pogledajPicovnik(id){
+		document.getElementById('jelaipica').style.display = 'none';
+		//alert("gledaj picovnik + "+id);
+	}
+	
+	function rezervisemRestoran(id){
+		document.getElementById('jelaipica').style.display = 'none';
+		//alert("rezervisem restoran sa id + " + id);
 	}
 	
 	function sortPoImenuRestorane(){
