@@ -99,6 +99,8 @@ public class ProfilController {
 
 		System.out.println(kogaTrazim + "mojemail: " + mojEmail);
 		ArrayList<Korisnik> korisnici = new ArrayList<Korisnik>();
+		
+		String realText = kogaTrazim.toLowerCase();
 
 		Iterable<Prijateljstvo> pr = prijateljstvoService.getAllPrijateljstva();
 
@@ -107,7 +109,7 @@ public class ProfilController {
 		} else {
 			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 			for (Korisnik item : listaKorisnika) {
-				if (item.getIme().contains(kogaTrazim) || item.getPrezime().contains(kogaTrazim)) {
+				if (item.getIme().toLowerCase().contains(realText) || item.getPrezime().toLowerCase().contains(realText)) {
 					if (!item.getEmail().equals(mojEmail)) {
 						korisnici.add(item);
 					}
@@ -306,7 +308,6 @@ public class ProfilController {
 		svaslova.add("Z");
 		svaslova.add("z");
 
-		int k = 0;
 		for (int j = 0; j < svaslova.size(); j += 2) {
 			for (int i = 0; i < prijateljiMoji.size(); i++) {
 				if (prijateljiMoji.get(i).getIme().startsWith(svaslova.get(j))
