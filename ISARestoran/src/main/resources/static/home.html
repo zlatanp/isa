@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="stylesheet" href="html/css/bootstrap.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" href="html/css/homecss.css" />
@@ -9,9 +11,19 @@
 <script src="html/js/jquery.min.js"></script>
 <script src="html/js/bootstrap.js"></script>
 <script src="html/js/bootstrap.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Cookie'
+	rel='stylesheet' type='text/css'>
 
 
-<script src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
+<script
+	src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
 
 <meta charset="ISO-8859-1">
 
@@ -51,7 +63,8 @@ var grad;
 		$.getJSON('//freegeoip.net/json/'+ipadresa, function(data) {grad = data.city;});
 		});
 			
-		
+
+
 		
 	}
 </script>
@@ -111,6 +124,8 @@ var grad;
 
 	
 	function profilKorisnika(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -139,6 +154,8 @@ var grad;
 	}
 	
 	function basicDetails(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -158,7 +175,8 @@ var grad;
 	}
 	
 	function editDetails(){
-		
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -200,7 +218,8 @@ var grad;
 
 	
 	function saveDetails(){
-		
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var i = document.getElementById('FirstName');
 		var ime = i.value;
 		var j = document.getElementById('LastName');
@@ -251,6 +270,8 @@ var grad;
 	}
 	
 	function dajSliku(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -281,8 +302,63 @@ var grad;
 		</div>
 
 	</div>
+	
+	<div id="restoranProfil" style="display: none;">
+	
+	<div id="logoDiv">
+		<h2 id="logo"></h2>
+		<h3 id="opis"></h3>
+	</div>
+
+
+	<div class="container hideMe col-lg-10" id="divInfo">
+		<table id="tableInfo">
+			<tr>
+				<td>
+				   <table>
+					<tr>
+						<th>Tip:</th>
+						<td class="td" id="tipTD"></td>
+					</tr>
+					<tr>
+						<th>Adresa:</th>
+						<td class="td" id="adrTD"></td>
+					</tr>
+					<tr>
+						<th>Grad:</th>
+						<td class="td" id="gradTD"></td>
+					</tr>
+					<tr>
+						<th>Telefon:</th>
+						<td class="td" id="telTD"></td>
+					</tr>
+					<tr>
+						<th>E-mail:</th>
+						<td class="td" id="emailTD"></td>
+					</tr>
+					<tr>
+						<th>Radno vreme:</th>
+						<td class="td" id="radnoVremeTD"></td>
+					</tr>
+				</table>
+				</td>
+				<td>&nbsp;</td>
+				<td style="border:solid">
+					<img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>
+				</td>
+			</tr>
+		</table>
+		<div class="col-md-6" style="padding: 10px">
+			<div id="dajmapumesto" style="height: 185px;"></div>
+		</div>
+	</div>
+
+	
+	</div>
 	<script>
 function friends(){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -308,6 +384,8 @@ function friends(){
 }
 
 function dajPrijateljeTrazi(){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -341,7 +419,8 @@ function dajPrijateljeTrazi(){
 }
 
 function dodajPrijatelja(email,broj){
-	
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var JAemail = delovi[1];
@@ -361,6 +440,8 @@ function dodajPrijatelja(email,broj){
 }
 
 function notifikacija(){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -391,6 +472,8 @@ function notifikacija(){
 }
 
 function odbaciPrijatelja(emailKogPrijatelja){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -409,6 +492,8 @@ function odbaciPrijatelja(emailKogPrijatelja){
 }
 
 function  prihvatiPrijatelja(email) {
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var mojEmail = delovi[1];
@@ -427,6 +512,8 @@ function  prihvatiPrijatelja(email) {
 }
 
 function ukloniPrijatelja(email,broj){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	
 	var x = document.cookie;
 	var delovi = x.split("=");
@@ -447,6 +534,8 @@ function ukloniPrijatelja(email,broj){
 }
 
 function pocetnaFrends(){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 var x = document.cookie;
 var delovi = x.split("=");
 var email = delovi[1];
@@ -477,6 +566,8 @@ $.ajax({
 }
 
 function sortPoImenu(){
+	document.getElementById('restoranProfil').style.display = 'none';
+	document.getElementById('glavniDiv').style.display = 'block';
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -506,6 +597,8 @@ function sortPoImenu(){
 	}
 	
 	function sortPoPrezimenu(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -535,6 +628,8 @@ function sortPoImenu(){
 	}
 
 	function sviRestorani(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var cars = new Array();
 		var imaga = false;
 		$.ajax({ 
@@ -552,7 +647,7 @@ function sortPoImenu(){
 		    				
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a onclick="dajStranicuRestorana(\''+data[i].id+'\')" href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			
 		        				if(cars.length < 1){
 			    					cars.push(String(data[0].tip));
@@ -588,7 +683,76 @@ function sortPoImenu(){
 		});
 	}
 	
+	function dajStranicuRestorana(idRestorana){
+		document.getElementById('restoranProfil').style.display = 'block';
+		document.getElementById('glavniDiv').style.display = 'none';
+		
+		$.ajax({	     
+			type: 'GET',
+			url: 'restoran/dajRestoranSaId', 
+			dataType: 'JSON',
+	        data: {id : idRestorana},
+	        success: function(data){
+	 			console.log(data);
+	 			if(data != null){
+	 				upisiPodatke(data);
+	 				$("#logo").text(data.naziv);
+	 				$("#opis").text(data.opis);
+	 				$("#adrTD").html(data.adresa);
+	 				$("#gradTD").html(data.grad);
+	 				$("#telTD").html(data.telefon);
+	 				$("#emailTD").html(data.email);
+	 				$("#tipTD").html(data.tip);
+	 				$("#radnoVremeTD").text(data.vremeOD + ' -- ' + data.vremeDO);
+	 				var putanjaSlike = "../../../slike/restorani/"+data.slika;
+	 				$("#slikaRestImg").attr("src", putanjaSlike);
+	 				setMap(data.adresa + ', ' + data.grad + ', Srbija');
+	 				//restoran = data;
+	 			}
+	        }
+		});
+	}
+	
+	function upisiPodatke(data) {
+		$("#nazivRestorana").text(data.naziv);
+		$("#nazivRest").val(data.naziv);
+		$("#opisRest").val(data.opis);
+		$("#telRest").val(data.telefon);
+		$("#emailRest").val(data.email);
+		$("#adrRest").val(data.adresa);
+		$("#gradRest").val(data.grad);
+		$("#tipRest").val(data.tip);
+		$("#vremeODRest").val(data.vremeOD);
+		$("#vremeDORest").val(data.vremeDO);
+		$("#idRestorana").text(data.id);
+		$("#valutaRestorana").text(data.valuta);
+	}
+	
+	function setMap(address){
+		var geocoder = new google.maps.Geocoder();
+
+		geocoder.geocode({'address': address}, function(results,status){
+		
+		if (status == google.maps.GeocoderStatus.OK){
+			var location = results[0].geometry.location;
+			var map_options = {
+					center :  location,
+					zoom : 14
+			}
+			
+			var addressMap = new google.maps.Map(document.getElementById('dajmapumesto'),map_options);
+			
+			var marker = new google.maps.Marker({
+				position: location,
+				map: addressMap
+			})
+		}
+	});
+	}
+	
 	function sortPoImenuRestorane(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		$.ajax({ 
 		    type: 'GET',
 		    url: 'restoran/sortirajrestoranepoimenu',
@@ -614,6 +778,8 @@ function sortPoImenu(){
 	}
 	
 	function dajRestoraneTrazi(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var r = document.getElementsByName('staTrazimR');
 		var naziv = r[0].value;
 		
@@ -646,6 +812,8 @@ function sortPoImenu(){
 	}
 	
 	function traziPoVrsti(){
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		var i = document.getElementById('vrstaRestorana');
 		var selektovanog = i.options[i.selectedIndex].value;
 		
@@ -682,7 +850,8 @@ function sortPoImenu(){
 	
 	function sortPoUdaljenosti(){
 		
-			
+		document.getElementById('restoranProfil').style.display = 'none';
+		document.getElementById('glavniDiv').style.display = 'block';
 		
 		
 			$.ajax({ 

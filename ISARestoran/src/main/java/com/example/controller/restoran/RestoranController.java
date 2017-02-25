@@ -79,7 +79,6 @@ public class RestoranController {
 	private static final String jela_folder = "\\slike\\jela\\";
 	private static final String pica_folder = "\\slike\\pica\\";
 	private static int photo_num_restorani, photo_num_pica, photo_num_jela = 1;
-	private static String API_KEY = "AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14";
 	final Geocoder geocoder = new Geocoder();
 
 	// odmah posle dependency-injectiona se izvrsava
@@ -590,5 +589,11 @@ public class RestoranController {
 	    }
 
 	    return result;
+	}
+	
+	@RequestMapping(value = "/dajRestoranSaId", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String dobaviRestoranID(@RequestParam("id") int idRestorana) throws JsonProcessingException {
+		
+		return objectMapper.writeValueAsString(restoranService.findById(idRestorana));
 	}
 }
