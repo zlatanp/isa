@@ -11,6 +11,7 @@
 <script src="html/js/bootstrap.min.js"></script>
 
 
+<script src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
 
 <meta charset="ISO-8859-1">
 
@@ -531,7 +532,7 @@ function sortPoImenu(){
 		    dataType: 'json',
 			 success: function(data){
 		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><p>Traži po vrsti: <select onchange="traziPoVrsti()" id="vrstaRestorana"></select></p><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><p>Traži po vrsti: <select onchange="traziPoVrsti()" id="vrstaRestorana"></select></p><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><a onclick="sortPoUdaljenosti()" href="#" >Sortiraj udaljenosti &nbsp;</a><br><br><table  id="skrolable"></table></div>');
 		    			$('#desniDiv').show();
 		    			if(data.length>0){
 		    				$('#glavniDiv').show();
@@ -565,7 +566,7 @@ function sortPoImenu(){
 		    			$('#vrstaRestorana').append($("<option></option>").attr("value","izaberi").text("Izaberi tip za selekciju po vrsti"));
 		    			for(var p=0;p<cars.length;p++){
        					 $('#vrstaRestorana').append($("<option></option>").attr("value",cars[p]).text(cars[p])); 
-       					 console.log(cars[p]);
+       					
        				}
 			 }
 		});
@@ -661,6 +662,118 @@ function sortPoImenu(){
 			   });
 	}
 	}
+	
+	function sortPoUdaljenosti(){
+		var ipadresa;
+		var grad;
+		var mojLatitude;
+		var mojLongitude;
+		var tvojLat;
+		var tvojLon;
+		var udaljeniSmo;
+		var rec = new google.maps.Geocoder();
+		var geocoder = new google.maps.Geocoder();
+		var araj = new Array();
+		
+			$.getJSON('//api.ipify.org?format=jsonp&callback=?', function(data) {
+			  	ipadresa = data.ip;
+				
+				$.getJSON('//freegeoip.net/json/'+ipadresa, function(data) {
+					grad = data.city;
+					
+					
+					geocoder.geocode( { 'address': grad}, function(results, status) {
+
+						if (status == google.maps.GeocoderStatus.OK) {
+							mojLatitude = results[0].geometry.location.lat();
+							mojLongitude = results[0].geometry.location.lng();
+						    }
+						
+						$.ajax({ 
+						    type: 'GET',
+						    url: 'restoran/dobaviRestorane',
+						    dataType: 'json',
+							 success: function(data){
+						    			if(data.length>0){
+						        			for(var i=0;i<data.length;i++){
+						        				
+						        					
+						        					rec.geocode( { 'address': data[i].grad}, function(results, status) {
+						        					
+														if (status == google.maps.GeocoderStatus.OK) {
+															tvojLat = results[0].geometry.location.lat();
+															tvojLon = results[0].geometry.location.lng();
+															
+															udaljeniSmo = calculateDistance(mojLatitude, mojLongitude, tvojLat, tvojLon);
+															araj.push(udaljeniSmo);
+														}	
+														
+						        					});
+						        					
+						        					
+						        			}
+						        			setTimeout(ajdalje(araj), 2000);
+						        			
+						    			
+				       				}
+							 			}
+						});
+						
+						}); 
+				});
+			});
+
+			
+	}
+	
+	function ajdalje(araj){
+		var objekat = new Object();
+		$.ajax({ 
+		    type: 'GET',
+		    url: 'restoran/dobaviRestorane',
+		    dataType: 'json',
+			 success: function(data){
+		    			console.log(data);
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><p>Traži po vrsti: <select onchange="traziPoVrsti()" id="vrstaRestorana"></select></p><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><a onclick="sortPoUdaljenosti()" href="#" >Sortiraj udaljenosti &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').show();
+		    			if(data.length>0){
+		    				$('#glavniDiv').show();
+		    				$('#leviDiv').hide();
+		    				
+		    				document.getElementById("helloHeder").innerHTML = "";
+		        			for(var i=0;i<data.length;i++){
+		        				
+		        				alert(data[i]);
+		        				alert(araj[i]);
+		        				objekat.data[i] = araj[i];
+		        				
+		        			}	
+		        			}else{
+		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
+		                		
+		        			}
+		    			
+       				}
+			 
+		});
+	}
+		
+			
+	function calculateDistance(posALat, posALon, posBLat, posBLon) {
+		var earthRadius = 6371;
+				
+			
+		var lat = posBLat-posALat; // Difference of latitude
+		var lon = posBLon-posALon; // Difference of longitude
+
+		var disLat = (lat*Math.PI*earthRadius)/180; // Vertical distance
+		var disLon = (lon*Math.PI*earthRadius)/180; // Horizontal distance
+
+		var ret = Math.pow(disLat, 2) + Math.pow(disLon, 2); 
+		ret = Math.sqrt(ret); // Total distance (calculated by Pythagore: a^2 + b^2 = c^2)
+
+		return ret;	    
+			} 
 </script>
 </body>
 </html>
