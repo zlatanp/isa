@@ -18,6 +18,10 @@
 <title>Restoran početna</title>
 
 <script>
+var ipadresa;
+var grad;
+
+
 	function onload(){
 		var x = document.cookie;
 		var delovi = x.split("=");
@@ -41,6 +45,13 @@
 	            		}
 	     	});
 	     }
+		
+		
+		$.getJSON('//api.ipify.org?format=jsonp&callback=?', function(data) {ipadresa = data.ip;
+		$.getJSON('//freegeoip.net/json/'+ipadresa, function(data) {grad = data.city;});
+		});
+			
+		
 		
 	}
 </script>
@@ -580,7 +591,7 @@ function sortPoImenu(){
 			 success: function(data){
 				 $('#skrolable').html('');
 		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><table  id="skrolable"></table></div>');
+		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><table  id="skrolable"></table></div>');
 		    			$('#desniDiv').show();
 		    			if(data.length>0){
 		    				$('#glavniDiv').show();
@@ -662,118 +673,41 @@ function sortPoImenu(){
 			   });
 	}
 	}
+
 	
 	function sortPoUdaljenosti(){
-		var ipadresa;
-		var grad;
-		var mojLatitude;
-		var mojLongitude;
-		var tvojLat;
-		var tvojLon;
-		var udaljeniSmo;
-		var rec = new google.maps.Geocoder();
-		var geocoder = new google.maps.Geocoder();
-		var araj = new Array();
 		
-			$.getJSON('//api.ipify.org?format=jsonp&callback=?', function(data) {
-			  	ipadresa = data.ip;
-				
-				$.getJSON('//freegeoip.net/json/'+ipadresa, function(data) {
-					grad = data.city;
-					
-					
-					geocoder.geocode( { 'address': grad}, function(results, status) {
-
-						if (status == google.maps.GeocoderStatus.OK) {
-							mojLatitude = results[0].geometry.location.lat();
-							mojLongitude = results[0].geometry.location.lng();
-						    }
-						
-						$.ajax({ 
-						    type: 'GET',
-						    url: 'restoran/dobaviRestorane',
-						    dataType: 'json',
-							 success: function(data){
-						    			if(data.length>0){
-						        			for(var i=0;i<data.length;i++){
-						        				
-						        					
-						        					rec.geocode( { 'address': data[i].grad}, function(results, status) {
-						        					
-														if (status == google.maps.GeocoderStatus.OK) {
-															tvojLat = results[0].geometry.location.lat();
-															tvojLon = results[0].geometry.location.lng();
-															
-															udaljeniSmo = calculateDistance(mojLatitude, mojLongitude, tvojLat, tvojLon);
-															araj.push(udaljeniSmo);
-														}	
-														
-						        					});
-						        					
-						        					
-						        			}
-						        			setTimeout(ajdalje(araj), 2000);
-						        			
-						    			
-				       				}
-							 			}
-						});
-						
-						}); 
-				});
+			
+		
+		
+			$.ajax({ 
+			    type: 'GET',
+			    url: 'restoran/sortPoUdaljenosti',
+			    dataType: 'json',
+			    data: {grad : grad},
+				 success: function(data){
+					 console.log(data);
+					 $('#skrolable').html('');
+			    			console.log(data);
+			    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><table  id="skrolable"></table></div>');
+			    			$('#desniDiv').show();
+			    			if(data.length>0){
+			    				$('#glavniDiv').show();
+			    				$('#leviDiv').hide();
+			    				document.getElementById("helloHeder").innerHTML = "";
+			        			for(var i=0;i<data.length;i++){
+			        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+			        			}	
+			        			}else{
+			        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
+			                		
+			        			}
+				 }
 			});
-
-			
-	}
+		}
 	
-	function ajdalje(araj){
-		var objekat = new Object();
-		$.ajax({ 
-		    type: 'GET',
-		    url: 'restoran/dobaviRestorane',
-		    dataType: 'json',
-			 success: function(data){
-		    			console.log(data);
-		    			$('#desniDiv').html('<h3><i>Svi restorani</i></h3><br><div><input name="staTrazimR" type="text" placeholder="Traži restoran"><input type="button" onclick="return dajRestoraneTrazi()" value="Traži"><br><br><p>Traži po vrsti: <select onchange="traziPoVrsti()" id="vrstaRestorana"></select></p><a onclick="sortPoImenuRestorane()" href="#" >Sortiraj po imenu &nbsp;</a><br><br><a onclick="sortPoUdaljenosti()" href="#" >Sortiraj udaljenosti &nbsp;</a><br><br><table  id="skrolable"></table></div>');
-		    			$('#desniDiv').show();
-		    			if(data.length>0){
-		    				$('#glavniDiv').show();
-		    				$('#leviDiv').hide();
-		    				
-		    				document.getElementById("helloHeder").innerHTML = "";
-		        			for(var i=0;i<data.length;i++){
-		        				
-		        				alert(data[i]);
-		        				alert(araj[i]);
-		        				objekat.data[i] = araj[i];
-		        				
-		        			}	
-		        			}else{
-		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
-		                		
-		        			}
-		    			
-       				}
-			 
-		});
-	}
-		
 			
-	function calculateDistance(posALat, posALon, posBLat, posBLon) {
-		var earthRadius = 6371;
-				
-			
-		var lat = posBLat-posALat; // Difference of latitude
-		var lon = posBLon-posALon; // Difference of longitude
-
-		var disLat = (lat*Math.PI*earthRadius)/180; // Vertical distance
-		var disLon = (lon*Math.PI*earthRadius)/180; // Horizontal distance
-
-		var ret = Math.pow(disLat, 2) + Math.pow(disLon, 2); 
-		ret = Math.sqrt(ret); // Total distance (calculated by Pythagore: a^2 + b^2 = c^2)
-
-		return ret;	    
-			} 
+	
 </script>
 </body>
 </html>

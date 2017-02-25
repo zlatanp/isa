@@ -4,9 +4,17 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -22,15 +30,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.beans.korisnici.Korisnik;
-import com.example.beans.korisnici.Prijateljstvo;
-import com.example.beans.restoran.Restoran;
 import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.JeloDTO;
 import com.example.dto.restoran.RestoranDTO;
-import com.example.enums.FriendshipStatus;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
@@ -41,6 +45,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.code.geocoder.Geocoder;
+import com.google.code.geocoder.GeocoderRequestBuilder;
+import com.google.code.geocoder.model.GeocodeResponse;
+import com.google.code.geocoder.model.GeocoderGeometry;
+import com.google.code.geocoder.model.GeocoderRequest;
+import com.google.code.geocoder.model.GeocoderResult;
 
 @RestController
 @RequestMapping("/restoran")
@@ -64,6 +74,8 @@ public class RestoranController {
 	private static final String jela_folder = "\\slike\\jela\\";
 	private static final String pica_folder = "\\slike\\pica\\";
 	private static int photo_num_restorani, photo_num_pica, photo_num_jela = 1;
+	private static String API_KEY = "AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14";
+	final Geocoder geocoder = new Geocoder();
 
 	// odmah posle dependency-injectiona se izvrsava
 	// za mogucnost uploada fajla
@@ -333,6 +345,101 @@ public class RestoranController {
 			return restoranizaVratiti;
 		}
 
+	}
+
+	@RequestMapping(value = "/sortPoUdaljenosti", method = {
+			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized ArrayList<RestoranDTO> sortPoUdaljenosti(@RequestParam("grad") String grad) {
+		List<RestoranDTO> r = restoranService.findAll();
+		ArrayList<RestoranDTO> restoranizaVratiti = new ArrayList<RestoranDTO>();
+
+		ArrayList<Double> koordinateMoje = new ArrayList<Double>();
+		ArrayList<Double> koordinateRestorana = new ArrayList<Double>();
+		Map<RestoranDTO, Double> mapaSaRastojanjima = new HashMap<RestoranDTO, Double>();
+		
+		Map<RestoranDTO, Double> result = new LinkedHashMap<>();
+		
+		if (grad.isEmpty()) {
+
+			return restoranizaVratiti;
+		} else {
+			koordinateMoje = koordinate(grad);
+
+			for (RestoranDTO item : r) {
+				String restoranGrad = item.getGrad();
+				koordinateRestorana = koordinate(restoranGrad);
+				double rastojanje = calculateDistance(koordinateRestorana.get(0), koordinateRestorana.get(1),
+						koordinateMoje.get(0), koordinateMoje.get(1));
+				mapaSaRastojanjima.put(item, rastojanje);
+			}
+
+			if (mapaSaRastojanjima.size() > 0) {
+
+				result = sortByValue(mapaSaRastojanjima);
+				
+			}
+			
+			for(RestoranDTO rr : result.keySet()){
+				restoranizaVratiti.add(rr);
+			}
+
+			return restoranizaVratiti;
+		}
+
+	}
+
+	private ArrayList<Double> koordinate(String grad) {
+		ArrayList<Double> lista = new ArrayList<Double>();
+		if (grad != null) {
+			GeocoderRequest geocoderRequest = new GeocoderRequestBuilder().setAddress(grad.toString()).setLanguage("en").getGeocoderRequest();
+			GeocodeResponse geocoderResponse = geocoder.geocode(geocoderRequest);
+			List<GeocoderResult> someList = geocoderResponse.getResults();
+			GeocoderResult data = someList.get(0);
+			GeocoderGeometry data_2 = data.getGeometry();
+			BigDecimal Latitude = data_2.getLocation().getLat();
+			BigDecimal Longitude = data_2.getLocation().getLng();
+
+			lista.add(Latitude.doubleValue());
+			lista.add(Longitude.doubleValue());
+
+		}
+		return lista;
+	}
+
+	private double calculateDistance(double posALat, double posALon, double posBLat, double posBLon) {
+		int earthRadius = 6371;
+		
+		double lat = posBLat - posALat; // Difference of latitude
+		double lon = posBLon - posALon; // Difference of longitude
+
+		double disLat = (lat * Math.PI * earthRadius) / 180; // Vertical
+																// distance
+		double disLon = (lon * Math.PI * earthRadius) / 180; // Horizontal
+																// distance
+
+		double ret = Math.pow(disLat, 2) + Math.pow(disLon, 2);
+		ret = Math.sqrt(ret); // Total distance (calculated by Pythagore: a^2 +
+								// b^2 = c^2)
+
+		return ret;
+	}
+	
+	private static <K, V> Map<RestoranDTO, Double> sortByValue(Map<RestoranDTO, Double> map) {
+	    List<Entry<RestoranDTO, Double>> list = new LinkedList<>(map.entrySet());
+	    Collections.sort(list, new Comparator<Object>() {
+	        @SuppressWarnings("unchecked")
+	        public int compare(Object o1, Object o2) {
+	            return ((Comparable<Double>) ((Map.Entry<RestoranDTO, Double>) (o1)).getValue()).compareTo(((Map.Entry<RestoranDTO, Double>) (o2)).getValue());
+	        }
+	    });
+
+	    Map<RestoranDTO, Double> result = new LinkedHashMap<>();
+	    for (Iterator<Entry<RestoranDTO, Double>> it = list.iterator(); it.hasNext();) {
+	        Map.Entry<RestoranDTO, Double> entry = (Map.Entry<RestoranDTO, Double>) it.next();
+	        result.put(entry.getKey(), entry.getValue());
+	    }
+
+	    return result;
 	}
 
 }
