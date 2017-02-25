@@ -289,9 +289,10 @@ public class KorisnikController {
 	}
 	
 	@RequestMapping(value="/registerAdmin", method= RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin){
+	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin) throws IOException{
 		boolean ovakavPostoji = false;
 		Iterable<Korisnik> sviKorisnici = korisnikService.getAllKorisnici();
+		
 		for(Korisnik k : sviKorisnici){
 			if(k.getEmail().equals(admin.getEmail())){
 				ovakavPostoji = true;
@@ -299,7 +300,20 @@ public class KorisnikController {
 		}		
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, admin);
+			
+			
 			menadzerSistemaService.create(admin);
+			
+//			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+//			for(Korisnik kor : sviKorisnici2){
+//				if(kor.getEmail().equals(admin.getEmail())){
+//					File fi = new File("src/main/resources/static/html/profilePic.jpg");
+//					byte[] fileContent = Files.readAllBytes(fi.toPath());
+//					kor.setSlika(fileContent);
+//					korisnikService.saveKorisnik(kor);
+//					break;
+//				}
+//			}	
 			return true;
 		}else {
 			return false;
@@ -307,7 +321,7 @@ public class KorisnikController {
 	}
 	
 	@RequestMapping(value="/registerMenadzer", method= RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer){
+	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer) throws IOException{
 		KorisnikDTO k = korisnikService.findByEmail(menadzer.email);
 		boolean ovakavPostoji = false;
 		if(k != null){
@@ -315,6 +329,10 @@ public class KorisnikController {
 		}
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
+			File fi = new File("src/main/resources/static/html/menadzer.jpg");
+			byte[] fileContent = Files.readAllBytes(fi.toPath());
+			
+			menadzer.setSlika(fileContent);
 			menadzerService.create(menadzer);
 			RestoranDTO restoran = restoranService.findById(menadzer.radi_u);
 			restoran.getMenadzeri().add(menadzer);
