@@ -78,14 +78,15 @@ public class PiceService {
 			return null;
 		
 		for(Pice p : pica){
-			if(p.getRestoran() == r){
+			if(p.getRestoran() == r && !p.isObrisano()){
 				if(s1.equals("")){
 					if(p.getNaziv().toLowerCase().contains(s1.toLowerCase())){
-						filter.add(new PiceDTO(p, null));
+							filter.add(new PiceDTO(p, null));
+						
 					}
 				}else {
 					if(p.getNaziv().toLowerCase().contains(s1.toLowerCase()) || p.getNaziv().toLowerCase().contains(s2.toLowerCase()) ){
-						filter.add(new PiceDTO(p, null));
+							filter.add(new PiceDTO(p, null));
 					}
 				}
 			}

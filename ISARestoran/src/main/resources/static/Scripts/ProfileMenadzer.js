@@ -199,17 +199,17 @@ function validateField(field) {
 	}
 }
 
-$(document).on("click", "#jelaHref", function(e){
+$(document).on("click", "#jeloHref", function(e){
 	e.preventDefault();
 	window.location.replace("jelovnik.html?" + restoran.id);
 });
 
-$(document).on("click", "#picaHref", function(e){
+$(document).on("click", "#piceHref", function(e){
 	e.preventDefault();
 	window.location.replace("kartaPica.html?" + restoran.id);
 });
 
-$(document).on("click", "#picaHref", function(e){
+$(document).on("click", "#sedenjeHref", function(e){
 	e.preventDefault();
 	window.location.replace("sedenje.html?" + restoran.id);
 });

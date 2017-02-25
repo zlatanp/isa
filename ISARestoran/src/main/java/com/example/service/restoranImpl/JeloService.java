@@ -82,7 +82,7 @@ public class JeloService {
 		
 		
 		for(Jelo jelo : svaJela){
-			if(jelo.getRestoran() == r){
+			if(jelo.getRestoran() == r && !jelo.isObrisano()){
 				if(v2.equals("")){
 					if(jelo.getNaziv().toLowerCase().contains(v1.toLowerCase())){
 						filter.add(new JeloDTO(jelo, null));
