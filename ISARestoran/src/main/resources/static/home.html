@@ -549,9 +549,10 @@ function sortPoImenu(){
 		    				$('#glavniDiv').show();
 		    				$('#leviDiv').hide();
 		    				
+		    				
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			
 		        				if(cars.length < 1){
 			    					cars.push(String(data[0].tip));
@@ -569,7 +570,11 @@ function sortPoImenu(){
 		        							cars.push(String(data[i].tip));
 		        						}
 			    				}
+		        				console.log(data[i].slika);
+		        				var putanjaSlike = "../../../slike/restorani/"+data[i].slika;
+			    				$("#slikaRestImg").attr("src", putanjaSlike);
 		        			}	
+		        			
 		        			}else{
 		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 		                		
@@ -598,7 +603,7 @@ function sortPoImenu(){
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			}	
 		        			}else{
 		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
@@ -629,8 +634,8 @@ function sortPoImenu(){
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
-		        			}	
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        			}
 		        			}else{
 		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 		                		
@@ -662,8 +667,8 @@ function sortPoImenu(){
 			    				document.getElementById("helloHeder").innerHTML = "";
 			        			for(var i=0;i<data.length;i++){
 			        				if(String(data[i].tip) === selektovanog)
-			        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
-			        			}
+			        					$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+				        			}
 			        		}else{
 			        			$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
 			                		
@@ -696,7 +701,7 @@ function sortPoImenu(){
 			    				$('#leviDiv').hide();
 			    				document.getElementById("helloHeder").innerHTML = "";
 			        			for(var i=0;i<data.length;i++){
-			        				$('#skrolable').append('<tr><td><h3>'+data[i].naziv+'</h3><h6>'+ data[i].opis+'</h6></td><td><input type="button" id='+i+' onclick="return ukloniPrijatelja(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+			        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 			        			}	
 			        			}else{
 			        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
