@@ -58,6 +58,9 @@ public class Restoran implements Serializable {
 	@Column(name = "valuta", nullable = false)
 	protected TipValute valuta;
 	
+	@Column(name="slika", nullable=true)
+	protected String slika;
+	
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY, mappedBy="radi_u")
 	protected Set<MenadzerRestorana> menadzeri;
 	
@@ -70,8 +73,6 @@ public class Restoran implements Serializable {
 	public Restoran() {
 	}
 	
-	
-
 
 	public Restoran(String naziv, TipRestorana restaurantType, String adresa, String grad, String opis, String telefon,
 			String email, String radnoVremeOd, String radnoVremeDo) {
@@ -216,5 +217,34 @@ public class Restoran implements Serializable {
 	public void setMenadzeri(Set<MenadzerRestorana> menadzeri) {
 		this.menadzeri = menadzeri;
 	}
-		
+
+
+	public String getSlika() {
+		return slika;
+	}
+
+
+	public void setSlika(String slika) {
+		this.slika = slika;
+	}
+
+
+	public Set<Jelo> getJelovnik() {
+		return jelovnik;
+	}
+
+
+	public void setJelovnik(Set<Jelo> jelovnik) {
+		this.jelovnik = jelovnik;
+	}
+
+
+	public Set<Pice> getKartaPica() {
+		return kartaPica;
+	}
+
+
+	public void setKartaPica(Set<Pice> kartaPica) {
+		this.kartaPica = kartaPica;
+	}	
 }

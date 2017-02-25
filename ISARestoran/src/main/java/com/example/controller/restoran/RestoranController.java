@@ -34,11 +34,13 @@ import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.JeloDTO;
+import com.example.dto.restoran.PiceDTO;
 import com.example.dto.restoran.RestoranDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
 import com.example.service.restoranImpl.JeloService;
+import com.example.service.restoranImpl.PiceService;
 import com.example.service.restoranImpl.RestoranService;
 import com.example.utilities.FileHelper;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -65,6 +67,9 @@ public class RestoranController {
 	@Autowired
 	private JeloService jeloService;
 
+	@Autowired
+	private PiceService piceService;
+	
 	@Autowired
 	private ServletContext servletContext;
 
@@ -114,12 +119,6 @@ public class RestoranController {
 		return objectMapper.writeValueAsString(lista);
 	}
 
-	@RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/JSON", consumes = "application/JSON")
-	public boolean registracijaRestorana(@RequestBody @Valid RestoranDTO restoran) {
-		restoranService.create(restoran);
-		return true;
-	}
-
 	@RequestMapping(value = "/dobaviRestorane", method = RequestMethod.GET, produces = "application/JSON")
 	public String dobaviRestorane() throws JsonProcessingException {
 		return objectMapper.writeValueAsString(restoranService.findAll());
@@ -151,21 +150,59 @@ public class RestoranController {
 		return objectMapper.writeValueAsString(jeloService.findAll(idRestorana));
 	}
 
-	@RequestMapping(value = "/getJelo", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public String getJelo(@RequestBody @Valid JeloDTO jelo) throws JsonProcessingException {
+	
+	@RequestMapping(value="/getPica/{id}", method= RequestMethod.GET, produces = "application/json")
+	public String getPica(@PathVariable("id") int idRestorana) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(piceService.findAll(idRestorana));
+	}
+	
+	@RequestMapping(value="/getJelo", method= RequestMethod.POST, consumes="application/json", produces = "application/json")
+	public String getJelo(@RequestBody @Valid JeloDTO jelo) throws JsonProcessingException{
 		return objectMapper.writeValueAsString(jeloService.findById(jelo.id));
 	}
-
-	@RequestMapping(value = "/obrisiJelo", method = RequestMethod.POST, consumes = "application/json")
-	public boolean obrisiJelo(@RequestBody @Valid JeloDTO jelo) {
+	
+	@RequestMapping(value="/getPice", method= RequestMethod.POST, consumes="application/json", produces = "application/json")
+	public String getPice(@RequestBody @Valid PiceDTO pice) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(piceService.findById(pice.id));
+	}
+	
+	@RequestMapping(value="/obrisiJelo", method = RequestMethod.POST, consumes="application/json")
+	public boolean obrisiJelo(@RequestBody @Valid JeloDTO jelo){
 		return jeloService.delete(jelo);
 	}
+	
+	@RequestMapping(value="/obrisiPice", method = RequestMethod.POST, consumes="application/json")
+	public boolean obrisiPice(@RequestBody @Valid PiceDTO pice){
+		return piceService.delete(pice);
+	}
+	
+	@RequestMapping(value="/register", method = RequestMethod.POST)
+	public boolean dodajRestoran(@RequestParam(value="uploadfile", required=false) MultipartFile uploadfile, @RequestParam(value="restoran") String restoranJSON) throws JsonParseException, JsonMappingException, IOException{
+		RestoranDTO r = objectMapper.readValue(restoranJSON, RestoranDTO.class);
+		RestoranDTO zaBazu = restoranService.create(r);
+		if(zaBazu == null){
+			System.out.println("ovde 1");
+			return false;
+		}
+		if(!r.slika.equals("")){
+			if(!(sacuvajSlikuRestoran(zaBazu.id, uploadfile).equals(""))){ 
+				System.out.println("ovde 2");
+				return true;
+			}else {		
+				System.out.println("ovde 3");
+				return false;
+			}
+		}
+		return true;		
+	}
+
 
 	@RequestMapping(value = "/dodajJelo/{email}", method = RequestMethod.POST)
 	public boolean dodajJelo(@PathVariable("email") String managerEmail,
 			@RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
 			@RequestParam(value = "jelo") String jeloJSON)
 			throws JsonParseException, JsonMappingException, IOException {
+
 		String realEmail = managerEmail + ".com";
 		KorisnikDTO k = korisnikService.findByEmail(realEmail);
 		if (k.tip != TipKorisnika.MENADZERRESTORANA || k == null) {
@@ -189,6 +226,30 @@ public class RestoranController {
 		return true;
 	}
 
+	
+	@RequestMapping(value="/dodajPice/{email}", method = RequestMethod.POST)
+	public boolean dodajPice(@PathVariable("email") String emailManager, @RequestParam(value="uploadfile", required=false) MultipartFile uploadFile, @RequestParam(value="pice") String piceJSON) throws JsonParseException, JsonMappingException, IOException{
+		String realEmail = emailManager + ".com";
+		KorisnikDTO k = korisnikService.findByEmail(realEmail);
+		if(k.tip != TipKorisnika.MENADZERRESTORANA || k == null){
+			return false;
+		}
+		PiceDTO pice = objectMapper.readValue(piceJSON, PiceDTO.class);
+		PiceDTO zaBazu = piceService.create(pice, realEmail);
+		if(zaBazu == null){
+			return false;
+		}			
+		if(!pice.slika.equals("")){
+			if(!(sacuvajSlikuPica(zaBazu.id, uploadFile).equals(""))){ // ako je uspesno sacuvao sliku
+				return true;
+			}else {				
+				return false;
+			}
+		}
+		return true;
+	}
+	
+
 	@RequestMapping(value = "/izmeniJelo", method = RequestMethod.POST)
 	public boolean izmeniJelo(@RequestParam(value = "uploadfile", required = false) MultipartFile uploadfile,
 			@RequestParam(value = "jelo") String jeloJSON)
@@ -204,6 +265,23 @@ public class RestoranController {
 		}
 		return true;
 	}
+
+	
+	@RequestMapping(value="/izmeniPice", method = RequestMethod.POST)
+	public boolean izmeniPice(@RequestParam(value="uploadfile", required= false) MultipartFile uploadFIle, @RequestParam(value="pice") String piceJSON) throws JsonParseException, JsonMappingException, IOException{
+		PiceDTO pice = objectMapper.readValue(piceJSON, PiceDTO.class);
+		PiceDTO zaBazu = piceService.update(pice);			
+		if(!pice.slika.equals("")){
+			if(!(sacuvajSlikuPica(zaBazu.id, uploadFIle).equals(""))){
+				return true;
+			}else {				
+				return false;
+			}
+		}
+		return true;
+	}
+	
+
 
 	public String sacuvajSliku(int id, MultipartFile uploadSlika) {
 		JeloDTO jelo = jeloService.findById(id);
@@ -228,7 +306,56 @@ public class RestoranController {
 			return "";
 		}
 	}
-
+	
+	public String sacuvajSlikuPica(int id, MultipartFile uploadSlika){
+		PiceDTO pice = piceService.findById(id);
+		if(pice == null){
+			return ""; // vrati prazno ako ga nisi nasao
+		}
+		try {
+			byte[] bytes = uploadSlika.getBytes();
+			String extenzija = uploadSlika.getOriginalFilename().split("\\.")[1];
+			String ime = pica_folder + photo_num_pica + "." + extenzija;
+			String saPutanjom = servletContext.getRealPath("") + ime;
+			File file = new File(saPutanjom);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+            stream.write(bytes);
+            stream.close();
+            String ret = photo_num_pica + "." + extenzija;
+            piceService.namestiSliku(id, ret);
+            photo_num_pica++;
+            return objectMapper.writeValueAsString(ret);		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	public String sacuvajSlikuRestoran(int id, MultipartFile uploadSlika){
+		RestoranDTO restoran = restoranService.findById(id);
+		if(restoran == null){
+			return "";
+		}
+		try {
+			byte[] bytes = uploadSlika.getBytes();
+			String extenzija = uploadSlika.getOriginalFilename().split("\\.")[1];
+			String ime = restorani_folder + photo_num_restorani + "." + extenzija;
+			String saPutanjom = servletContext.getRealPath("") + ime;
+			File file = new File(saPutanjom);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+            stream.write(bytes);
+            stream.close();
+            String ret = photo_num_restorani + "." + extenzija;
+            restoranService.namestiSliku(id, ret);
+            photo_num_restorani++;
+            return objectMapper.writeValueAsString(ret);		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	
 	@RequestMapping(value = "/traziJelo/{id}", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public String traziJelo(@RequestBody @Valid CompareStringsDTO zaTrazenje, @PathVariable("id") int idRestorana)
 			throws JsonProcessingException {
@@ -247,6 +374,28 @@ public class RestoranController {
 			String druga = delovi[1];
 			jela = jeloService.findByParameters(prva, druga, idRestorana);
 			retVal = objectMapper.writeValueAsString(jela);
+		}
+		return retVal;
+	}
+
+	
+	@RequestMapping(value="/traziPice/{id}", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public String traziPice(@RequestBody @Valid CompareStringsDTO zaTrazenje, @PathVariable("id") int idRestorana) throws JsonProcessingException{
+		String[] delovi = zaTrazenje.getVal1().split(" ");
+		String retVal = "";
+		List<PiceDTO> pica = new ArrayList<PiceDTO>();	
+		if(delovi.length == 0){
+			retVal = "";
+		}else if(delovi.length == 1){
+			String prva = delovi[0];
+			String druga = "";
+			pica = piceService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(pica);
+		}else if(delovi.length == 2){
+			String prva = delovi[0];
+			String druga = delovi[1];
+			pica = piceService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(pica);
 		}
 		return retVal;
 	}
@@ -347,6 +496,7 @@ public class RestoranController {
 
 	}
 
+
 	@RequestMapping(value = "/sortPoUdaljenosti", method = {
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized ArrayList<RestoranDTO> sortPoUdaljenosti(@RequestParam("grad") String grad) {
@@ -441,5 +591,4 @@ public class RestoranController {
 
 	    return result;
 	}
-
 }

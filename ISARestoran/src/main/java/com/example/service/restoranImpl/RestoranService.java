@@ -20,11 +20,21 @@ public class RestoranService {
 	@Autowired
 	RestoranRepository restoranRepostitory;
 	
+	
+	private static final String default_restoran_path = "restoran.jpg";
+	
+	
 	public RestoranDTO create(RestoranDTO restoran){
 		Restoran restoranZaBazu = new Restoran(restoran.getNaziv(), restoran.getTip(), restoran.getAdresa(), restoran.getGrad(), 
 				restoran.getOpis(), restoran.getTelefon(), restoran.getEmail(), restoran.getVremeOD(), restoran.getVremeDO());
-		restoranRepostitory.save(restoranZaBazu);
-		return restoran;	
+		if(restoran.slika.equals(""))
+			System.out.println("slika mu je nuls");
+			restoranZaBazu.setSlika(default_restoran_path);
+		Restoran r = restoranRepostitory.save(restoranZaBazu);
+		RestoranDTO ret = new RestoranDTO(r.getId(), r.getNaziv(), r.getAdresa(), r.getGrad(), 
+				r.getTelefon(), r.getEmail(), r.getOpis(), r.getRadnoVremeDo(), r.getRadnoVremeOd(), r.getRestaurantType(), TipValute.DINAR);
+		ret.slika = r.getSlika();
+		return ret;
 	}
 	
 	public RestoranDTO findById(int id){
@@ -77,5 +87,13 @@ public class RestoranService {
 			}
 		}
 		return false;
+	}
+	
+	public void namestiSliku(int id, String slika){
+		Restoran r = restoranRepostitory.findOne(id);
+		if(r == null)
+			return;
+		r.setSlika(slika);
+		restoranRepostitory.save(r);
 	}
 }

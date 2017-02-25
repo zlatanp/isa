@@ -21,6 +21,7 @@ public class RestoranDTO {
 	public String opis;
 	public String vremeOD;
 	public String vremeDO;
+	public String slika;
 	public TipRestorana tip;
 	public TipValute valuta;	
 	public List<MenadzerDTO> menadzeri;
@@ -55,13 +56,16 @@ public class RestoranDTO {
 		this.telefon = r.getTelefon();
 		this.email = r.getEmail();
 		this.opis = r.getOpis();
+		this.slika = r.getSlika();
 		this.vremeOD = r.getRadnoVremeOd();
 		this.vremeDO = r.getRadnoVremeDo();
 		this.tip = r.getRestaurantType();
 		this.valuta = r.getValuta();
 		this.menadzeri = new ArrayList<>();
-		for(MenadzerRestorana m : r.getMenadzeri()){
-			this.menadzeri.add(new MenadzerDTO(m));
+		if(r.getMenadzeri() != null){
+			for(MenadzerRestorana m : r.getMenadzeri()){
+				this.menadzeri.add(new MenadzerDTO(m));
+			}
 		}
 	}
 
@@ -161,4 +165,11 @@ public class RestoranDTO {
 		this.menadzeri = menadzeri;
 	}
 
+	public String getSlika() {
+		return slika;
+	}
+
+	public void setSlika(String slika) {
+		this.slika = slika;
+	}
 }

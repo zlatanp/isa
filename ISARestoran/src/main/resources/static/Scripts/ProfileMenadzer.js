@@ -72,7 +72,9 @@ $(document).ready(function(){
  				$("#telTD").html(data.telefon);
  				$("#emailTD").html(data.email);
  				$("#tipTD").html(data.tip);
- 				$('#radnoVremeTD').text(data.vremeOD + ' -- ' + data.vremeDO);
+ 				$("#radnoVremeTD").text(data.vremeOD + ' -- ' + data.vremeDO);
+ 				var putanjaSlike = "../../../slike/restorani/"+data.slika;
+ 				$("#slikaRestImg").attr("src", putanjaSlike);
  				setMap(data.adresa + ', ' + data.grad + ', Srbija');
  				restoran = data;
  			}
@@ -197,17 +199,17 @@ function validateField(field) {
 	}
 }
 
-$(document).on("click", "#jelaHref", function(e){
+$(document).on("click", "#jeloHref", function(e){
 	e.preventDefault();
 	window.location.replace("jelovnik.html?" + restoran.id);
 });
 
-$(document).on("click", "#picaHref", function(e){
+$(document).on("click", "#piceHref", function(e){
 	e.preventDefault();
 	window.location.replace("kartaPica.html?" + restoran.id);
 });
 
-$(document).on("click", "#picaHref", function(e){
+$(document).on("click", "#sedenjeHref", function(e){
 	e.preventDefault();
 	window.location.replace("sedenje.html?" + restoran.id);
 });
@@ -230,8 +232,6 @@ function setMap(address){
 			position: location,
 			map: addressMap
 		})
-		
-		
 	}
 });
 }

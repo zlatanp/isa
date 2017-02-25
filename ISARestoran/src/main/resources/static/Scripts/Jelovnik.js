@@ -51,7 +51,7 @@ function getRestoran(id){
 		url: 'restoran/restoranProfil/' + id,
 		type: 'GET',
 		dataType: 'json',
-		async: false, 				//izvrsi ovaj ajax poziv pre svega ostalog
+		async: false,
 		success: function(retVal){
 			if (retVal != "" && retVal != null){
 				$("#logo").text(retVal.naziv);
@@ -82,7 +82,6 @@ function getJela(idRestorana){
 		dataType: 'JSON',
 		success: function(retVal){
 			if(retVal == null){
-				alert("nema jela");
 				window.location.replace("notFound.html");
 				return;
 			}else {
@@ -146,12 +145,18 @@ function napraviKarticuZaJelo(jelo){
 							valuta + ' ' + jelo.cena +
 						'</h4>'+
 						'<br>'+ '<br>'+ 
-						'<h4 class="pull-right" style="text-align:left;"><a id="obrisime' + jelo.id + '" class="ObrisiDijalogOpen" href="#"><i class="glyphicon glyphicon-trash"></i></a></h4>'+
+						'<h4 class="pull-right" style="text-align:left;"><a id="obrisime' + jelo.id + '" onclick="kantaPritisnuto(\''+jelo.id+'\')" href="#"><i class="glyphicon glyphicon-trash"></i></a></h4>'+
 					'</div>' +
 				'</div>'+
 			'</div>';
 	
 	return html;		
+}
+
+
+function kantaPritisnuto(id){
+	$("#obrisiJeloModal").appendTo("body").modal("show");
+	$("#idJelaZaDelete").text(id);
 }
 
 $(document).on("click", "#btnTraziJela", function(e){
@@ -174,6 +179,21 @@ $(document).on("click", "#btnTraziJela", function(e){
 	}
 });
 
+$(document).on("click", "#jeloHref", function(e){
+	e.preventDefault();
+	window.location.replace("jelovnik.html?" + restoranID);
+});
+
+$(document).on("click", "#piceHref", function(e){
+	e.preventDefault();
+	window.location.replace("kartaPica.html?" + restoranID);
+});
+
+$(document).on("click", "#sedenjeHref", function(e){
+	e.preventDefault();
+	window.location.replace("sedenje.html?" + restoranID);
+});
+
 $(document).on("click", "#btnPrikaziJela", function(){
 	if(restoranID != null){
 		getJela(restoranID);
@@ -184,7 +204,9 @@ $(document).on("click", ".ObrisiDijalogOpen", function(e){
 	e.preventDefault();
 	$("#obrisiJeloModal").appendTo("body").modal("show");
 	var id = $(".ObrisiDijalogOpen").prop("id");
+	alert(id);
 	var idPravi = id.split("obrisime")[1];
+	alert(idPravi)
 	$("#idJelaZaDelete").text(idPravi);
 });
 
@@ -249,11 +271,8 @@ $(document).click(function(event){
 				id2.value = ret.id;
 			}
 		});
-	}
-	
+	}	
 });
-
-
 
 
 function convertScoreToStars(score){
@@ -314,13 +333,14 @@ $(document).on("click", "#btnIzmeniJelo", function(e){
 	}
 	
 	if(!isNumber(cena)){
-		toastr.error("Cena mora biti decimalan broj1!");
+		toastr.error("Cena mora biti decimalan broj!");
 		return;
 	}
 	if(parseFloat(cena)<=0){
-		toastr.error("Cena mora biti pozitivan broj2!");
+		toastr.error("Cena mora biti pozitivan broj!");
 		return;
 	}	
+	
 	jeloUpdate['id'] = id;
 	jeloUpdate['naziv'] = naziv;
 	jeloUpdate['opis'] = opis;
@@ -328,7 +348,6 @@ $(document).on("click", "#btnIzmeniJelo", function(e){
 	jeloUpdate['klasaJela'] = klasa;
 	jeloUpdate['tipJela'] = tip;
 	jeloUpdate['slika'] = slikaString;
-	alert(JSON.stringify(jeloUpdate));
 	izmeniJelo(JSON.stringify(jeloUpdate), file);
 });
 
@@ -372,7 +391,6 @@ $(document).on("click", "#btnDodajJelo", function(e){
 	novoJelo['klasaJela'] = klasa;
 	novoJelo['tipJela'] = tip;
 	novoJelo['slika'] = slikaString;
-	alert(JSON.stringify(novoJelo));
 	dodajNovoJelo(JSON.stringify(novoJelo), file);
 });
 
@@ -431,6 +449,7 @@ function dodajNovoJelo(novoJelo, file){
 				return;
 	    	}else {
 	    		toastr.success("Jelo je uspešno dodato!");
+	    		$("#modalJelo").find("form")[0].reset();
 				$("#modalJelo").modal("toggle");
 				getJela(restoranID);
 	    	}
