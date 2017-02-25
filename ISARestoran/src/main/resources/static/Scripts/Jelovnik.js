@@ -249,11 +249,8 @@ $(document).click(function(event){
 				id2.value = ret.id;
 			}
 		});
-	}
-	
+	}	
 });
-
-
 
 
 function convertScoreToStars(score){
@@ -372,7 +369,6 @@ $(document).on("click", "#btnDodajJelo", function(e){
 	novoJelo['klasaJela'] = klasa;
 	novoJelo['tipJela'] = tip;
 	novoJelo['slika'] = slikaString;
-	alert(JSON.stringify(novoJelo));
 	dodajNovoJelo(JSON.stringify(novoJelo), file);
 });
 

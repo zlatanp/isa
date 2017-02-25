@@ -72,7 +72,9 @@ $(document).ready(function(){
  				$("#telTD").html(data.telefon);
  				$("#emailTD").html(data.email);
  				$("#tipTD").html(data.tip);
- 				$('#radnoVremeTD').text(data.vremeOD + ' -- ' + data.vremeDO);
+ 				$("#radnoVremeTD").text(data.vremeOD + ' -- ' + data.vremeDO);
+ 				var putanjaSlike = "../../../slike/restorani/"+data.slika;
+ 				$("#slikaRestImg").attr("src", putanjaSlike);
  				setMap(data.adresa + ', ' + data.grad + ', Srbija');
  				restoran = data;
  			}
@@ -230,8 +232,6 @@ function setMap(address){
 			position: location,
 			map: addressMap
 		})
-		
-		
 	}
 });
 }

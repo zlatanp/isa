@@ -87,7 +87,19 @@ $(document).on("click", "#btnDodajRestoran", function(e) {
 	noviRestoran["vremeOD"] = $("#timepickerOD").val();
 	noviRestoran["vremeDO"] = $("#timepickerDO").val();
 	noviRestoran["tip"] = $("#tipRestSel").val(); // id-restorana u kojem je zaposlen
-	registerRestoran(JSON.stringify(noviRestoran));
+	var slikaString = "";
+	var slika = $("#slikaRestorana");
+	var file = null;
+	if(slika.val() != ""){
+		file = slika.get(0).files[0];
+		if (file != null && !file.type.match('image.*')){
+			toastr.warrning("Pogrešan format fajla. Morate odabrati sliku!");
+			return;
+		}
+		slikaString = "1";
+	}
+	noviRestoran["slika"] = slikaString;
+	registerRestoran(JSON.stringify(noviRestoran), file);
 });
 
 $(document).on("click", "#btnDodajAdmina", function(e) {
@@ -118,12 +130,24 @@ $(document).on("click", "#btnDodajMenadzera", function(e){
 });
 
 
-function registerRestoran(restoranJSON) {
+function registerRestoran(restoranJSON, file) {
+	var formdata = new FormData();
+	formdata.append("uploadfile", file);
+	formdata.append("restoran", restoranJSON);
 	$.ajax({
 		url : 'restoran/register',
 		type : 'POST',
 		contentType : 'application/json',
-		data : restoranJSON,
+		dataType: 'JSON',
+		data : formdata,
+		async: false,
+		xhr: function() { 
+			var myXhr = $.ajaxSettings.xhr();
+			return myXhr;
+		},
+		cache: false,
+		contentType: false,
+		processData: false,	
 		success : function(ret) {
 			console.log(ret);
 			toastr.success("Restoran je uspešno registrovan!")

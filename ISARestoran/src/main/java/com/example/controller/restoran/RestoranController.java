@@ -104,12 +104,6 @@ public class RestoranController {
 		return objectMapper.writeValueAsString(lista);
 	}
 	
-	@RequestMapping(value="/register", method = RequestMethod.POST, produces = "application/JSON", consumes="application/JSON")
-	public boolean registracijaRestorana(@RequestBody @Valid RestoranDTO restoran){
-		restoranService.create(restoran);
-		return true;
-	}
-	
 	@RequestMapping(value="/dobaviRestorane", method = RequestMethod.GET, produces="application/JSON")
 	public String dobaviRestorane() throws JsonProcessingException{
 		return objectMapper.writeValueAsString(restoranService.findAll());
@@ -165,6 +159,26 @@ public class RestoranController {
 		return piceService.delete(pice);
 	}
 	
+	@RequestMapping(value="/register", method = RequestMethod.POST)
+	public boolean dodajRestoran(@RequestParam(value="uploadfile", required=false) MultipartFile uploadfile, @RequestParam(value="restoran") String restoranJSON) throws JsonParseException, JsonMappingException, IOException{
+		RestoranDTO r = objectMapper.readValue(restoranJSON, RestoranDTO.class);
+		RestoranDTO zaBazu = restoranService.create(r);
+		if(zaBazu == null){
+			System.out.println("ovde 1");
+			return false;
+		}
+		if(!r.slika.equals("")){
+			if(!(sacuvajSlikuRestoran(zaBazu.id, uploadfile).equals(""))){ 
+				System.out.println("ovde 2");
+				return true;
+			}else {		
+				System.out.println("ovde 3");
+				return false;
+			}
+		}
+		return true;		
+	}
+	
 	@RequestMapping(value="/dodajJelo/{email}", method = RequestMethod.POST)
 	public boolean dodajJelo(@PathVariable("email") String managerEmail, @RequestParam(value="uploadfile", required=false) MultipartFile uploadfile, @RequestParam(value= "jelo") String jeloJSON) throws JsonParseException, JsonMappingException, IOException{
 		String realEmail = managerEmail + ".com";
@@ -200,7 +214,7 @@ public class RestoranController {
 			return false;
 		}			
 		if(!pice.slika.equals("")){
-			if(!(sacuvajSliku(zaBazu.id, uploadFile).equals(""))){ // ako je uspesno sacuvao sliku
+			if(!(sacuvajSlikuPica(zaBazu.id, uploadFile).equals(""))){ // ako je uspesno sacuvao sliku
 				return true;
 			}else {				
 				return false;
@@ -223,12 +237,12 @@ public class RestoranController {
 		return true;
 	}
 	
-	@RequestMapping(value="/izmeniJelo", method = RequestMethod.POST)
+	@RequestMapping(value="/izmeniPice", method = RequestMethod.POST)
 	public boolean izmeniPice(@RequestParam(value="uploadfile", required= false) MultipartFile uploadFIle, @RequestParam(value="pice") String piceJSON) throws JsonParseException, JsonMappingException, IOException{
 		PiceDTO pice = objectMapper.readValue(piceJSON, PiceDTO.class);
 		PiceDTO zaBazu = piceService.update(pice);			
 		if(!pice.slika.equals("")){
-			if(!(sacuvajSliku(zaBazu.id, uploadFIle).equals(""))){
+			if(!(sacuvajSlikuPica(zaBazu.id, uploadFIle).equals(""))){
 				return true;
 			}else {				
 				return false;
@@ -254,6 +268,54 @@ public class RestoranController {
             String ret = photo_num_jela + "." + extenzija;
             jeloService.namestiSliku(id, ret);
             photo_num_jela++;
+            return objectMapper.writeValueAsString(ret);		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	public String sacuvajSlikuPica(int id, MultipartFile uploadSlika){
+		PiceDTO pice = piceService.findById(id);
+		if(pice == null){
+			return ""; // vrati prazno ako ga nisi nasao
+		}
+		try {
+			byte[] bytes = uploadSlika.getBytes();
+			String extenzija = uploadSlika.getOriginalFilename().split("\\.")[1];
+			String ime = pica_folder + photo_num_pica + "." + extenzija;
+			String saPutanjom = servletContext.getRealPath("") + ime;
+			File file = new File(saPutanjom);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+            stream.write(bytes);
+            stream.close();
+            String ret = photo_num_pica + "." + extenzija;
+            piceService.namestiSliku(id, ret);
+            photo_num_pica++;
+            return objectMapper.writeValueAsString(ret);		
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	public String sacuvajSlikuRestoran(int id, MultipartFile uploadSlika){
+		RestoranDTO restoran = restoranService.findById(id);
+		if(restoran == null){
+			return ""; // vrati prazno ako ga nisi nasao
+		}
+		try {
+			byte[] bytes = uploadSlika.getBytes();
+			String extenzija = uploadSlika.getOriginalFilename().split("\\.")[1];
+			String ime = restorani_folder + photo_num_restorani + "." + extenzija;
+			String saPutanjom = servletContext.getRealPath("") + ime;
+			File file = new File(saPutanjom);
+			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(file));
+            stream.write(bytes);
+            stream.close();
+            String ret = photo_num_restorani + "." + extenzija;
+            restoranService.namestiSliku(id, ret);
+            photo_num_restorani++;
             return objectMapper.writeValueAsString(ret);		
 		} catch (IOException e) {
 			e.printStackTrace();
