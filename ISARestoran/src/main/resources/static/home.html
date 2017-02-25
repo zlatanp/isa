@@ -33,7 +33,8 @@
 var ipadresa;
 var grad;
 var restoranIDE;
-
+var karticeJela;
+var karticaPica;
 
 	function onload(){
 		var x = document.cookie;
@@ -387,6 +388,34 @@ var restoranIDE;
 			<hr />
 			<div class="row">
 				<div class="" id="cards_jela"></div>
+			</div>
+		</div>
+	</div>
+	</div>
+		<div id="picaijela" style="display: none;">
+		<br>
+		<div class="row-content jelovnikDiv col-lg-8">
+		<div id="glavni_tab" class="tab-pane fade in active">
+			<div class="form-group col-lg-5">
+				<h4>Unesite naziv pića:</h4>
+				<input class="form-control" type="text" id="piceImeZaPretragu">
+			</div>
+			<br> <br>
+			<div class="form-group">
+				<button id="btnTraziPica" type="button" class="btn btn-success">
+					Traži pića <span class="glyphicon glyphicon-search"></span>
+				</button>
+				&nbsp;
+				<button id="btnPrikaziPica" type="button" onclick="pogledajPicovnik(restoranIDE)" class="btn btn-default">
+					Prikaži sva pića <span class="glyphicon glyphicon-search"></span>
+				</button>
+			</div>
+			<br>
+			<hr />
+			
+			<br>
+			<div class="row">
+				<div class="" id="cards_pica"></div>
 			</div>
 		</div>
 	</div>
@@ -810,6 +839,7 @@ function sortPoImenu(){
 	
 	function pogledajJelovnik(id){
 		document.getElementById('jelaipica').style.display = 'block';
+		document.getElementById('picaijela').style.display = 'none';
 		getJela(id);
 	}
 	
@@ -929,12 +959,114 @@ function sortPoImenu(){
 	
 	function pogledajPicovnik(id){
 		document.getElementById('jelaipica').style.display = 'none';
+		document.getElementById('picaijela').style.display = 'block';
 		//alert("gledaj picovnik + "+id);
+		getPica(restoranIDE);
 	}
+	
+	$(document).on("click", "#btnTraziPica", function(e){
+		e.preventDefault();
+		var zaTrazenje = new Object();
+		zaTrazenje.val1 = $("#piceImeZaPretragu").val();
+		zaTrazenje.val2 = "";
+		console.log(zaTrazenje.val1);
+		if (/\S/.test(zaTrazenje.val1) || /\S/.test(zaTrazenje.val2)){
+			$.ajax({
+				url: 'restoran/traziPice/' + restoranIDE,
+				type: 'POST',
+				contentType: 'application/json',
+				dataType: 'json',
+				data: JSON.stringify(zaTrazenje),
+				success: function(retVal){
+					prikaziPica(retVal);
+				}
+			});		
+		}
+	});
+	
+	function getPica(idRestorana){
+		$.ajax({
+			type: 'GET',
+			url: 'restoran/getPica/' + idRestorana,
+			dataType: 'JSON',
+			success: function(retVal){
+				if(retVal == null){
+					window.location.replace("notFound.html");
+					return;
+				}else {
+					console.log(retVal);
+					prikaziPica(retVal);
+				}
+			},
+			error: function(){
+				window.location.replace("notFound.html");
+			}		
+		});
+	}
+	
+	
+	function prikaziPica(pica){
+		var divPica = $("#cards_pica");
+		karticaPica = 0;
+		divPica.empty();
+		var speed = 0;
+		$.each(pica, function(index, k){
+			console.log(k.id);
+			var piceCard = napraviKarticuZaPice(k);
+			var novi_div = "<div></div>";
+			divPica.append(novi_div);
+			var a = divPica.children().last();
+			a.hide();
+			a.append(piceCard);
+			a.delay(speed).fadeIn('fast');
+			speed+=200;
+		});
+	}
+	
+	function napraviKarticuZaPice(pice){
+		var html = "";
+		if (karticaPica % 3 == 0){
+			if (karticaPica != 0){
+				html += '</div>';
+			}
+			html += '<div class="row-content">';
+		}
+		karticaPica++;
+		html += '<div class="col-md-4">' + 
+					'<div class="card text-center my-card" style="margin-top:2%;border-style:solid;border-width:2px;background-color:#ccff99">' +
+						'<div class="card-block">' +
+							'<h3 class="card-title">' + pice.naziv + '</h3>' +				
+						'</div>'+
+						'<img src="../../../slike/pica/' + pice.slika + '"width="180" height="180" >' +
+						'<div class="card-block">'+
+							pice.opis +
+						'</div>'+
+						'<div class="card-block">'+
+							'<div class="zvezdiceJelo pull-right">'+
+								'<p>' + convertScoreToStars(pice.ocena) + '</p>' +
+							'</div>'+
+							'<br>'+
+							'<div class="pull-right">'+
+								pice.brojOcena + ' reviews' +
+							'</div>'+
+							'<br>'+
+							'<h4 class="pull-right" style="text-align:left;">'+
+								valuta + ' ' + pice.cena +
+							'</h4>'+
+							'<br>'+ '<br>'+ 
+							'</div>' +
+					'</div>'+
+				'</div>';
+		
+		return html;		
+	}
+	
+	
 	
 	function rezervisemRestoran(id){
 		document.getElementById('jelaipica').style.display = 'none';
-		//alert("rezervisem restoran sa id + " + id);
+		document.getElementById('picaijela').style.display = 'none';
+		alert("rezervisem restoran sa id + " + id);
 	}
 	
 	function sortPoImenuRestorane(){
@@ -954,7 +1086,7 @@ function sortPoImenu(){
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a onclick="dajStranicuRestorana(\''+data[i].id+'\')" href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			}	
 		        			}else{
 		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
@@ -987,7 +1119,7 @@ function sortPoImenu(){
 		    				$('#leviDiv').hide();
 		    				document.getElementById("helloHeder").innerHTML = "";
 		        			for(var i=0;i<data.length;i++){
-		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+		        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a onclick="dajStranicuRestorana(\''+data[i].id+'\')" href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 		        			}
 		        			}else{
 		        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
@@ -1022,7 +1154,7 @@ function sortPoImenu(){
 			    				document.getElementById("helloHeder").innerHTML = "";
 			        			for(var i=0;i<data.length;i++){
 			        				if(String(data[i].tip) === selektovanog)
-			        					$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+			        					$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a onclick="dajStranicuRestorana(\''+data[i].id+'\')" href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 				        			}
 			        		}else{
 			        			$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
@@ -1057,7 +1189,7 @@ function sortPoImenu(){
 			    				$('#leviDiv').hide();
 			    				document.getElementById("helloHeder").innerHTML = "";
 			        			for(var i=0;i<data.length;i++){
-			        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
+			        				$('#skrolable').append('<tr><td><img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td><h3><a onclick="dajStranicuRestorana(\''+data[i].id+'\')" href="#">'+data[i].naziv+'</a></h3><h6>'+ data[i].opis+'</h6></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" id='+i+' onclick="return rezervisemRestoran(\''+data[i].id+'\',\''+i+'\')" value="Rezerviši" /></td></tr><tr><td><br><br></td></tr>');
 			        			}	
 			        			}else{
 			        				$('#skrolable').html('<h3>Ništa nije pronađeno!</h3>');
