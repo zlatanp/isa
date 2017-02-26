@@ -7,8 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ManyToAny;
-
 import com.example.beans.restoran.Restoran;
 import com.example.enums.TipKorisnika;
 
@@ -74,6 +72,12 @@ public abstract class Zaposleni extends Korisnik {
 	public void setVelicina_obuce(String velicina_obuce) {
 		this.velicina_obuce = velicina_obuce;
 	}
-	
-	
+
+	public Restoran getRadi_u() {
+		return radi_u;
+	}
+
+	public void setRadi_u(Restoran radi_u) {
+		this.radi_u = radi_u;
+	}
 }

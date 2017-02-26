@@ -73,6 +73,9 @@ public class Restoran implements Serializable {
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "restoran")
 	protected Set<Segment> segmenti;
 
+	@Column(name = "raspored", columnDefinition = "LONGTEXT")
+	protected String raspored;
+	
 	public Restoran() {
 	}
 
@@ -225,6 +228,14 @@ public class Restoran implements Serializable {
 
 	public void setSegmenti(Set<Segment> segmenti) {
 		this.segmenti = segmenti;
+	}
+
+	public String getRaspored() {
+		return raspored;
+	}
+
+	public void setRaspored(String raspored) {
+		this.raspored = raspored;
 	}
 
 }

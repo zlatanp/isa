@@ -36,12 +36,14 @@ import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.JeloDTO;
 import com.example.dto.restoran.PiceDTO;
 import com.example.dto.restoran.RestoranDTO;
+import com.example.dto.restoran.StoDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
 import com.example.service.restoranImpl.JeloService;
 import com.example.service.restoranImpl.PiceService;
 import com.example.service.restoranImpl.RestoranService;
+import com.example.service.restoranImpl.StoService;
 import com.example.utilities.FileHelper;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -69,6 +71,9 @@ public class RestoranController {
 
 	@Autowired
 	private PiceService piceService;
+	
+	@Autowired
+	private StoService stoService;
 	
 	@Autowired
 	private ServletContext servletContext;
@@ -591,4 +596,36 @@ public class RestoranController {
 
 	    return result;
 	}
+	
+	@RequestMapping(value="/getCanvas/{email}", method = RequestMethod.GET )
+	public String getCanvas(@PathVariable("email") String email){
+		//System.out.println(email);
+		String realEmail = email + ".com";
+		KorisnikDTO k = korisnikService.findByEmail(realEmail);
+		String raspored = restoranService.getRaspored(k);	
+		return raspored;
+	}
+	
+	@RequestMapping(value="/getCanvas/{email}/{id}", method=RequestMethod.GET)
+	public String getCanvasById(@PathVariable("email") String emailUser, @PathVariable("id") int restId) throws JsonProcessingException{
+		String realEmail = emailUser + ".com";
+		KorisnikDTO korisnik = korisnikService.findByEmail(realEmail);
+		if (korisnik == null)
+			return "";
+		return restoranService.getRasporedById(restId);
+	}
+	
+	@RequestMapping(value="/getTable",method = RequestMethod.POST)
+	public String getTable(@RequestBody String naziv) throws JsonParseException, JsonMappingException, IOException{
+		naziv = naziv.substring(0, naziv.length()-1);
+		StoDTO sto = stoService.findByName(naziv);
+		if(sto!=null){
+			return objectMapper.writeValueAsString(sto);
+		}
+		else{
+			return objectMapper.writeValueAsString("");
+		}
+	}
+	
+	
 }
