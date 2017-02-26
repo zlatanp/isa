@@ -6,6 +6,9 @@ function profilMenadzera(){
 	var delovi = x.split("=");
 	var email = delovi[1];
 	
+	var ime;
+	var prezime;
+	
 	dajSliku();
 	
 	if(email.search("@")!=-1){
@@ -33,7 +36,6 @@ function dajSliku(){
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
-	alert(email);
 	 $.ajax({
 		    url :'picture/dajSliku/'+email,
 		    type: "GET",
