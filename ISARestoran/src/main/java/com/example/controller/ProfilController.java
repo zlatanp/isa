@@ -1,8 +1,10 @@
 package com.example.controller;
 
 import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,11 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Gost;
 import com.example.beans.korisnici.Korisnik;
+import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.beans.korisnici.Prijateljstvo;
+import com.example.dto.korisnici.KorisnikDTO;
+import com.example.dto.korisnici.MenadzerDTO;
 import com.example.enums.FriendshipStatus;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.PrijateljstvoService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/profile")
@@ -26,21 +33,43 @@ public class ProfilController {
 	@Autowired
 	private PrijateljstvoService prijateljstvoService;
 
+	
 	@Autowired
 	GostService gostService;
+	
+	private ObjectMapper maper = new ObjectMapper();
 
 	@RequestMapping(value = "/gost", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public synchronized Korisnik profil(@RequestParam("email") String email) {
 		Korisnik k = new Korisnik();
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-
 		for (Korisnik item : listaKorisnika) {
-			if (item.getEmail().equals(email))
+			if (item.getEmail().equals(email)){
 				k = item;
+			}
+			
 		}
 		return k;
 
 	}
+	
+	@RequestMapping(value = "/dajMenadzera/{email}", method = RequestMethod.GET, produces ="application/json")
+	public String menadzerProfil(@PathVariable("email") String email) throws JsonProcessingException {
+
+		String realemail = email + ".com";
+		System.out.println(realemail);
+		String retval = "";
+		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+		for (Korisnik item : listaKorisnika) {
+			if (item.getEmail().equals(realemail)){
+				retval = maper.writeValueAsString(new MenadzerDTO((MenadzerRestorana) item));
+				//retval = item.getIme();
+			}
+		}
+		return retval;
+
+	}
+
 
 	@RequestMapping(value = "/svimojiprijateljibisurirasuti", method = {
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -84,6 +113,33 @@ public class ProfilController {
 				}
 			}
 			return k;
+		}
+
+	}
+	
+	@RequestMapping(value = "/editMenadzera", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public synchronized boolean izmeniProfilMenadzera(@RequestParam("ime") String ime, @RequestParam("prezime") String prezime,
+			@RequestParam("email") String email, @RequestParam("password") String password,
+			@RequestParam("password1") String password1) {
+
+		KorisnikDTO k = korisnikService.findByEmail(email);
+		if(k != null){
+			Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+			for (Korisnik item : listaKorisnika) {
+				if (item.getEmail().equals(email) && password.equals(password1)){
+					item.setIme(ime);
+					item.setPrezime(prezime);
+					item.setPassword(password);
+					
+					korisnikService.saveKorisnik(item);
+					
+					
+				}
+			}
+			
+			return true;
+		}else{
+			return false;
 		}
 
 	}

@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.util.Base64;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +59,74 @@ public class UploadPicture {
 						
 	}
 	
+	@RequestMapping(value = "/upload/adminPage/{email}", method = {RequestMethod.POST})
+	public synchronized void uploadPictureAdmin(HttpServletResponse response, @RequestParam("file") MultipartFile file, @PathVariable("email") String email) throws IOException{
+	
+		String realMail = email + ".com";
+			if (!file.isEmpty() && realMail.contains("@") && file.getSize()<999998) {
+				//Upis u fajl sistem, lokal
+				 BufferedImage src = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
+				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
+				 ImageIO.write(src, "jpg", destination);
+				 
+				//Citanje fajla i upis u bazu
+					
+					File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+				
+					Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+				
+					for (Korisnik korisnik : listaKorisnika) {
+							if(korisnik.getEmail().equals(realMail)){
+									korisnik.setSlika(fileContent);
+									korisnikService.saveKorisnik(korisnik);
+									
+							}
+					}
+				response.sendRedirect("/adminPage.html");
+			}else{
+				response.sendRedirect("/adminPage.html");
+			}
+						
+	}
+	
+	@RequestMapping(value = "/upload/managerPage/{email}", method = {RequestMethod.POST})
+	public synchronized void uploadPictureManager(HttpServletResponse response, @RequestParam("file") MultipartFile file, @PathVariable("email") String email) throws IOException{
+	
+		String realMail = email + ".com";
+			if (!file.isEmpty() && realMail.contains("@") && file.getSize()<999998) {
+				//Upis u fajl sistem, lokal
+				 BufferedImage src = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
+				 File destination = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg"); // something like C:/Users/tom/Documents/nameBasedOnSomeId.png
+				 ImageIO.write(src, "jpg", destination);
+				 
+				//Citanje fajla i upis u bazu
+					
+					File fi = new File(System.getProperty("catalina.base")+File.separator+"mydata.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+				
+					Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+				
+					for (Korisnik korisnik : listaKorisnika) {
+							if(korisnik.getEmail().equals(realMail)){
+									korisnik.setSlika(fileContent);
+									korisnikService.saveKorisnik(korisnik);
+									
+							}
+					}
+				response.sendRedirect("/menadzerPage.html");
+			}else{
+				response.sendRedirect("/menadzerPage.html");
+			}
+						
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/dajSliku/{email}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public byte[] testphoto(HttpServletResponse response,  @PathVariable("email") String email) throws IOException {
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		byte[] slika = null;
-		System.out.println(email);
+		
 		if(email.contains("@")){
 		String realEmail = email + ".com";
 		for (Korisnik korisnik : listaKorisnika) {
@@ -74,17 +135,18 @@ public class UploadPicture {
 				}
 		}
 		}
-		
+		if(slika != null){
 		byte[] encodedBytes = Base64.getEncoder().encode(slika);
-		
-		
+		return encodedBytes;
+		}else{
+			return null;
+		}
 //		response.setContentType("image/jpeg");
 //		ServletOutputStream responseOutputStream = response.getOutputStream();
 //		responseOutputStream.write(slika);
 //		responseOutputStream.flush();
 //		responseOutputStream.close();
 		
-		return encodedBytes;
 	}
 	
 	

@@ -23,11 +23,17 @@ $(document).ready(function() {
 
 	$(".OpenNewRest").on("click", function() {
 		$divsForHide.hide();
+		$('#glavniDiv').hide();
+	 	$('#leviDiv').hide();
+	 	$('#desniDiv').hide();
 		$("#NewRest").show();
 	});
 
 	$(".OpenNewManForRest").on("click", function() {
 		$divsForHide.hide();
+		$('#glavniDiv').hide();
+	 	$('#leviDiv').hide();
+	 	$('#desniDiv').hide();
 		$("#NewManForRest").show();
 		var lozinka = makePassword();
 		$("#lozMen").val(lozinka);
@@ -35,6 +41,9 @@ $(document).ready(function() {
 
 	$(".OpenNewSystemMan").on("click", function() {
 		$divsForHide.hide();
+		$('#glavniDiv').hide();
+	 	$('#leviDiv').hide();
+	 	$('#desniDiv').hide();
 		$("#NewSystemMan").show();
 		var lozinka = makePassword();
 		$("#passAdm").val(lozinka);
@@ -73,6 +82,7 @@ $(document).on("click", ".OpenNewManForRest", function(e){
 });
 
 $(document).on("click", "#btnDodajRestoran", function(e) {
+	
 	e.preventDefault();
 	if (!validateFormRestoran()) {
 		return;

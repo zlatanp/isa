@@ -16,6 +16,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -289,9 +290,10 @@ public class KorisnikController {
 	}
 	
 	@RequestMapping(value="/registerAdmin", method= RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin){
+	public boolean registracijaNovogMenadzeraSistema(@RequestBody @Valid MenadzerSistemaDTO admin) throws IOException{
 		boolean ovakavPostoji = false;
 		Iterable<Korisnik> sviKorisnici = korisnikService.getAllKorisnici();
+		
 		for(Korisnik k : sviKorisnici){
 			if(k.getEmail().equals(admin.getEmail())){
 				ovakavPostoji = true;
@@ -299,7 +301,20 @@ public class KorisnikController {
 		}		
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, admin);
+			
+			
 			menadzerSistemaService.create(admin);
+			
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(admin.getEmail())){
+					File fi = new File("src/main/resources/static/html/admin.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}	
 			return true;
 		}else {
 			return false;
@@ -307,7 +322,7 @@ public class KorisnikController {
 	}
 	
 	@RequestMapping(value="/registerMenadzer", method= RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer){
+	public boolean registracijaMenadzera(@RequestBody @Valid MenadzerDTO menadzer) throws IOException{
 		KorisnikDTO k = korisnikService.findByEmail(menadzer.email);
 		boolean ovakavPostoji = false;
 		if(k != null){
@@ -315,10 +330,23 @@ public class KorisnikController {
 		}
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
+			
+			
 			menadzerService.create(menadzer);
 			RestoranDTO restoran = restoranService.findById(menadzer.radi_u);
 			restoran.getMenadzeri().add(menadzer);
 			restoranService.updateRestoran(restoran, menadzer.email);
+			
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(menadzer.getEmail())){
+					File fi = new File("src/main/resources/static/html/menadzer.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
 			return true;
 		}else {
 			return false;
