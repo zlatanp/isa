@@ -10,6 +10,10 @@ public class StoDTO {
 	public int brojStolica;
 	public TipSegmenta tipSegmenta;
 	
+	public StoDTO(){
+		
+	}
+	
 	public StoDTO(Sto s){
 		this.id = s.getId();
 		this.naziv = s.getNaziv();

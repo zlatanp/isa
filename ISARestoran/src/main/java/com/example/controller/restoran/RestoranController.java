@@ -84,7 +84,9 @@ public class RestoranController {
 	private static final String jela_folder = "\\slike\\jela\\";
 	private static final String pica_folder = "\\slike\\pica\\";
 	private static int photo_num_restorani, photo_num_pica, photo_num_jela = 1;
+	
 	private static String API_KEY = "AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14";
+	
 	final Geocoder geocoder = new Geocoder();
 
 	// odmah posle dependency-injectiona se izvrsava
@@ -599,7 +601,6 @@ public class RestoranController {
 	
 	@RequestMapping(value="/getCanvas/{email}", method = RequestMethod.GET )
 	public String getCanvas(@PathVariable("email") String email){
-		//System.out.println(email);
 		String realEmail = email + ".com";
 		KorisnikDTO k = korisnikService.findByEmail(realEmail);
 		String raspored = restoranService.getRaspored(k);	
@@ -615,6 +616,12 @@ public class RestoranController {
 		return restoranService.getRasporedById(restId);
 	}
 	
+	@RequestMapping(value="/saveCanvas/{email}",method=RequestMethod.POST, consumes="application/json") 
+	public boolean sacuvajRaspored(@PathVariable("email") String emailUser, @RequestBody String canvasJSON){
+		String real = emailUser + ".com";
+		return restoranService.update(canvasJSON, real);
+	}
+	
 	@RequestMapping(value="/getTable",method = RequestMethod.POST)
 	public String getTable(@RequestBody String naziv) throws JsonParseException, JsonMappingException, IOException{
 		naziv = naziv.substring(0, naziv.length()-1);
@@ -625,6 +632,15 @@ public class RestoranController {
 		else{
 			return objectMapper.writeValueAsString("");
 		}
+	}
+	
+	@RequestMapping(value="/saveTable/{email}",method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean sacuvajStolove(@RequestBody List<StoDTO> stolovi, @PathVariable("email") String emailUser){
+		String realEmail = emailUser + ".com";
+		for(int i=0; i<stolovi.size(); i++){
+			stoService.create(stolovi.get(i), realEmail);
+		}
+		return true;
 	}
 	
 	

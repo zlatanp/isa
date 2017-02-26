@@ -121,28 +121,40 @@ public class RestoranService {
 	}
 
 	public String getRaspored(KorisnikDTO k){
-		
+		// ovde isprati sta ce da ispise
 		Restoran restoran;
 		if(k instanceof MenadzerDTO){
 			MenadzerRestorana menadzer = menadzerRepository.findByEmail(k.email);
-			if(menadzer == null)
+			if(menadzer == null){
+				System.out.println("menadzer: menadzer==null");
 				return "";
+			}
 			restoran = menadzer.getRadi_u();
-			if(restoran == null)
+			if(restoran == null){
+				System.out.println("menadzer: restoran==null");
 				return "";	
+			}
 		} else {
 			// Zaposleni
 			Zaposleni zap = zaposleniRepository.findByEmail(k.email);
-			if(zap == null)
+			if(zap == null){
+				System.out.println("zaposleni: zaposleni==null");
 				return "";
+			}
 			restoran = zap.getRadi_u();
-			if(restoran == null)
+			if(restoran == null){
+				System.out.println("zaposleni: restoran==null");
 				return "";
+			}
 		}
-		if(restoran.getRaspored()!=null)
+		if(restoran.getRaspored()!=null){
+			System.out.println("kraj: raspored != null");
 			return restoran.getRaspored();
-		else 
+		}
+		else {
+			System.out.println("kraj: raspored == null");  // novi restoran vrati prazno
 			return "";
+		}
 	}
 	
 	public String getRasporedById(int id){
