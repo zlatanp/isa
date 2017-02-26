@@ -96,7 +96,7 @@ public class UploadPicture {
 	public byte[] testphoto(HttpServletResponse response,  @PathVariable("email") String email) throws IOException {
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 		byte[] slika = null;
-		System.out.println(email);
+		
 		if(email.contains("@")){
 		String realEmail = email + ".com";
 		for (Korisnik korisnik : listaKorisnika) {
@@ -105,17 +105,18 @@ public class UploadPicture {
 				}
 		}
 		}
-		
+		if(slika != null){
 		byte[] encodedBytes = Base64.getEncoder().encode(slika);
-		
-		
+		return encodedBytes;
+		}else{
+			return null;
+		}
 //		response.setContentType("image/jpeg");
 //		ServletOutputStream responseOutputStream = response.getOutputStream();
 //		responseOutputStream.write(slika);
 //		responseOutputStream.flush();
 //		responseOutputStream.close();
 		
-		return encodedBytes;
 	}
 	
 	

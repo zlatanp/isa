@@ -33,7 +33,7 @@ function dajSliku(){
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
-	
+	alert(email);
 	 $.ajax({
 		    url :'picture/dajSliku/'+email,
 		    type: "GET",
@@ -41,7 +41,7 @@ function dajSliku(){
 		    dataType: "text",
 		    success: function(data) { 
 		            $("#mestoZaSliku").html('<img src="data:image/jpg;base64,' + data + '" style="width:260px;height:260px;" />');
-		        }
+		    }
 		    });
 		}
 

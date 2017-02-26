@@ -16,6 +16,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -304,16 +305,16 @@ public class KorisnikController {
 			
 			menadzerSistemaService.create(admin);
 			
-//			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
-//			for(Korisnik kor : sviKorisnici2){
-//				if(kor.getEmail().equals(admin.getEmail())){
-//					File fi = new File("src/main/resources/static/html/profilePic.jpg");
-//					byte[] fileContent = Files.readAllBytes(fi.toPath());
-//					kor.setSlika(fileContent);
-//					korisnikService.saveKorisnik(kor);
-//					break;
-//				}
-//			}	
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(admin.getEmail())){
+					File fi = new File("src/main/resources/static/html/admin.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}	
 			return true;
 		}else {
 			return false;
@@ -329,14 +330,23 @@ public class KorisnikController {
 		}
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
-			File fi = new File("src/main/resources/static/html/menadzer.jpg");
-			byte[] fileContent = Files.readAllBytes(fi.toPath());
 			
-			menadzer.setSlika(fileContent);
+			
 			menadzerService.create(menadzer);
 			RestoranDTO restoran = restoranService.findById(menadzer.radi_u);
 			restoran.getMenadzeri().add(menadzer);
 			restoranService.updateRestoran(restoran, menadzer.email);
+			
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(menadzer.getEmail())){
+					File fi = new File("src/main/resources/static/html/menadzer.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
 			return true;
 		}else {
 			return false;
