@@ -36,6 +36,7 @@ public class ProfilController {
 
 		for (Korisnik item : listaKorisnika) {
 			if (item.getEmail().equals(email))
+				
 				k = item;
 		}
 		return k;
