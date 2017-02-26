@@ -74,7 +74,7 @@
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
-					<li><a href="#">Profil</a></li>
+					<li><a onclick="profilmidaj()" href="#">Profil</a></li>
 					<li><a onclick="izlogujSe()" href="#">Odjavite se</a></li>
 				</ul>
 			</div>
@@ -250,6 +250,20 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	
+		<div class="container" style="display: none; background-color: #E8E8E8"
+		id="glavniDiv">
+		<h1 id="helloHeder"></h1>
+		<div class="row">
+			<div class="col-sm-3" id="leviDiv">
+				<div id="mestoZaSliku"></div>
+				<br> <br> <a href="#" onclick="basicDetails()">Osnovni
+					podaci</a><br>
+			</div>
+			<div class="col-sm-9" id="desniDiv"></div>
+		</div>
+
 	</div>
 </body>
 </html>

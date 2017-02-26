@@ -12,6 +12,9 @@ function izlogujSe() {
 }
 
 $(document).ready(function(){
+	$('#glavniDiv').hide();
+	$('#leviDiv').hide();
+	$('#desniDiv').hide();
 	var cookie = document.cookie;
 	var emailLogovanog = cookie.split("=")[1];
 	
@@ -29,16 +32,28 @@ $(document).ready(function(){
 	$("#divInfo").show();
 	
 	$(".OpenUpdateRest").on("click", function(){
+		$('#glavniDiv').hide();
+		$('#leviDiv').hide();
+		$('#desniDiv').hide();
+		
 		$divsForHide.hide();
 		$("#divRestoran").show();
 	});
 	
 	$(".OpenZaposleni").on("click", function(){
+		$('#glavniDiv').hide();
+		$('#leviDiv').hide();
+		$('#desniDiv').hide();
+		
 		$divsForHide.hide();
 		$("#divZaposleni").show();
 	});
 	
 	$(".OpenPonude").on("click", function(){
+		$('#glavniDiv').hide();
+		$('#leviDiv').hide();
+		$('#desniDiv').hide();
+		
 		$divsForHide.hide();
 		$("#divRestoran").hide();
 		$("#divPonude").show();
@@ -99,6 +114,8 @@ function upisiPodatke(data) {
 }
 
 $(document).on("click", "#btnIzmeniRest", function(){
+
+	
 	$("#btnIzmeniRest").hide();
 	$("#btnSacuvajIzm").show();
 	$(".inputRest").attr("readonly", false);
@@ -247,7 +264,6 @@ function profilmidaj() {
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
-	alert(email);
 	
 	if(email.search("@")!=-1){
      	$.ajax({ 
@@ -312,7 +328,7 @@ function editDetails(){
 	$('#saveDetails').show();
 	$('#cancelDetails').show();
 	$('#tabela').append('<tr><td>Nova šifra: </td><td><input style="border:none" type="password" id="password"></td></tr><tr><td>Ponovljena nova šifra: </td><td><input style="border:none" type="password" id="password1"></td></tr>');
-	$('#zaUpload').html('<form method="POST" action="picture/upload/adminPage/'+email+'" enctype="multipart/form-data">Dodaj novu profilnu sliku: <br><input type="file" id="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input onclick="return proveraVelicine()" type="submit" value="Učitaj"></form>');
+	$('#zaUpload').html('<form method="POST" action="picture/upload/managerPage/'+email+'" enctype="multipart/form-data">Dodaj novu profilnu sliku: <br><input type="file" id="file" name="file"><input type="hidden" name="email" value="'+email+'"><br><input onclick="return proveraVelicine()" type="submit" value="Učitaj"></form>');
 	
 	$('#FirstName').attr('readonly', false);
 	$('#LastName').attr('readonly', false);

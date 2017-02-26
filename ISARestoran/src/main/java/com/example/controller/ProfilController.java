@@ -1,9 +1,6 @@
 package com.example.controller;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,7 +20,6 @@ import com.example.enums.FriendshipStatus;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
 import com.example.service.PrijateljstvoService;
-import com.example.service.korisniciImpl.MenadzerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
