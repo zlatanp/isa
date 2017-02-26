@@ -36,12 +36,14 @@ import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.restoran.JeloDTO;
 import com.example.dto.restoran.PiceDTO;
 import com.example.dto.restoran.RestoranDTO;
+import com.example.dto.restoran.StoDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
 import com.example.service.restoranImpl.JeloService;
 import com.example.service.restoranImpl.PiceService;
 import com.example.service.restoranImpl.RestoranService;
+import com.example.service.restoranImpl.StoService;
 import com.example.utilities.FileHelper;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -71,6 +73,9 @@ public class RestoranController {
 	private PiceService piceService;
 	
 	@Autowired
+	private StoService stoService;
+	
+	@Autowired
 	private ServletContext servletContext;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
@@ -79,6 +84,7 @@ public class RestoranController {
 	private static final String jela_folder = "\\slike\\jela\\";
 	private static final String pica_folder = "\\slike\\pica\\";
 	private static int photo_num_restorani, photo_num_pica, photo_num_jela = 1;
+
 	final Geocoder geocoder = new Geocoder();
 
 	// odmah posle dependency-injectiona se izvrsava
@@ -591,9 +597,55 @@ public class RestoranController {
 	    return result;
 	}
 	
+
 	@RequestMapping(value = "/dajRestoranSaId", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String dobaviRestoranID(@RequestParam("id") int idRestorana) throws JsonProcessingException {
 		
 		return objectMapper.writeValueAsString(restoranService.findById(idRestorana));
 	}
+
+	@RequestMapping(value="/getCanvas/{email}", method = RequestMethod.GET )
+	public String getCanvas(@PathVariable("email") String email){
+		String realEmail = email + ".com";
+		KorisnikDTO k = korisnikService.findByEmail(realEmail);
+		String raspored = restoranService.getRaspored(k);	
+		return raspored;
+	}
+	
+	@RequestMapping(value="/getCanvas/{email}/{id}", method=RequestMethod.GET)
+	public String getCanvasById(@PathVariable("email") String emailUser, @PathVariable("id") int restId) throws JsonProcessingException{
+		String realEmail = emailUser + ".com";
+		KorisnikDTO korisnik = korisnikService.findByEmail(realEmail);
+		if (korisnik == null)
+			return "";
+		return restoranService.getRasporedById(restId);
+	}
+	
+	@RequestMapping(value="/saveCanvas/{email}",method=RequestMethod.POST, consumes="application/json") 
+	public boolean sacuvajRaspored(@PathVariable("email") String emailUser, @RequestBody String canvasJSON){
+		String real = emailUser + ".com";
+		return restoranService.update(canvasJSON, real);
+	}
+	
+	@RequestMapping(value="/getTable",method = RequestMethod.POST)
+	public String getTable(@RequestBody String naziv) throws JsonParseException, JsonMappingException, IOException{
+		naziv = naziv.substring(0, naziv.length()-1);
+		StoDTO sto = stoService.findByName(naziv);
+		if(sto!=null){
+			return objectMapper.writeValueAsString(sto);
+		}
+		else{
+			return objectMapper.writeValueAsString("");
+		}
+	}
+	
+	@RequestMapping(value="/saveTable/{email}",method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean sacuvajStolove(@RequestBody List<StoDTO> stolovi, @PathVariable("email") String emailUser){
+		String realEmail = emailUser + ".com";
+		for(int i=0; i<stolovi.size(); i++){
+			stoService.create(stolovi.get(i), realEmail);
+		}
+		return true;
+	}
+
 }
