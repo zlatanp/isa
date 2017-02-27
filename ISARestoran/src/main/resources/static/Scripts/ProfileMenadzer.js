@@ -1,4 +1,6 @@
 var restoran = null;
+var restoranID = null;
+
 
 function izlogujSe() {
 	var x = document.cookie;
@@ -40,24 +42,6 @@ $(document).ready(function(){
 		$("#divRestoran").show();
 	});
 	
-	$(".OpenZaposleni").on("click", function(){
-		$('#glavniDiv').hide();
-		$('#leviDiv').hide();
-		$('#desniDiv').hide();
-		
-		$divsForHide.hide();
-		$("#divZaposleni").show();
-	});
-	
-	$(".OpenPonude").on("click", function(){
-		$('#glavniDiv').hide();
-		$('#leviDiv').hide();
-		$('#desniDiv').hide();
-		
-		$divsForHide.hide();
-		$("#divRestoran").hide();
-		$("#divPonude").show();
-	});
 	
 	$.ajax({
 		url : 'restoran/tipovi',
@@ -92,11 +76,15 @@ $(document).ready(function(){
  				$("#slikaRestImg").attr("src", putanjaSlike);
  				setMap(data.adresa + ', ' + data.grad + ', Srbija');
  				restoran = data;
+ 				restoranID = data.id;
  			}
         }
 	});
 	
 });
+
+
+
 
 function upisiPodatke(data) {
 	$("#nazivRestorana").text(data.naziv);
@@ -229,6 +217,16 @@ $(document).on("click", "#piceHref", function(e){
 $(document).on("click", "#sedenjeHref", function(e){
 	e.preventDefault();
 	window.location.replace("sedenje.html?" + restoran.id);
+});
+
+$(document).on("click", ".OpenZaposleni", function(e){
+	e.preventDefault();
+	window.location.replace("zaposleni.html?" + restoranID);
+});
+
+$(document).on("click", ".OpenPonude", function(e){
+	e.preventDefault();
+	window.location.replace("ponude.html?" + restoranID);
 });
 
 function setMap(address){
