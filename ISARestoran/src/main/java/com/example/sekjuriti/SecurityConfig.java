@@ -28,7 +28,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
             .antMatchers("/html/**", "/css/**").permitAll()
+            .antMatchers("/register.html").permitAll()
                 .antMatchers("/", "/index.html").permitAll()
+                .antMatchers("/korisnik/register").permitAll()
+                .antMatchers("/korisnik/active/{code}").permitAll()
+                .antMatchers("/home.html").hasAuthority("ROLE_GOST")
+                .antMatchers("/adminPage.html").hasAuthority("ROLE_MENADZERSISTEMA")
+                .antMatchers("/changePassword.html").hasAnyAuthority("ROLE_MENADZERSISTEMA","ROLE_MENADZERRESTORANA","ROLE_KUVAR","ROLE_KONOBAR","ROLE_SANKER","ROLE_PONUDJAC")
+                .antMatchers("/jelovnik.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/kartaPica.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/menadzerPage.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/ponude.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/sedenje.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/zaposleni.html").hasAuthority("ROLE_MENADZERRESTORANA")
+                .antMatchers("/notFound.html").hasAnyAuthority("ROLE_MENADZERSISTEMA","ROLE_MENADZERRESTORANA","ROLE_KUVAR","ROLE_KONOBAR","ROLE_SANKER","ROLE_PONUDJAC")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -36,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		 		.permitAll()
 		 		.usernameParameter("email")
 		 		.loginProcessingUrl("/korisnik/login")
-		 		.failureUrl("/index.html")
+		 		.failureUrl("/notFound.html")
 		 		.successHandler(authSuccessHandler())
 		 		.and()
                 .logout()
@@ -48,10 +61,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .rememberMe()
-		 	    .and()
-		 	    .apply(new SpringSocialConfigurer().signupUrl("/index.html")
-		 	    								   .alwaysUsePostLoginUrl(true)
-		 	    								   .postLoginUrl("/home.html"));
+                .and()
+                .apply(new SpringSocialConfigurer().signupUrl("/register.html")
+						   .alwaysUsePostLoginUrl(true)
+						   .postLoginUrl("/postLogin.html"));
     }
 	
 	@Override

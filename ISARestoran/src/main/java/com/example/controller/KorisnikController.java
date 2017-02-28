@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Gost;
@@ -172,25 +173,20 @@ public class KorisnikController {
 	public String determineRole(Korisnik korisnik){
 		if (korisnik.getTipKorisnika().equals(TipKorisnika.GOST)){
 			return "GOST";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.MENADZERSISTEMA)){
+			return "MENADZERSISTEMA";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.MENADZERRESTORANA)){
+			return "MENADZERRESTORANA";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.KUVAR)){
+			return "KUVAR";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.KONOBAR)){
+			return "KONOBAR";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.SANKER)){
+			return "SANKER";
+		}else if (korisnik.getTipKorisnika().equals(TipKorisnika.PONUDJAC)){
+			return "PONUDJAC";
 		}
-//		else if (korisnik instanceof MenadzerDTO){
-//			return "MENADZER";
-//		}
-//		else if (korisnik instanceof KonobarDTO){
-//			return "KONOBAR";
-//		}
-//		else if (korisnik instanceof KuvarDTO){
-//			return "KUVAR";
-//		}
-//		else if (korisnik instanceof SankerDTO){
-//			return "SANKER";
-//		}
-//		else if (korisnik instanceof MenadzerSistemaDTO){
-//			return "ADMIN";
-//		}
-//		else if (korisnik instanceof PonudjacDTO){
-//			return "PONUDJAC";
-//		}
+		
 		return "";
 	}
 	
@@ -201,15 +197,6 @@ public class KorisnikController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
 	}
-	
-	@RequestMapping(value = "/logout", method = { RequestMethod.POST })
-	public synchronized void logout(HttpServletResponse response) throws IOException {
-	
-
-
-	
-	}
-	
 	
 	@RequestMapping(value = "/register", method = { RequestMethod.POST })
 	public synchronized void register(HttpServletResponse httpServletResponse,
@@ -278,17 +265,26 @@ public class KorisnikController {
 	@RequestMapping(value = "/active/{code}", method = RequestMethod.GET)
 	public synchronized void activateAccount(HttpServletResponse httpServletResponse, @PathVariable("code") String kod)
 			throws IOException {
+		
+		System.out.println("adjadadsadjasdnwajdnwajd");
 		Iterable<Gost> listaGostiju = gostService.getAllGosti();
+		Iterable<Korisnik> listakorisnika = korisnikService.getAllKorisnici();
 		ArrayList<Gost> list = new ArrayList<Gost>();
 		for (Gost item : listaGostiju) {
 			list.add(item);
 		}
+		
 
 		for (Gost gost : list) {
 			if (gost.getHashCode() != null) {
 				if (gost.getHashCode().equals(kod)) {
 					gost.setActivated(true);
 					gostService.saveGost(gost);
+					for(Korisnik k : listakorisnika){
+						if (k.getEmail().equals(gost.getEmail()))
+							k.setPromenioLozinku(true);
+							korisnikService.saveKorisnik(k);
+					}
 				}
 			}
 		}

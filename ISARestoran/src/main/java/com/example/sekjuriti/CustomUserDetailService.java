@@ -21,7 +21,7 @@ public class CustomUserDetailService implements UserDetailsService {
 	@Transactional
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		Korisnik korisnik = new Korisnik();
+		Korisnik korisnik = null;
 		
 		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
 
@@ -30,6 +30,10 @@ public class CustomUserDetailService implements UserDetailsService {
 					korisnik=k;
 				}
 			
+		}
+		
+		if (korisnik == null || !korisnik.isPromenioLozinku()){
+			throw new UsernameNotFoundException("No user found with username: " + email); 
 		}
 		
 		System.out.println("User details service :" + email);
