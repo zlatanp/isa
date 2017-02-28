@@ -1,6 +1,8 @@
  <!DOCTYPE html>
 <html>
 <head>
+<title>Restaurant Index Page</title>
+<base href="/">
 <meta charset="utf-8">
 <link rel="stylesheet" href="html/css/bootstrap.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
@@ -17,64 +19,9 @@
 <link rel="stylesheet" type="text/css" href="html/css/looknfeel.css">
 <meta charset="ISO-8859-1">
 
-<title>Restaurant Index Page</title>
-<script type="text/javascript">
+<script src="html/js/indexSkripte.js"></script>
 
-var x = document.cookie;
-var delovi = x.split("=");
-var emailUlogovanog = delovi[1];
 
-// if(emailUlogovanog.search("@")!=-1){
-// 	window.location.href="home.html";
-// }
-
-        window.onload = function() {
-            var modal = new RModal(document.getElementById('modal'), {
-                //content: 'Abracadabra'
-                beforeOpen: function(next) {
-                    console.log('beforeOpen');
-                    next();
-                }
-                , afterOpen: function() {
-                    console.log('opened');
-                }
-
-                , beforeClose: function(next) {
-                    console.log('beforeClose');
-                    next();
-                }
-                , afterClose: function() {
-                    console.log('closed');
-                }
-                // , bodyClass: 'modal-open'
-                // , dialogClass: 'modal-dialog modal-dialog-lg'
-                // , dialogOpenClass: 'animated fadeIn'
-                // , dialogCloseClass: 'animated fadeOut'
-
-                // , focus: true
-                // , focusElements: ['input.form-control', 'textarea', 'button.btn-primary']
-
-                // , escapeClose: true
-            });
-
-            document.addEventListener('keydown', function(ev) {
-                modal.keydown(ev);
-            }, false);
-
-            document.getElementById('showModal').addEventListener("click", function(ev) {
-                ev.preventDefault();
-                modal.open();
-            }, false);
-
-            window.modal = modal;
-            
-            
-        }
-        
-        
-        	
-        
-    </script>
 </head>
 <body>
 <div class="container">
@@ -100,12 +47,12 @@ var emailUlogovanog = delovi[1];
     <div class="tab-content">
         <div id="sectionA" class="tab-pane fade in active">
         <div class="innter-form">
-            <form class="sa-innate-form" method="post" action="korisnik/login">
+            <form class="sa-innate-form" id="loginForm"  method="post" action="korisnik/login">
             <label>Email Address</label>
             <input type="email" name="email">
             <label>Password</label>
             <input type="password" name="password">
-            <button type="submit" onclick="return ulogujSe()">Sign In</button>
+            <button onclick="return ulogujSe()" type="submit" >Sign In</button>
             <a href="" id="showModal">Forgot Password?</a>
             </form>
             </div>
@@ -178,81 +125,5 @@ var emailUlogovanog = delovi[1];
             </div>
         </div>
     </div>
-    
-    <script>
-  
-    
-    function ulogujSe(){
-    	var i = document.getElementsByName('email');
-    	var emailValue = i[0].value;
-    	var j = document.getElementsByName('password');
-    	var passValue = j[0].value;
-    	
-    	
-//     	if(emailValue!="" && passValue!=""){
-//     	$.ajax({ 
-//             type: 'POST',
-//             url: 'gost/login',
-//             dataType: 'json',
-//             data: {email : emailValue, password : passValue},
-//     		success: function(data){
-//             	console.log(data);
-//             	alert("Prodavac sa korisnickim imenom "+emailValue+" uspesno obrisan!");
-//             	window.location.replace("restoran.html");
-//            }
-//     	});
-//     	}else{
-//     		alert("Username or password can't be empty!");
-//     	}
-
-	if(emailValue=="" || passValue==""){
-		alert("Username or password can't be empty!");
-		return false;
-    }else{
-    	document.cookie = "emailValue=" + emailValue;
-    	return true;
-    }
-    }
-    
-    function registrujSe(){
-    	var i = document.getElementsByName('nameRegister');
-    	var nameValue = i[0].value;
-    	
-    	var j = document.getElementsByName('lastnameRegister');
-    	var lastnameValue = j[0].value;
-    	
-    	var k = document.getElementsByName('emailRegister');
-    	var emailValue = k[0].value;
-    	
-    	var l = document.getElementsByName('passwordRegister');
-    	var passwordValue = l[0].value;
-    	var m = document.getElementsByName('password1Register');
-    	var password1Value = m[0].value;
-
-    	
-    	if(nameValue=="" || lastnameValue=="" || emailValue=="" || passwordValue=="" || password1Value==""){
-    		alert("You must enter all fields!");
-    		return false;
-        }else{
-        	if(passwordValue.length <8){
-        		alert("Password must contain 8-30 characters!")
-        		return false;
-        	}
-        	if(passwordValue.length > 30){
-        		alert("Password must contain 8-30 characters!")
-        		return false;
-        	}
-        	
-        	if(passwordValue != password1Value){
-        		alert("Password does not match the confirm password!")
-        		return false;
-        	}
-        	return true;
-        }
-    }
-    
-    
-    </script>
-
 </body>
 </html>
