@@ -233,6 +233,11 @@ function validateFormRestoran() {
 		$("#emailRest").focus();
 		return false;
 	}
+	if(!validateEmail($("#emailRest").val())){
+		toastr.error("E-mail restorana nije validan.");
+		$("#emailRest").focus();
+		return false;
+	}
 	if (!validateField($("#descriptionRest"))) {
 		toastr.error("Ne možete dodati restoran. Unesite opis restorana!")
 		$("#descriptionRest").focus();
@@ -256,10 +261,15 @@ function validateFormAdmin() {
 		toastr.error("Niste uneli email!");
 		$("#emailAdm").focus();
 		return false;
-	}
+	}	
 	if (!validateField($("#passAdm"))) {
 		toastr.error("Niste uneli lozinku!");
 		$("#passAdm").focus();
+		return false;
+	}
+	if(!validateEmail($("#emailAdm").val())){
+		toastr.error("E-mail administratora nije validan.");
+		$("#emailAdm").focus();
 		return false;
 	}
 //	if (!validateField($("#passAdmRep"))) {
@@ -293,6 +303,11 @@ function validateFormMenadzer(){
 		$("#mailMen").focus();
 		return false;
 	}
+	if(!validateEmail($("#mailMen").val())){
+		toastr.error("E-mail menadžera nije validan.");
+		$("#mailMen").focus();
+		return false;
+	}
 	if(!validateField($("#lozMen"))){
 		toastr.error("Niste uneli lozinku za menadžera");
 		$("#lozMen").focus();
@@ -310,6 +325,11 @@ function validateFormMenadzer(){
 //		return false;
 //	}
 	return true;
+}
+
+function validateEmail(email){
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(email);
 }
 
 

@@ -16,7 +16,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.util.SystemPropertyUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,16 +29,22 @@ import com.example.beans.korisnici.MenadzerRestorana;
 import com.example.beans.korisnici.MenadzerSistema;
 import com.example.dto.hellpers.ChangePasswordDTO;
 import com.example.dto.korisnici.GostDTO;
+import com.example.dto.korisnici.KonobarDTO;
 import com.example.dto.korisnici.KorisnikDTO;
+import com.example.dto.korisnici.KuvarDTO;
 import com.example.dto.korisnici.MenadzerDTO;
 import com.example.dto.korisnici.MenadzerSistemaDTO;
+import com.example.dto.korisnici.SankerDTO;
 import com.example.dto.restoran.RestoranDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TypeEmail;
 import com.example.service.GostService;
 import com.example.service.KorisnikService;
+import com.example.service.korisniciImpl.KonobarService;
+import com.example.service.korisniciImpl.KuvarService;
 import com.example.service.korisniciImpl.MenadzerService;
 import com.example.service.korisniciImpl.MenadzerSistemaService;
+import com.example.service.korisniciImpl.SankerService;
 import com.example.service.restoranImpl.RestoranService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -59,6 +64,15 @@ public class KorisnikController {
 	
 	@Autowired
 	private MenadzerService menadzerService;
+	
+	@Autowired
+	private KonobarService konobarService;
+	
+	@Autowired
+	private KuvarService kuvarService;
+	
+	@Autowired
+	private SankerService sankerService;
 	
 	@Autowired
 	private RestoranService restoranService;
@@ -330,8 +344,6 @@ public class KorisnikController {
 		}
 		if(!ovakavPostoji){
 			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, menadzer);
-			
-			
 			menadzerService.create(menadzer);
 			RestoranDTO restoran = restoranService.findById(menadzer.radi_u);
 			restoran.getMenadzeri().add(menadzer);
@@ -349,6 +361,84 @@ public class KorisnikController {
 			}
 			return true;
 		}else {
+			return false;
+		}
+	}
+	
+	@RequestMapping(value="/registerKonobar", method=RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaKonobara(@RequestBody @Valid KonobarDTO konobar) throws IOException{
+		KorisnikDTO k = korisnikService.findByEmail(konobar.email);
+		boolean postoji = false;
+		if(k != null){
+			postoji = true;
+		}
+		if(!postoji){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, konobar);
+			konobarService.create(konobar);
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(konobar.getEmail())){
+					File fi = new File("src/main/resources/static/html/konobar.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@RequestMapping(value="/registerKuvar", method=RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaKuvara(@RequestBody @Valid KuvarDTO kuvar) throws IOException{
+		KorisnikDTO k = korisnikService.findByEmail(kuvar.email);
+		boolean postoji = false;
+		if(k != null){
+			postoji = true;
+		}
+		if(!postoji){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, kuvar);
+			kuvarService.create(kuvar);
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(kuvar.getEmail())){
+					File fi = new File("src/main/resources/static/html/kuvar.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	@RequestMapping(value="/registerSanker", method=RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaKuvara(@RequestBody @Valid SankerDTO sanker) throws IOException{
+		KorisnikDTO k = korisnikService.findByEmail(sanker.email);
+		boolean postoji = false;
+		if(k != null){
+			postoji = true;
+		}
+		if(!postoji){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, sanker);
+			sankerService.create(sanker);
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(sanker.getEmail())){
+					File fi = new File("src/main/resources/static/html/konobar.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
+			return true;
+		}else{
 			return false;
 		}
 	}

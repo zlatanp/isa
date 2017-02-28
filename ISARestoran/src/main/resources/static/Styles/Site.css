@@ -106,3 +106,26 @@ div.jelovnikDiv{
 	margin-right: auto;
 	background: rgba(204, 204, 179, 0.6);
 }
+
+div.zaposleniBlok{
+	border-radius: 15px;
+	border:2px solid;
+	background-color: rgba(204, 204, 179, 0.9);
+}
+
+.trunc{
+	max-width:100px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+div.controlZap{
+	padding-top: 10px;
+	margin-left: 400px; 
+	margin-top: 50px; 
+	margin-bottom: 10px; 
+	border: 2px solid;
+	border-radius: 15px;
+	background-color: rgba(217, 255, 179, 0.9)
+}
