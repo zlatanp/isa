@@ -57,6 +57,9 @@ public class Rezervacija implements Serializable{
 	@Column(name="broj_stolica")
 	protected int broj_stolica;
 	
+	@OneToMany(cascade={CascadeType.ALL},fetch=FetchType.LAZY,mappedBy="rezervacija")
+	protected Set<Narudzbina> narudzbine;
+	
 	public Rezervacija() {}
 
 	public int getId() {
@@ -129,5 +132,13 @@ public class Rezervacija implements Serializable{
 
 	public void setBroj_stolica(int broj_stolica) {
 		this.broj_stolica = broj_stolica;
+	}
+
+	public Set<Narudzbina> getNarudzbine() {
+		return narudzbine;
+	}
+
+	public void setNarudzbine(Set<Narudzbina> narudzbine) {
+		this.narudzbine = narudzbine;
 	}
 }
