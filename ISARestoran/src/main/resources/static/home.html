@@ -86,8 +86,7 @@
 		<!-- /.container-fluid -->
 	</nav>
 
-
-	<div class="container" style="display: none; background-color: #E8E8E8"
+<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>
 		<div class="row">
@@ -96,28 +95,51 @@
 				<br> <br> <a href="#" onclick="basicDetails()">Osnovni
 					podaci</a><br> <a href="#" onclick="friends()">Prijatelji</a>
 			</div>
-			
-			
-<!-- 			<div class="col-sm-9" id="desniDiv" style="visibility: hidden;"> -->
-<!-- 				<div class="input-group date" id="datapicker" > -->
-
-<!--   					<input type="text" class="form-control" /> -->
-
-<!--   					<span class="input-group-addon"> -->
-
-<!--     				<span class="glyphicon glyphicon-calendar"></span> -->
-<!--   					</span> -->
-
-<!-- 				</div> -->
-
-<!-- 	<script> -->
-// 	$('#example').datetimepicker();
-<!-- </script>		 -->
-			
-<!-- 			</div> -->
+			<div class="col-sm-9" id="desniDiv"></div>
 		</div>
+		
+		<div id="zarezervaciju" style="display: none;">
+		<table>
+			<tr><td>Izaberite datum i vreme posete restoranu: &nbsp;</td><td><div class="input-group date" id="datapicker" >
 
+  					<input type="text" class="form-control" id="datumcina"/>
+
+  					<span class="input-group-addon">
+
+    				<span class="glyphicon glyphicon-calendar"></span>
+  					</span>
+
+				</div>
+				</td></tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr><td>Dužina boravka u restoranu (u satima): </td><td><select name="satiBoravka">
+    <option value="1">1 sat</option>
+    <option value="2">2 sata</option>
+    <option value="3">3 sata</option>
+    <option value="4">4 sata</option>
+    <option value="5">5 sati</option>
+    <option value="6">6 sati</option>
+    <option value="7">7 sati</option>
+    <option value="8">8 sati</option>
+  </select></td></tr>
+	</table>
+	<br>
+	<br>
+	<br>
+	<button onclick="return dajMapuStolova()" class="btn btn-success">Izaberi sto</button>
+	<br>
+	<br>
 	</div>
+	</div>
+
+	<script>
+ 	$('#datapicker').datetimepicker();
+</script>		
+			
+			
+		
+
+	
 	
 	<div id="restoranProfil" style="display: none;">
 	
