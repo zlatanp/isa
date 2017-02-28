@@ -37,7 +37,9 @@ public class Ponuda implements Serializable {
 	@Column(name="prihvacena", nullable=false)
 	protected boolean prihvacena;
 	
-	// neki zahtev za ponude dodaj "KONKURS"
+	@ManyToOne
+	@JoinColumn(name="za_konkurs",referencedColumnName="id", nullable=false)
+	protected Konkurs za_konkurs;
 	
 	public Ponuda() {
 	}
@@ -88,5 +90,13 @@ public class Ponuda implements Serializable {
 
 	public void setPrihvacena(boolean prihvacena) {
 		this.prihvacena = prihvacena;
-	}	
+	}
+
+	public Konkurs getZaKonkurs() {
+		return za_konkurs;
+	}
+
+	public void setZaKonkurs(Konkurs konkurs) {
+		this.za_konkurs = konkurs;
+	}
 }

@@ -50,6 +50,7 @@ import com.example.service.korisniciImpl.KonobarService;
 import com.example.service.korisniciImpl.KuvarService;
 import com.example.service.korisniciImpl.MenadzerService;
 import com.example.service.korisniciImpl.MenadzerSistemaService;
+import com.example.service.korisniciImpl.PonudjacService;
 import com.example.service.korisniciImpl.SankerService;
 import com.example.service.restoranImpl.RestoranService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,6 +81,9 @@ public class KorisnikController {
 	
 	@Autowired
 	private SankerService sankerService;
+	
+	@Autowired
+	private PonudjacService ponudjacService;
 	
 	@Autowired
 	private RestoranService restoranService;
@@ -487,6 +491,17 @@ public class KorisnikController {
 			}
 			return true;
 		}else{
+			return false;
+		}
+	}
+	
+	@RequestMapping(value="/registerPonudjac", method= RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean registracijaPonudjaca(@RequestBody @Valid com.example.dto.korisnici.PonudjacDTO ponudjac){
+		KorisnikDTO k = korisnikService.findByEmail(ponudjac.email);
+		if(k == null){
+			ponudjacService.create(ponudjac);
+			return true;
+		}else {
 			return false;
 		}
 	}

@@ -12,9 +12,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.example.beans.korisnici.Konobar;
 
 @Entity
 @Table(name="poseta")
@@ -42,12 +44,20 @@ public class Poseta implements Serializable {
 	protected Set<Sto> stolovi;
 	
 	@ManyToOne
+	@JoinColumn(name="konobar",referencedColumnName="id", nullable=false)
+	protected Konobar konobar;
+	
+	@ManyToOne
 	@JoinColumn(name="restoran",referencedColumnName="id", nullable=false)
 	protected Restoran restoran;
 	
 	@OneToOne
 	@JoinColumn(name="racun")
 	protected Racun racun;
+	
+	@OneToMany(fetch=FetchType.EAGER)
+	@JoinColumn(name="narudzbine")
+	protected Set<Narudzbina> narudzbine;
 	
 	public Poseta() {}
 
@@ -106,4 +116,22 @@ public class Poseta implements Serializable {
 	public void setRacun(Racun racun) {
 		this.racun = racun;
 	}
+
+	public Set<Narudzbina> getNarudzbine() {
+		return narudzbine;
+	}
+
+	public void setNarudzbine(Set<Narudzbina> narudzbine) {
+		this.narudzbine = narudzbine;
+	}
+
+	public Konobar getKonobar() {
+		return konobar;
+	}
+
+	public void setKonobar(Konobar konobar) {
+		this.konobar = konobar;
+	}
+	
+	
 }
