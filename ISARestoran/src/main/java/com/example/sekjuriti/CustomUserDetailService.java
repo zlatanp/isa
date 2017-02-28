@@ -32,7 +32,8 @@ public class CustomUserDetailService implements UserDetailsService {
 			
 		}
 		
-		if (korisnik == null || !korisnik.isPromenioLozinku()){
+		if (korisnik == null){
+			
 			throw new UsernameNotFoundException("No user found with username: " + email); 
 		}
 		

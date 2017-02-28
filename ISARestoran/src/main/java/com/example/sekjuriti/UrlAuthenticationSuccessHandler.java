@@ -29,8 +29,15 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 		
 		LoggedUser korisnik = (LoggedUser) authentication.getPrincipal();
 		Korisnik user = korisnik.Korisnik();
-		handle(request,response,authentication);
-		clearAuthenticationAttributes(request);	
+		System.out.println("user ispromeniolozinku: +" + user.isPromenioLozinku());
+		
+		if (!user.isPromenioLozinku()){
+			System.out.println("Ne dam!");
+			redirectStrategy.sendRedirect(request, response, "/changePassword.html");
+		} else {
+			handle(request,response,authentication);
+			clearAuthenticationAttributes(request);		
+		}
 	}
 	
 	public void handle(HttpServletRequest request,HttpServletResponse response,Authentication auth) throws IOException{		
@@ -54,27 +61,27 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 					gost= true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_MEN_RES")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_MENADZERRESTORANA")){		
 					menadzer = true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_KUV")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_KUVAR")){		
 					kuvar = true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_KON")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_KONOBAR")){		
 					konobar = true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_SANK")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_SANKER")){		
 					sanker = true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_MEN_SIS")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_MENADZERSISTEMA")){		
 					admin= true;		
 					break;		
 				}		
-				else if (grantedAuthority.getAuthority().equals("ROLE_PON")){		
+				else if (grantedAuthority.getAuthority().equals("ROLE_PONUDJAC")){		
 					ponudjac= true;		
 					break;		
 				}		
@@ -83,11 +90,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 			if (gost)		
 				return "/home.html";		
 			else if (menadzer)		
-				return "/profilMenadzera.html";		
+				return "/menadzerPage.html";		
 			else if (konobar || kuvar || sanker)		
 				return "/profilZaposlenog.html";		
 			else if (admin)		
-				return "/admin.html";		
+				return "/adminPage.html";		
 			else if (ponudjac)		
 				return "/profilPonudjaca.html";		
 			else 		
