@@ -838,11 +838,6 @@ var karticaPica;
 		
 		
 		
-		function rezervisemRestoran(id){
-			document.getElementById('jelaipica').style.display = 'none';
-			document.getElementById('picaijela').style.display = 'none';
-			alert("rezervisem restoran sa id + " + id);
-		}
 		
 		function sortPoImenuRestorane(){
 			document.getElementById('restoranProfil').style.display = 'none';
@@ -975,4 +970,29 @@ var karticaPica;
 			}
 		
 				
+		function izlogujSe(){
+			document.cookie = "emailValue=";
+		}
+		
+		
+		function rezervisemRestoran(id){
+			document.getElementById('restoranProfil').style.display = 'none';
+			document.getElementById('glavniDiv').style.display = 'block';
+			$('#leviDiv').html('');
+			
+			alert("rezervisem restoran sa id + " + id);
+			
+			$.ajax({	     
+				type: 'GET',
+				url: 'restoran/dajRestoranSaId', 
+				dataType: 'JSON',
+		        data: {id : id},
+		        success: function(data){
+		        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv;
+		        	$('#desniDiv').html('<table><tr><td>Izaberite datum posete restoranu: </td><td><input type="date" name="datum" id="datum"></td></tr><tr><td>Unesite vreme posete restoranu: </td><td>vremenekonesto</td></tr><tr><td>Dužina boravka u restoranu (u satima): </td><td>nekisatinesto</td></tr></table>');
+		        }
+		        
+		        });
+		}
+	
 		

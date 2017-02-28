@@ -21,36 +21,37 @@ import com.example.beans.korisnici.Korisnik;
 
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+	private RedirectStrategy redirect = new DefaultRedirectStrategy();
 	
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+	public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse resp, Authentication auth)
 			throws IOException, ServletException {
 		
-		LoggedUser korisnik = (LoggedUser) authentication.getPrincipal();
+		LoggedUser korisnik = (LoggedUser) auth.getPrincipal();
 		Korisnik user = korisnik.Korisnik();
 		System.out.println("user ispromeniolozinku: +" + user.isPromenioLozinku());
 		
 		if (!user.isPromenioLozinku()){
-			System.out.println("Ne dam!");
-			redirectStrategy.sendRedirect(request, response, "/changePassword.html");
+			redirect.sendRedirect(req, resp, "/changePassword.html");
 		} else {
-			handle(request,response,authentication);
-			clearAuthenticationAttributes(request);		
+			handle(req,resp,auth);
+			clearAuthenticationAttributes(req);		
 		}
 	}
 	
 	public void handle(HttpServletRequest request,HttpServletResponse response,Authentication auth) throws IOException{		
 		String targetURL = determineURL(auth);		
 		System.out.println(targetURL);		
-		redirectStrategy.sendRedirect(request, response, targetURL);		
+		redirect.sendRedirect(request, response, targetURL);		
 				
 	}		
 	
 	 public String determineURL(Authentication auth){		
 			boolean gost = false; 		
 			boolean menadzer = false;		
-			boolean kuvar = false ,sanker = false ,konobar = false;		
+			boolean kuvar = false;
+			boolean sanker = false;
+			boolean konobar = false;		
 			boolean admin=false;		
 			boolean ponudjac=false;		
 					
@@ -110,10 +111,10 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 	   }		
 			
 		public RedirectStrategy getRedirectStrategy() {		
-			return redirectStrategy;		
+			return redirect;		
 		}		
 				
 		public void setRedirectStrategy(RedirectStrategy redirectStrategy) {		
-			this.redirectStrategy = redirectStrategy;		
+			this.redirect = redirectStrategy;		
 		}		
 }
