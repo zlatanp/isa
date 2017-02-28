@@ -41,10 +41,10 @@ var karticaPica;
 		var delovi = x.split("=");
 		var emailUlogovanog = delovi[1];
 		
-		if(emailUlogovanog.search("@")==-1){
-			$('.navbar').hide();
-			$('#glavniDiv').hide();
-    	}
+// 		if(emailUlogovanog.search("@")==-1){
+// 			$('.navbar').hide();
+// 			$('#glavniDiv').hide();
+//     	}
 		
 		if(emailUlogovanog.search("@")!=-1){
 	     	$.ajax({ 
@@ -104,7 +104,7 @@ var karticaPica;
 					<li id="notifikacija"></li>
 					<li><a onclick="profilKorisnika()" href="#">Moj profil</a></li>
 					<li><a onclick="pocetnaFrends()" href="#">Prijatelji</a></li>
-					<li><a onclick="izlogujSe()" href="#">Izloguj se</a></li>
+					<li><a  href="/korisnik/logout">Izloguj se</a></li>
 				</ul>
 			</div>
 			<!-- /.navbar-collapse -->
@@ -120,7 +120,15 @@ var karticaPica;
 		
 		if(emailUlogovanog.search("@")!=-1){
 			document.cookie =  "emailValue=" + "";
-    		window.location.href="index.html";
+    		
+    		$.ajax({ 
+	             type: 'POST',
+	             url: 'korisnik/logout',
+	     		 success: function(data){
+	     			window.location.href="index.html";
+	        		
+	            		}
+	     	});
     	}
 	}
 

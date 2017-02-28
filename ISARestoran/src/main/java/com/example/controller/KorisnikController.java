@@ -15,8 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.util.SystemPropertyUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +47,7 @@ import com.example.service.restoranImpl.RestoranService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 @RestController
 @RequestMapping("/korisnik")
 public class KorisnikController {
@@ -63,104 +67,150 @@ public class KorisnikController {
 	@Autowired
 	private RestoranService restoranService;
 	
+	
 	private ObjectMapper objectMapper = new ObjectMapper();
 
-	@RequestMapping(value = "/login", method = { RequestMethod.POST }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public synchronized void login(HttpServletResponse response, @ModelAttribute("email") String email,
-			@ModelAttribute("password") String password) throws IOException {
-		boolean postoji = false;
-		boolean aktiviran = false;
-		boolean nasaoMenSistema = false;
-		boolean nasaoMenRest = false;
-		MenadzerSistemaDTO msDTO = new MenadzerSistemaDTO();
-		MenadzerDTO mrDTO = new MenadzerDTO();
-		Korisnik korisnikKojiSeLoguje = null;
-		System.out.println("loguje se: " + email + " " + password);
-
-		System.out.println();
-		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
-
-		for (Korisnik korisnik : listaKorisnika) {
-			if (korisnik.getEmail().equals(email)) {
-				if (korisnik.getPassword().equals(password)) {
-					System.out.println("imaga");
-					postoji = true;
-					korisnikKojiSeLoguje = korisnik;
-				}
-			}
+//	@RequestMapping(value = "/login", method = { RequestMethod.POST }, produces = MediaType.APPLICATION_JSON_VALUE)
+//	public synchronized void login(HttpServletResponse response, @ModelAttribute("email") String email,
+//			@ModelAttribute("password") String password) throws IOException {
+//		boolean postoji = false;
+//		boolean aktiviran = false;
+//		boolean nasaoMenSistema = false;
+//		boolean nasaoMenRest = false;
+//		MenadzerSistemaDTO msDTO = new MenadzerSistemaDTO();
+//		MenadzerDTO mrDTO = new MenadzerDTO();
+//		Korisnik korisnikKojiSeLoguje = null;
+//		System.out.println("loguje se: " + email + " " + password);
+//
+//		System.out.println();
+//		Iterable<Korisnik> listaKorisnika = korisnikService.getAllKorisnici();
+//
+//		for (Korisnik korisnik : listaKorisnika) {
+//			if (korisnik.getEmail().equals(email)) {
+//				if (korisnik.getPassword().equals(password)) {
+//					System.out.println("imaga");
+//					postoji = true;
+//					korisnikKojiSeLoguje = korisnik;
+//				}
+//			}
+//		}
+//
+//		// ovdee menjam
+//		// Uzimam tip korisnika koji se loguje i pitam da li je Gost.
+//		// Ako jeste gost onda proveravam da li je aktivirao profil preko mejla,
+//		// ako jeste onda se loguje uspesno, ako nije onda se ne moze ulogovati
+//
+//		if (korisnikKojiSeLoguje != null && postoji) {
+//			TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
+//			System.out.println("Tip koji se loguje: "+ tip);
+//			
+//			switch (tip) {
+//			case GOST:
+//				Iterable<Gost> sviGosti = gostService.getAllGosti();
+//				for (Gost item : sviGosti) {
+//					if (item.isActivated()) {
+//						aktiviran = true;
+//					} else {
+//						aktiviran = false;
+//					}
+//				}
+//				break;
+//			case MENADZERSISTEMA:
+//				Iterable<MenadzerSistema> sviMenadzeri = menadzerSistemaService.getAll();
+//				for(MenadzerSistema m : sviMenadzeri){
+//					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) && 
+//							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
+//						nasaoMenSistema = true;
+//						msDTO = new MenadzerSistemaDTO(m);
+//					}
+//				}
+//				break;
+//			
+//			case MENADZERRESTORANA:
+//				Iterable<MenadzerRestorana> sviMenadzeriRest = menadzerService.findAll();
+//				for(MenadzerRestorana m : sviMenadzeriRest){
+//					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) &&
+//							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
+//						nasaoMenRest = true;
+//						mrDTO = new MenadzerDTO(m);
+//					}
+//				}
+//				break;
+//				
+//			default:
+//				break;
+//			}
+//		}
+//
+//		if (aktiviran) {
+//			response.sendRedirect("/home.html");
+//			
+//		} else if (nasaoMenSistema){
+//			if(msDTO.getIme().equals("admin")){
+//				response.sendRedirect("/adminPage.html");
+//			}else if(!msDTO.isPromenioLozinku()){
+//				response.sendRedirect("/changePassword.html");
+//			}else {
+//				response.sendRedirect("/adminPage.html");
+//			}
+//			
+//		}else if (nasaoMenRest){
+//			if(!mrDTO.isPromenioLozinku()){
+//				response.sendRedirect("/changePassword.html");
+//			}else {
+//				response.sendRedirect("/menadzerPage.html");
+//			}
+//			
+//		} else {
+//			response.sendRedirect("/index.html");
+//		}
+//	}
+	
+	@RequestMapping(value="/login",method=RequestMethod.POST)
+	public void login(){}
+	
+	public String determineRole(Korisnik korisnik){
+		if (korisnik.getTipKorisnika().equals(TipKorisnika.GOST)){
+			return "GOST";
 		}
-
-		// ovdee menjam
-		// Uzimam tip korisnika koji se loguje i pitam da li je Gost.
-		// Ako jeste gost onda proveravam da li je aktivirao profil preko mejla,
-		// ako jeste onda se loguje uspesno, ako nije onda se ne moze ulogovati
-
-		if (korisnikKojiSeLoguje != null && postoji) {
-			TipKorisnika tip = korisnikKojiSeLoguje.getTipKorisnika();
-			System.out.println("Tip koji se loguje: "+ tip);
-			
-			switch (tip) {
-			case GOST:
-				Iterable<Gost> sviGosti = gostService.getAllGosti();
-				for (Gost item : sviGosti) {
-					if (item.isActivated()) {
-						aktiviran = true;
-					} else {
-						aktiviran = false;
-					}
-				}
-				break;
-			case MENADZERSISTEMA:
-				Iterable<MenadzerSistema> sviMenadzeri = menadzerSistemaService.getAll();
-				for(MenadzerSistema m : sviMenadzeri){
-					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) && 
-							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
-						nasaoMenSistema = true;
-						msDTO = new MenadzerSistemaDTO(m);
-					}
-				}
-				break;
-			
-			case MENADZERRESTORANA:
-				Iterable<MenadzerRestorana> sviMenadzeriRest = menadzerService.findAll();
-				for(MenadzerRestorana m : sviMenadzeriRest){
-					if(m.getEmail().equals(korisnikKojiSeLoguje.getEmail()) &&
-							m.getPassword().equals(korisnikKojiSeLoguje.getPassword())){
-						nasaoMenRest = true;
-						mrDTO = new MenadzerDTO(m);
-					}
-				}
-				break;
-				
-			default:
-				break;
-			}
-		}
-
-		if (aktiviran) {
-			response.sendRedirect("/home.html");
-			
-		} else if (nasaoMenSistema){
-			if(msDTO.getIme().equals("admin")){
-				response.sendRedirect("/adminPage.html");
-			}else if(!msDTO.isPromenioLozinku()){
-				response.sendRedirect("/changePassword.html");
-			}else {
-				response.sendRedirect("/adminPage.html");
-			}
-			
-		}else if (nasaoMenRest){
-			if(!mrDTO.isPromenioLozinku()){
-				response.sendRedirect("/changePassword.html");
-			}else {
-				response.sendRedirect("/menadzerPage.html");
-			}
-			
-		} else {
-			response.sendRedirect("/index.html");
-		}
+//		else if (korisnik instanceof MenadzerDTO){
+//			return "MENADZER";
+//		}
+//		else if (korisnik instanceof KonobarDTO){
+//			return "KONOBAR";
+//		}
+//		else if (korisnik instanceof KuvarDTO){
+//			return "KUVAR";
+//		}
+//		else if (korisnik instanceof SankerDTO){
+//			return "SANKER";
+//		}
+//		else if (korisnik instanceof MenadzerSistemaDTO){
+//			return "ADMIN";
+//		}
+//		else if (korisnik instanceof PonudjacDTO){
+//			return "PONUDJAC";
+//		}
+		return "";
 	}
+	
+	public void setAuthorAuthen(Korisnik korisnik){
+		final java.util.Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(determineRole(korisnik)));
+        final Authentication authentication = new PreAuthenticatedAuthenticationToken(korisnik, null, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+	}
+	
+	@RequestMapping(value = "/logout", method = { RequestMethod.POST })
+	public synchronized void logout(HttpServletResponse response) throws IOException {
+	
 
+
+	
+	}
+	
+	
 	@RequestMapping(value = "/register", method = { RequestMethod.POST })
 	public synchronized void register(HttpServletResponse httpServletResponse,
 			@ModelAttribute("nameRegister") String name, @ModelAttribute("lastnameRegister") String lastname,
