@@ -975,13 +975,14 @@ var karticaPica;
 		}
 		
 		
+		
+		
 		function rezervisemRestoran(id){
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
+			document.getElementById('desniDiv').style.display = 'block';
 			$('#leviDiv').html('');
-			
-			alert("rezervisem restoran sa id + " + id);
-			
+//			document.getElementById('datumDiv').style.display = 'block';
 			$.ajax({	     
 				type: 'GET',
 				url: 'restoran/dajRestoranSaId', 
@@ -989,7 +990,8 @@ var karticaPica;
 		        data: {id : id},
 		        success: function(data){
 		        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv;
-		        	$('#desniDiv').html('<table><tr><td>Izaberite datum posete restoranu: </td><td><input type="date" name="datum" id="datum"></td></tr><tr><td>Unesite vreme posete restoranu: </td><td>vremenekonesto</td></tr><tr><td>Dužina boravka u restoranu (u satima): </td><td>nekisatinesto</td></tr></table>');
+		        	//$('#desniDiv').html('<table><tr><td>Izaberite datum i vreme posete restoranu: </td><td><input type="date" name="datum" id="datum"></td></tr><tr><td>Dužina boravka u restoranu (u satima): </td><td>nekisatinesto</td></tr></table>');
+		        	$('#desniDiv').html('<div class="container" style="display: none;" id="datumDiv"><div class="row"><div class=\'col-sm-6\'><div class="form-group"><div class=\'input-group date\' id=\'datetimepicker1\'><input type=\'text\' class="form-control" /><span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span><script type="text/javascript">$(function () {$(\'#datetimepicker1\').datetimepicker();});</script></div></div>');
 		        }
 		        
 		        });
