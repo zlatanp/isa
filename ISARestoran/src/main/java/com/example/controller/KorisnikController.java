@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Gost;
@@ -496,10 +494,21 @@ public class KorisnikController {
 	}
 	
 	@RequestMapping(value="/registerPonudjac", method= RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean registracijaPonudjaca(@RequestBody @Valid com.example.dto.korisnici.PonudjacDTO ponudjac){
+	public boolean registracijaPonudjaca(@RequestBody @Valid com.example.dto.korisnici.PonudjacDTO ponudjac) throws IOException{
 		KorisnikDTO k = korisnikService.findByEmail(ponudjac.email);
 		if(k == null){
+			sendEmailToNewUser("", TypeEmail.CHANGE_PASSWORD, ponudjac);
 			ponudjacService.create(ponudjac);
+			Iterable<Korisnik> sviKorisnici2 = korisnikService.getAllKorisnici();
+			for(Korisnik kor : sviKorisnici2){
+				if(kor.getEmail().equals(ponudjac.getEmail())){
+					File fi = new File("src/main/resources/static/html/konobar.jpg");
+					byte[] fileContent = Files.readAllBytes(fi.toPath());
+					kor.setSlika(fileContent);
+					korisnikService.saveKorisnik(kor);
+					break;
+				}
+			}
 			return true;
 		}else {
 			return false;
