@@ -975,4 +975,6 @@ var karticaPica;
 			}
 		
 				
-		
+		function izlogujSe(){
+			document.cookie = "emailValue=";
+		}

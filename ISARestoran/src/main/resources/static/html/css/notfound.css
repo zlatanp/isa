@@ -1,0 +1,13 @@
+#skrolable{
+    width: 30em;
+    overflow-x: auto;
+    white-space: nowrap;
+    
+        }
+        
+
+body{
+	background-image: url(notfound404.jpg);
+	background-size: cover;
+	background-repeat: no-repeat;
+}
