@@ -12,5 +12,9 @@ public interface ZaposleniRepository extends JpaRepository<Zaposleni, Integer> {
 	
 	Zaposleni findById(int id);
 	
+	Zaposleni findByEmailAndPassword(String email, String password);
+	
+	Zaposleni findByImeAndPrezime(String ime, String prezime);
+	
 	List<Zaposleni> findAll();
 }

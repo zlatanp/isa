@@ -188,12 +188,22 @@ function validateFormRestoran() {
 		$("#emailRest").focus();
 		return false;
 	}
+	if(!validateEmail($("#emailRest").val())){
+		toastr.error("E-mail restorana nije validan.");
+		$("#emailRest").focus();
+		return false;
+	}
 	if (!validateField($("#opisRest"))) {
 		toastr.error("Ne možete izmeniti restoran. Unesite opis restorana!")
 		$("#opisRest").focus();
 		return false;
 	}
 	return true;
+}
+
+function validateEmail(email){
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(email);
 }
 
 function validateField(field) {

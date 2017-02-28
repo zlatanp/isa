@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
+import com.example.dto.korisnici.ZaposleniDTO;
 import com.example.dto.restoran.JeloDTO;
 import com.example.dto.restoran.PiceDTO;
 import com.example.dto.restoran.RestoranDTO;
@@ -40,6 +43,8 @@ import com.example.dto.restoran.StoDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
+import com.example.service.korisniciImpl.KonobarService;
+import com.example.service.korisniciImpl.ZaposlenService;
 import com.example.service.restoranImpl.JeloService;
 import com.example.service.restoranImpl.PiceService;
 import com.example.service.restoranImpl.RestoranService;
@@ -74,6 +79,12 @@ public class RestoranController {
 	
 	@Autowired
 	private StoService stoService;
+	
+	@Autowired
+	private ZaposlenService zaposleniService;
+	
+	@Autowired
+	private KonobarService konobarService;
 	
 	@Autowired
 	private ServletContext servletContext;
@@ -150,6 +161,20 @@ public class RestoranController {
 		return objectMapper.writeValueAsString(restoranService.findById(id));
 	}
 
+	@RequestMapping(value="/dobaviZaposlene/{email}", method = RequestMethod.GET, produces = "application/json")
+	public String getZaposleni(@PathVariable("email") String email) throws JsonProcessingException{
+		String realEmail = email + ".com";		
+		KorisnikDTO k = korisnikService.findByEmail(realEmail);
+		if(k == null){
+			return "";
+		}
+		
+		final DateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+		objectMapper.setDateFormat(df);
+		return objectMapper.writeValueAsString(zaposleniService.nadjiZaposleneZaRestoran(realEmail));
+	}
+	
+	
 	@RequestMapping(value = "/getJela/{id}", method = RequestMethod.GET, produces = "application/json")
 	public String getJela(@PathVariable("id") int idRestorana) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(jeloService.findAll(idRestorana));
@@ -404,6 +429,27 @@ public class RestoranController {
 		}
 		return retVal;
 	}
+	
+	@RequestMapping(value="/traziZaposlenog/{id}", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public String traziZaposlenog(@RequestBody @Valid CompareStringsDTO zaTrazenje, @PathVariable("id") int idRestorana) throws JsonProcessingException{
+		String[] delovi = zaTrazenje.getVal1().split(" ");
+		String retVal = "";
+		List<ZaposleniDTO> zaposleni = new ArrayList<ZaposleniDTO>();	
+		if(delovi.length == 0){
+			retVal = "";
+		}else if(delovi.length == 1){
+			String prva = delovi[0];
+			String druga = "";
+			zaposleni = zaposleniService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(zaposleni);
+		}else if(delovi.length == 2){
+			String prva = delovi[0];
+			String druga = delovi[1];
+			zaposleni = zaposleniService.findByParameters(prva, druga, idRestorana);
+			retVal = objectMapper.writeValueAsString(zaposleni);
+		}
+		return retVal;
+	}
 
 	@RequestMapping(value = "/sortirajrestoranepoimenu", method = {
 			RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -646,6 +692,11 @@ public class RestoranController {
 			stoService.create(stolovi.get(i), realEmail);
 		}
 		return true;
+	}
+	
+	@RequestMapping(value="/oceneKonobara/{email:.+}", method=RequestMethod.GET, produces = "application/json")
+	public String getOceneKonobara(@PathVariable("email") String email) throws JsonProcessingException{
+		return objectMapper.writeValueAsString(konobarService.dobaviOceneZaKonobara(email));
 	}
 
 }

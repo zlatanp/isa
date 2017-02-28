@@ -88,18 +88,51 @@
 	</div>
 
 
-	<div class="col-lg-6"
-		style="margin-left: 300px; margin-top: 50px; border: 2px solid">
+	<div class="col-lg-6 controlZap">
 		<button id="dugmeDodaj" data-toggle="modal"
-			data-target="#modalZaposleni" type="button" class="btn btn-success"
-			style="margin-right: 10px">
+			data-target="#modalZaposleni" type="button" class="btn btn-danger">
 			Registruj zaposlenog <span class="glyphicon glyphicon-plus"></span>
 		</button>
-		<button id="dugmePregled" type="button" class="btn btn-danger"
-			style="margin-right: 10px">
-			Pregled svih zaposlenih <span class="glyphicon glyphicon-list"></span>
-		</button>
+		<br>
+		<div class="form-group col-lg-6">
+			<h4>Unesite ime i prezime zaposlenog:</h4>
+			<input class="form-control col-lg-1" type="text" id="zapZaPretragu"
+				style="margin-bottom: 5px">
+			<button id="btnTraziZaposlenog" type="button" class="btn btn-success"
+				style="margin-right: 10px">
+				Traži <span class="glyphicon glyphicon-search"></span>
+			</button>
+			<button id="dugmePregled" type="button" class="btn btn-success">
+				Pregled svih zaposlenih <span class="glyphicon glyphicon-list"></span>
+			</button>
+		</div>
 	</div>
+
+	<div class="container col-md-10" id="kartice_zaposleni"
+		style="margin-left: 100px"></div>
+
+	<div id="tab_radnik" hidden>
+		<h2 id="naslovKonobar"></h2>
+		<hr>
+		<br>
+		<button type="button" class="btn btn-warning" id="nazad">
+			<span class="glyphicon glyphicon-menu-left"></span> Nazad
+		</button>
+		<br>
+		<br>
+		<div class="row">
+			<div class="col-md-2">
+				<p>Ukupna ocena:</p>
+			</div>
+			<div class="col-md-3">
+				<div id="zvezdice_za_konobara"></div>
+			</div>
+		</div>
+		<br>
+		<div id="cards_comments"></div>
+	</div>
+
+
 
 	<div id="modalZaposleni" class="modal fade" role="dialog"
 		data-backdrop="false">
@@ -144,7 +177,7 @@
 						<div class="form-group">
 							<label class="control-label col-sm-3">Datum rođenja:</label>
 							<div class="col-sm-8">
-								<input required class="pull-right form-control" type="text"
+								<input required class="pull-right form-control" type="date"
 									name="prezime" id="datRodj">
 							</div>
 						</div>
@@ -174,7 +207,7 @@
 						</div>
 						<div class="form-group">
 							<button class="btn btn-success" id="btnRegZaposlenog"
-								style="margin-left:130px">Registruj zaposlenog</button>
+								style="margin-left: 130px">Registruj zaposlenog</button>
 						</div>
 					</form>
 				</div>

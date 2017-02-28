@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.example.beans.korisnici.MenadzerRestorana;
+import com.example.beans.korisnici.Zaposleni;
 import com.example.enums.TipRestorana;
 import com.example.enums.TipValute;
 
@@ -64,6 +65,9 @@ public class Restoran implements Serializable {
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "radi_u")
 	protected Set<MenadzerRestorana> menadzeri;
 
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "radi_u")
+	protected Set<Zaposleni> zaposleni;
+	
 	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "restoran")
 	protected Set<Jelo> jelovnik;
 
@@ -75,6 +79,9 @@ public class Restoran implements Serializable {
 
 	@Column(name = "raspored", columnDefinition = "LONGTEXT")
 	protected String raspored;
+	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY , mappedBy= "restoran")
+	protected Set<Ocena> ocene;
 	
 	public Restoran() {
 	}
@@ -236,6 +243,22 @@ public class Restoran implements Serializable {
 
 	public void setRaspored(String raspored) {
 		this.raspored = raspored;
+	}
+
+	public Set<Ocena> getOcene() {
+		return ocene;
+	}
+
+	public void setOcene(Set<Ocena> ocene) {
+		this.ocene = ocene;
+	}
+
+	public Set<Zaposleni> getZaposleni() {
+		return zaposleni;
+	}
+
+	public void setZaposleni(Set<Zaposleni> zaposleni) {
+		this.zaposleni = zaposleni;
 	}
 
 }
