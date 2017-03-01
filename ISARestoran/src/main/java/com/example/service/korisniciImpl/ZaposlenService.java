@@ -77,4 +77,5 @@ public class ZaposlenService {
 		}
 		return filter;
 	}
+	
 }

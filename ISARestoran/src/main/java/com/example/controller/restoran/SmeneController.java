@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.beans.korisnici.Korisnik;
 import com.example.beans.korisnici.MenadzerRestorana;
+import com.example.dto.hellpers.RadniciSmena;
 import com.example.dto.restoran.SmenaDTO;
 import com.example.enums.TipKorisnika;
 import com.example.sekjuriti.LoggedUser;
@@ -65,6 +66,18 @@ public class SmeneController {
 	@RequestMapping(value="/smenaZaKonobara/{id}", method=RequestMethod.GET, produces="application/json")
 	public boolean smenaZaKonobara(@PathVariable("id") int idKonobara){
 		return radiUSmeniService.smenaJeKonobarova(idKonobara);
+	}
+	
+	@RequestMapping(value="/dobaviSmeneText", method=RequestMethod.POST, produces="application/json", consumes="text/plain")
+	public List<RadniciSmena> dobaviSmene(@RequestBody String month){
+		LoggedUser u = (LoggedUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Korisnik k = u.Korisnik();
+		if(k.getTipKorisnika().equals(TipKorisnika.MENADZERRESTORANA)){
+			MenadzerRestorana mr = menadzerService.findById(k.getId());
+			return radiUSmeniService.getByMonth(month, mr.getRadi_u().getId());
+		}else {
+			return null;
+		}
 	}
 	
 }

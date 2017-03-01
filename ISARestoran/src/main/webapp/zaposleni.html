@@ -35,9 +35,19 @@
 <script src="html/js/toastr.js"></script>
 <script src="html/js/jquery-ui.js"></script>
 
+<!-- KALENDAR -->
+<link rel="stylesheet" href="html/fullcalendar/fullcalendar.css" />
+<link rel="stylesheet" media="print"
+	href="html/fullcalendar/fullcalendar.print.css" />
+<script src="html/fullcalendar/lib/moment.min.js"></script>
+<script src="html/fullcalendar/fullcalendar.min.js"></script>
+<!-- KALENDAR -->
+
+
 <script src="Scripts/EvidencijaZaposlenih.js"></script>
 <script src="Scripts/Navbar.js"></script>
 <script src="Scripts/Smene.js"></script>
+<script type="text/javascript" src="Scripts/RadnoVreme.js"></script>
 
 <title>Evidencija zaposlenih</title>
 </head>
@@ -93,7 +103,7 @@
 
 	<div class="sakrijZaProfil">
 
-		<div class="col-lg-6 controlZap">
+		<div class="col-lg-8 controlZap" style="margin-left: 100px">
 			<button id="dugmeDodaj" data-toggle="modal"
 				data-target="#modalZaposleni" type="button" class="btn btn-danger"
 				style="margin-right: 5px">
@@ -118,8 +128,17 @@
 					Pregled svih zaposlenih <span class="glyphicon glyphicon-list"></span>
 				</button>
 				<button id="dugmePregledSmena" data-toggle="modal"
-				data-target="#modalSveSmene" type="button" class="btn btn-success">
+					data-target="#modalSveSmene" type="button" class="btn btn-success">
 					Pregled svih smena <span class="glyphicon glyphicon-list"></span>
+				</button>
+				<button id="dugmeReon" data-toggle="modal" data-target="#modalReon"
+					type="button" class="btn btn-warning">
+					Pregled svih reona<span class="glyphicon glyphicon-list"></span>
+				</button>
+				<button id="dugmeRadnoVreme" data-toggle="modal"
+					data-target="#modalRadnoVreme" type="button"
+					class="btn btn-warning">
+					Dodela radnog vremena<span class="glyphicon glyphicon-list"></span>
 				</button>
 			</div>
 		</div>
@@ -292,7 +311,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- 	MODAL ZA SVE SMENE-->
 	<div id="modalSveSmene" class="modal fade" role="dialog"
 		data-backdrop="false">
@@ -311,6 +330,69 @@
 							<th>Kraj:</th>
 						</tr>
 					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 	MODAL RADNO VREME KO RADI U KOJOJ SMENI -->
+	<div id="modalRadnoVreme" class="modal fade col-lg-12" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Radno vreme</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Radnik: </label>
+							<div class="col-sm-10">
+								<select class="form-control" id="svi_zaposleni">
+									<option value="def">Odaberi</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">Smena: </label>
+							<div class="col-sm-10">
+								<select class="form-control" id="sve_smene">
+
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-md btn-primary" id="btnSmena"
+								style="margin-left: 130px">Finish</button>
+						</div>
+						<div class="col-sm-10">
+							<div id="calendar"></div>
+						</div>
+
+						<div class="form-group" style="margin-top: 10px">
+							<button class="btn btn-primary" id="btnPotvrdiRadnoVreme"
+								style="margin-left: 130px">Potvrdi</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 	MODAL -->
+	<div id="modalReon" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Pregled svih reona u restoranu</h4>
+				</div>
+				<div class="modal-body">
+					<div id="reonCalendar"></div>
 				</div>
 			</div>
 		</div>

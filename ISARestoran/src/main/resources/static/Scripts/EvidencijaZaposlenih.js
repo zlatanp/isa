@@ -208,6 +208,7 @@ function makeCardComment(ocena){
 	return html;
 }
 
+// OVO DOPUNI ZA KONOBARA
 $(document).on("click", "#nazad", function(e){
 	$("#tab_radnik").hide();
 	$(".controlZap").show();
