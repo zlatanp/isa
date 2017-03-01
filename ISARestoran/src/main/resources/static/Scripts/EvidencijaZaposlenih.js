@@ -19,17 +19,6 @@ $(document).ready(function(){
 	
 	restoranID = getIdFromUrl();
 	
-//	$("#datRodj").datepicker({
-//		changeMonth: true,
-//	    changeYear: true,
-//	    altField: "#datRodj",
-//	    dateFormat: "yy-mm-dd",
-//	    yearRange: "-60:+0",
-//	    showOn: "both",
-//	    buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
-//	    buttonImageOnly: true 
-//	});
-	
     $("#lozZap").val(makePassword());
     
     getRestoran();
@@ -162,36 +151,6 @@ function convertScoreToStars(score){
 	}
 	return text;
 }
-//KLIKOVI NAVBAR UVEK ISTI 
-$(document).on("click", "#jeloHref", function(e) {
-	e.preventDefault();
-	window.location.replace("jelovnik.html?" + restoranID);
-});
-
-$(document).on("click", "#piceHref", function(e) {
-	e.preventDefault();
-	window.location.replace("kartaPica.html?" + restoranID);
-});
-
-$(document).on("click", "#sedenjeHref", function(e) {
-	e.preventDefault();
-	window.location.replace("sedenje.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenPonude", function(e) {
-	e.preventDefault();
-	window.location.replace("ponude.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenZaposleni", function(e) {
-	e.preventDefault();
-	window.location.replace("zaposleni.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenUpdateRest", function(e) {
-	e.preventDefault();
-	window.location.replace("menadzerPage.html");
-});
 
 //KLIKOVI SPECIFICNI
 $(document).on("click", ".konobarDetail", function(e){
@@ -249,6 +208,7 @@ function makeCardComment(ocena){
 	return html;
 }
 
+// OVO DOPUNI ZA KONOBARA
 $(document).on("click", "#nazad", function(e){
 	$("#tab_radnik").hide();
 	$(".controlZap").show();

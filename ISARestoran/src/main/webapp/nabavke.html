@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
+<link rel="stylesheet" href="html/css/bootstrap-timepicker.css" />
+<link rel="stylesheet" href="html/css/toastr.css" />
+<link rel="stylesheet" href="html/css/jquery-ui.css" />
+<link rel="stylesheet" href="html/css/jquery-ui.structure.css" />
+<link rel="stylesheet" href="html/css/jquery-ui.theme.css" />
+
+<link rel="stylesheet" href="Styles/Site.css" />
+
+<link href='http://fonts.googleapis.com/css?family=Cookie'
+	rel='stylesheet' type='text/css'>
+
+<script src="html/js/jquery-3.1.0.min.js"></script>
+<script src="html/js/jquery.min.js"></script>
+
+<script
+	src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.0/sockjs.min.js"></script>
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+<script src="html/js/toastr.js"></script>
+
+<script src="Scripts/Ponude.js"></script>
+<script src="Scripts/Navbar.js"></script>
+
+<title>Ponude i ponuđači</title>
+</head>
+<body id="menadzerBody">
+
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="menadzerPage.html">Restaurant
+					management</a>
+			</div>
+
+
+			<div class="collapse navbar-collapse"
+				id="bs-example-navbar-collapse-1">
+				<ul class="nav navbar-nav">
+					<li><a href="menadzerPage.html">Izmeni restoran</a></li>
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Usluge <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" id="jeloHref">Jelovnik</a></li>
+							<li><a href="#" id="piceHref">Karta pića</a></li>
+							<li><a href="#" id="sedenjeHref">Konfiguracija sedenja</a></li>
+						</ul></li>
+					<li><a href="#" id="zaposleniHref">Zaposleni</a></li>
+					<li><a href="#" id="nabavkeHref">Nabavke</a></li>
+				</ul>
+
+				<ul class="nav navbar-nav navbar-right">
+					<li><a onclick="profilmidaj()" href="#">Profil</a></li>
+					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite
+							se</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+
+	<div id="logoDiv">
+		<h2 id="logo"></h2>
+		<h3 id="opis"></h3>
+	</div>
+
+	<div class="col-lg-6 controlZap sakrijZaProfil">
+		<button id="dugmeDodajPon" data-toggle="modal"
+			data-target="#modalNoviPonudjac" type="button" class="btn btn-danger">
+			Registruj ponuđača <span class="glyphicon glyphicon-plus"></span>
+		</button>
+		<button id="dugmePrikaziSve" data-toggle="modal"
+			data-target="#modalSviPonudjaci" type="button"
+			class="btn btn-success">
+			Prikaži sve ponuđače <span class="glyphicon glyphicon-list"></span>
+		</button>
+	</div>
+
+
+	<!-- 	MODAL ZA NOVOG -->
+	<div id="modalNoviPonudjac" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Registracija ponuđača</h4>
+				</div>
+				<div class="modal-body">
+					<form id="RegPonuđača" method="post" action="#"
+						class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-sm-3">Ime:</label>
+							<div class="col-sm-8">
+								<input required class="pull-right form-control" type="text"
+									name="ime" id="imePon">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Prezime:</label>
+							<div class="col-sm-8">
+								<input required class="pull-right form-control" type="text"
+									name="prezime" id="przPon">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">E-mail:</label>
+							<div class="col-sm-8">
+								<input required class="pull-right form-control" type="email"
+									name="email" id="emailPon">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Lozinka:</label>
+							<div class="col-sm-8">
+								<input required class="pull-right form-control" type="text"
+									name="lozinka" id="lozPon" readonly="readonly">
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-success" id="btnRegPonudjaca"
+								style="margin-left: 130px">Potvrdi</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 	MODAL ZA SVE -->
+	<div id="modalSviPonudjaci" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Pregled svih ponuđača</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-hover" id="tabla_ponudjaci">
+						<tr>
+							<th>Ime:</th>
+							<th>Prezime:</th>
+							<th>E-mail:</th>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+<!-- 	PROFIL -->
+	<div class="container" style="display: none; background-color: #E8E8E8"
+		id="glavniDiv">
+		<h1 id="helloHeder"></h1>
+		<div class="row">
+			<div class="col-sm-3" id="leviDiv">
+				<div id="mestoZaSliku"></div>
+				<br> <br> <a href="#" onclick="basicDetails()">Osnovni
+					podaci</a><br>
+			</div>
+			<div class="col-sm-9" id="desniDiv"></div>
+		</div>
+
+	</div>
+</body>
+</html>
