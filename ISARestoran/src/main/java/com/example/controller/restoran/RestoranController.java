@@ -8,8 +8,10 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -24,6 +26,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.beans.restoran.Rezervacija;
+import com.example.beans.restoran.Sto;
 import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
@@ -43,6 +48,7 @@ import com.example.dto.restoran.StoDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
 import com.example.service.KorisnikService;
+import com.example.service.RezervacijaService;
 import com.example.service.korisniciImpl.KonobarService;
 import com.example.service.korisniciImpl.ZaposlenService;
 import com.example.service.restoranImpl.JeloService;
@@ -88,6 +94,9 @@ public class RestoranController {
 	
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired 
+	private RezervacijaService rezervacijaService;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -657,6 +666,7 @@ public class RestoranController {
 		String raspored = restoranService.getRaspored(k);	
 		return raspored;
 	}
+
 	
 	@RequestMapping(value="/getCanvas/{email}/{id}", method=RequestMethod.GET)
 	public String getCanvasById(@PathVariable("email") String emailUser, @PathVariable("id") int restId) throws JsonProcessingException{
@@ -665,6 +675,15 @@ public class RestoranController {
 		if (korisnik == null)
 			return "";
 		return restoranService.getRasporedById(restId);
+	}
+	
+	@RequestMapping(value="/dobaviKanvasZaHome/{id}", method=RequestMethod.GET)
+	public String getCanvasByIdHome(@PathVariable("id") int restId) throws JsonProcessingException{
+		if( restoranService.getRasporedById(restId)!= null){
+			return restoranService.getRasporedById(restId);
+		}else{
+			return "nema";
+		}
 	}
 	
 	@RequestMapping(value="/saveCanvas/{email}",method=RequestMethod.POST, consumes="application/json") 
@@ -698,5 +717,58 @@ public class RestoranController {
 	public String getOceneKonobara(@PathVariable("email") String email) throws JsonProcessingException{
 		return objectMapper.writeValueAsString(konobarService.dobaviOceneZaKonobara(email));
 	}
+	
+	@RequestMapping(value = "/rezervacije/proveriSto", method = { RequestMethod.GET }, consumes="application/json", produces="application/json")
+	public boolean proveraRezervisanogStola(@ModelAttribute("imeStola") String imeStola, @ModelAttribute("datum") Date datum, @ModelAttribute("sati") String sati) throws JsonProcessingException{
+		Iterable<Rezervacija> rezervacje = rezervacijaService.getAllRezervacije();
+		
+		System.out.println(imeStola);
+		
+		boolean flag = false;
+		Date mojOd = datum;
+		Calendar konverter = Calendar.getInstance(); 
+		konverter.setTime(datum); 
+		konverter.add(Calendar.HOUR, Integer.parseInt(sati));
+		Date mojDo = konverter.getTime();
+		for(Rezervacija r : rezervacje){
+			if(!r.getStolovi().isEmpty()){
+				for(Iterator<Sto> it = r.getStolovi().iterator(); it.hasNext(); ){
+					Sto s = it.next();
+					if(s.getNaziv().equals(imeStola)){
+						Date stoOd = r.getDatum();
+						Calendar konverter2 = Calendar.getInstance(); 
+						konverter2.setTime(stoOd); 
+						konverter2.add(Calendar.HOUR, r.getTrajanje());
+						Date postojeciDo = konverter.getTime();
+						if (!porediDatume(mojOd, mojDo, r.getDatum(), postojeciDo))
+							flag =  true;
+					}
+				}
+			}
+		}
+		
+		return flag;
+	}
+	
+	@RequestMapping(value = "/rezervacije/dodajRezervacijuBezPrijatelja", method = { RequestMethod.POST }, consumes="application/json", produces="application/json")
+	public boolean rezervacijaBezPrijatelja(@ModelAttribute("rezervisao") String emailUsera, @ModelAttribute("datum") Date datum, @ModelAttribute("trajanje") String sati, @ModelAttribute("restoran") String idRestorana, @ModelAttribute("stolovi") ArrayList<Object> listaStolova ) throws JsonProcessingException{
+		Iterable<Rezervacija> rezervacje = rezervacijaService.getAllRezervacije();
+		System.out.println(listaStolova.size());
+		System.out.println(emailUsera);
+		System.out.println(datum);
+		System.out.println(sati);
+		System.out.println(idRestorana);
+		
+		return true;
+		
+		
+	}
 
+	private boolean porediDatume(Date mojOD, Date mojDo, Date stoOd, Date stoDo){
+		if (stoOd.compareTo(mojOD) < 0 && stoDo.compareTo(mojOD) <= 0)
+			return true;
+		if (stoOd.compareTo(mojDo) >= 0 && stoDo.compareTo(mojDo) > 0)
+			return true;
+		return false;
+	}
 }

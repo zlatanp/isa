@@ -1,14 +1,23 @@
-
 var ipadresa;
 var grad;
 var restoranIDE;
 var karticeJela;
 var karticaPica;
+var emailUlogovanog;
+
+var brojSati;
+var datum;
+
+
+var stolovi = [];
+
+var zauzimamStolove = [];
+
 
 	function onload(){
 		var x = document.cookie;
 		var delovi = x.split("=");
-		var emailUlogovanog = delovi[1];
+		emailUlogovanog = delovi[1];
 		
 		if(emailUlogovanog.search("@")==-1){
 			$('.navbar').hide();
@@ -1014,32 +1023,238 @@ var karticaPica;
 		        success: function(data){
 		        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv +"<br><br>";
 		        	document.getElementById('zarezervaciju').style.display = 'block';
+		        	getCanvas(id);
 		        	 }
 		        
 		        });
 		}
+		//POTREBNE FUNKCIJE ZA DOBAVLJANJE KANVASA RESTORANA
 		
-		function dajMapuStolova(){
-			var i = document.getElementsByName('satiBoravka');
-			var brojSati = i[0].value;
+		
+		function getCanvas(id) {
+			// dobavi raspored ako ga ima preko ajaxa
+			$.ajax({
+				url : 'restoran/dobaviKanvasZaHome/'+id ,
+				type : 'GET',
+				dataType : 'text',
+				success : function(data) {
+					if (data != "nema") {
+						// iscitaj kanvas ako postoji raspored
+						console.log("vratio se neko drugi");
+						pripremiGotovCanvas(data);
+					}else{
+						alert("Ne postoji raspored stolova u restoranu!");
+					}
+				}
+			});
+		}
+
+		function pripremiGotovCanvas(data){
+			console.log("pripremam gotov");
+			var canvas = new fabric.CanvasEx("canvasId");
+			canvas.loadFromJSON(data);
+			document.getElementById("canvasId").fabric = canvas;
+			canvas.setHeight(450);
+			canvas.setWidth(800);
 			
-			var datum = $('#datumcina').val();
+			canvas.on('mouse:dblclick', function(options) {
+				var e = document.getElementsByName('satiBoravka');
+				brojSati = e[0].value;
+				
+				datum = $('#datumcina').val();
+				
+				if (imeElementa == null || brojSati =="" || !datum ) {
+					toastr.error("Morate uneti Datum i vreme i dužinu boravka da biste mogli selektovati sto!");
+				}else{
+					var pom = imeElementa;
+					//vidi da li je ID stola vec rezervisan?
+					$.ajax({
+						url : 'restoran/rezervacije/proveriSto/',
+						type : 'GET',
+						contentType: 'application/json; charset=UTF-8',
+						data : {imeStola : imeElementa, datum : datum, sati : brojSati},
+						success : function(data) {
+							console.log(data);
+							if (data == true) { //ako je rezervisan nista
+								toastr.error("Morate odabrati drugi sto! Ovaj sto je rezervisan za datum za koji vi želite rezervisati!.");
+								return;
+							}else if (data == false){
+								//ako nije rezervisan i nije u listi selektovanih omogucni DODAJ
+								if(zauzimamStolove.length <1){
+									$('#btnStoAdd').show();
+									$('#btnStoDelete').hide();
+									return;
+								}else{
+								for (var i = 0; i < zauzimamStolove.length; i++) {
+									if (zauzimamStolove[i].naziv != pom) {
+										$('#btnStoAdd').show();
+										$('#btnStoDelete').hide();
+										
+									}else{
+										$('#btnStoAdd').hide();
+										$('#btnStoDelete').show();
+										break;
+									}
+								}
+								}
+							}
+						}
+					});
+					
+					
+					//ako nije rezervisan i nije u listi selektovanih omogucni DODAJ
+					
+					//ako nije rezervisan a jeste u listi selektvanih omoguci OBRISI
+					$("#modalZaSto").modal();
+					$("#nazivStola").val(imeElementa);
+					dobaviStoPoID(imeElementa);
+					imeElementa = null;
+				}
+			});
+
+			canvas.on('object:selected', onObjectSelected)
+
+			fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
+			fabric.Object.prototype.transparentCorners = false;
+			fabric.Object.prototype.objectCaching = true;
+		}
+		
+		//Dugme za dodavanje stola u listu
+		$(document).on("click", "#btnStoAdd", function() {
+			var segment = $("#segmentSel").val();
+			var stolica = $("#brojStolica").val();
+			var nazivStola = $("#nazivStola").val();
+			var noviSto = new Object();
+
+			noviSto['naziv'] = nazivStola;
+			noviSto['brojStolica'] = stolica;
+			noviSto['tipSegmenta'] = segment;
+			zauzimamStolove.push(noviSto);
+			toastr.success("Uspešno ste dodali sto u rezervaciju.");
+			$('#modalZaSto').modal('hide');
+		});
+		
+		//Dugme za brisanje stola iz liste
+		$(document).on("click", "#btnStoDelete", function() {
+			var segment = $("#segmentSel").val();
+			var stolica = $("#brojStolica").val();
+			var nazivStola = $("#nazivStola").val();
 			
-			if(brojSati =="" || !datum){
-				alert("Morate uneti Datum i vreme i dužinu boravka!");
-			}else{
-				$.ajax({	     
-					type: 'GET',
-					url: 'restoran/dajRestoranSaId', 
-					dataType: 'JSON',
-			        data: {id : id},
-			        success: function(data){
-			        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv +"<br><br>";
-			        	document.getElementById('zarezervaciju').style.display = 'block';
-			        	 }
-			        
-			        });
+			for (i = 0; i < zauzimamStolove.length; i++) {
+				if (zauzimamStolove[i].naziv == nazivStola) {
+					zauzimamStolove.splice(i, 1);
+					toastr.success("Uspešno ste uklonili sto iz rezervacije.");
+					$('#modalZaSto').modal('hide');
+					break;
+				}
+			}
+			
+			
+			
+		});
+
+		//NAMED IMAGE-> custom objekat
+		fabric.NamedImage = fabric.util.createClass(fabric.Image, {
+
+			
+			  type: 'named-image',
+
+			  initialize: function(element, options) {
+				this.callSuper('initialize', element, options);
+				options && this.set('name', options.name);
+			  },
+
+			  toObject: function() {
+				return fabric.util.object.extend(this.callSuper('toObject'), { name: this.name });
+			  }
+		});fabric.NamedImage.async = true;
+
+
+		fabric.NamedImage.fromObject = function(object, callback) {
+			  fabric.util.loadImage(object.src, function(img) {
+				callback && callback(new fabric.NamedImage(img, object));
+			  });
+		};
+		
+		function onObjectSelected(e) {
+			console.log("objekat selektovan")
+			console.log(e.target);
+			imeElementa = e.target.get('name');
+			console.log(imeElementa);
+		}
+		
+		function dobaviStoPoID(id) {
+			var push = false;
+
+			for (var i = 0; i < stolovi.length; i++) {
+				if (stolovi[i].naziv === id) {
+					$("#brojStolica").val(stolovi[i].brojStolica);
+					$("#segmentSel").val(stolovi[i].tipSegmenta);
+					push = true;
+					break;
+				}
+			}
+
+			if (!push) {
+				$.ajax({
+					url : 'restoran/getTable',
+					data : id,
+					dataType : "json",
+					type : 'POST',
+					success : function(data) {
+						// zapisi to u modal dijalog
+						$("#segmentSel").val(data.tipSegmenta);
+						$("#brojStolica").val(data.brojStolica);
+					}
+
+				})
 			}
 		}
-	
+		
+		function nastaviRezervaciju(){
+			if(brojSati =="" || !datum || zauzimamStolove.length < 1){
+				toastr.error("Ne možete nastaviti dok ne unesete DATUM, BROJ SATI i ZAUZMETE barem 1 STO!");
+			}else{
+				$("#modalZaNastaviti").modal();
+			}
+		}
+		
+		$(document).on("click", "#btnPrijateljiNe", function() {
+			var x = document.cookie;
+			var delovi = x.split("=");
+			emailUlogovanog = delovi[1];
+			
+			var rezervacija = new Object();
+			rezervacija['datum'] = datum;
+			rezervacija['trajanje'] = brojSati;
+			rezervacija['stolovi'] = Object.keys(zauzimamStolove);
+			rezervacija['restoran'] = restoranIDE;
+			rezervacija['rezervisao'] = emailUlogovanog;
+			
+			var jsonArray = JSON.parse(JSON.stringify(rezervacija));
+			
+			//alert(JSON.stringify(zauzimamStolove));
+			
+			var lista = JSON.stringify(zauzimamStolove);
+			
+			$.ajax({
+				url : 'restoran/rezervacije/dodajRezervacijuBezPrijatelja',
+				type : 'POST',
+				contentType: 'application/json; charset=UTF-8',
+				data : {rezervisao : emailUlogovanog, datum  : datum, trajanje : brojSati, restoran : restoranIDE, stolovi : lista},
+				//data : JSON.stringify(jsonArray),
+				success : function(data) {
+					console.log(data);
+				}
+			});
+			$('#modalZaSto').modal('hide');
+		});
+		
+		
+		
+		$(document).on("click", "#btnPrijateljiDa", function() {
+			alert("ocuu prijatelje");
+			$('#modalZaSto').modal('hide');
+		});
+		
 		

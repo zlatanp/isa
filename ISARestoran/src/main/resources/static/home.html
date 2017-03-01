@@ -8,9 +8,10 @@
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" href="html/css/homecss.css" />
 <link rel="stylesheet" href="html/css/bootstrap-datetimepicker.min.css" />
-
+<link rel="stylesheet" href="html/css/toastr.css" />
 
 <script type="text/javascript" src="html/js/moment.js"></script>
+
 
 <script src="html/js/jquery-3.1.0.min.js"></script>
 <script src="html/js/jquery.min.js"></script>
@@ -28,8 +29,6 @@
 
 
 
-<script src="html/js/homeSkripte.js"></script>
-
 <script
 	src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
 <script type="text/javascript"
@@ -39,6 +38,10 @@
 <script
 	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
+<script src="html/js/fabric.js"></script>
+<script src="html/js/fabric.canvasex.js"></script>
+<script src="html/js/toastr.js"></script>
+<script src="html/js/homeSkripte.js"></script>
 
 <meta charset="ISO-8859-1">
 
@@ -126,10 +129,23 @@
 	<br>
 	<br>
 	<br>
-	<button onclick="return dajMapuStolova()" class="btn btn-success">Izaberi sto</button>
+	
+
+	<div class="container">
+		<div class="col-md-9">
+			<canvas id="canvasId" width="800" height="450"
+				style="border: 1px solid #000000"></canvas>
+		</div>
+		
+	</div>
+	<br>
+	<br>
+	<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onclick="return nastaviRezervaciju()" class="btn btn-success">Nastavi</button></p>
 	<br>
 	<br>
 	</div>
+	
+	
 	</div>
 
 	<script>
@@ -263,5 +279,90 @@
 
 	
 	</div>
+	
+	<!-- 	MODAL ZA STO -->
+	<div id="modalZaSto" class="modal fade" role="dialog" data-backdrop = "false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Detalji stola</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addSto" action="#" method="post" role="form"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input required id="nazivStola" class="pull-right form-control"
+										type="hidden" name="naziv">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Broj stolica:</label>
+								<div class="col-sm-8">
+									<input required id="brojStolica"
+										class="pull-right form-control" type="text" name="stolice" readonly="readonly">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Segment:</label>
+								<div class="col-sm-8">
+									<select id="segmentSel" class="form-control pull-right" disabled>
+										<option value="UNUTRA">UNUTRA</option>
+										<option value="ZA_NEPUSACE">UNUTRA BEZ PUŠENJA</option>
+										<option value="OTVORENA_BASTA">OTVORENA BAŠTA</option>
+										<option value="ZATVORENA_BASTA">ZATVORENA BAŠTA</option>
+									</select>
+								</div>
+							</div>
+							<hr/>
+							<div class="form-group">
+								<div class="col-sm-11">
+									<button type="button"
+										class="btn btn-md btn-primary"
+										id="btnStoAdd">Rezerviši sto</button>
+									<button type="button" class="btn btn-md btn-danger pull-right"
+										id="btnStoDelete">Obriši sto iz rezervacije</button>
+								</div>
+								<br />
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="modalZaNastaviti" class="modal fade" role="dialog" data-backdrop = "false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Da li želite pozvati prijatelje u rezervisani termin?</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addSto" action="#" method="post" role="form"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<div class="col-sm-11">
+									<button type="button"
+										class="btn btn-md btn-success"
+										id="btnPrijateljiDa">Da</button>
+									<button type="button" class="btn btn-md btn-danger pull-right"
+										id="btnPrijateljiNe">Ne</button>
+								</div>
+								<br />
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
 </body>
 </html>
