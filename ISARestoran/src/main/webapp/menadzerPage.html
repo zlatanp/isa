@@ -63,12 +63,27 @@
 							<li><a href="#" id="sedenjeHref">Konfiguracija sedenja</a></li>
 						</ul></li>
 					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
-					<li><a href="#" class="OpenPonude">Ponude</a></li>
+					<!-- 					<li><a href="#" class="OpenPonude">Ponude</a></li> -->
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">Konkursi <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="#" id="kreirajPonuduHref">Kreiraj ponudu</a></li>
+							<li><a href="#" id="sviKonkursiHref">Svi konkursi</a></li>
+						</ul></li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown"><a class="dropdown-toggle"
+						data-toggle="dropdown" href="#"><span
+							class="glyphicon glyphicon-bell"></span> <span class="badge"
+							id="br_notifikacija" style="color: yellow"></span></a>
+						<ul class="dropdown-menu" id="notifikacije">
+
+						</ul></li>
 					<li><a onclick="profilmidaj()" href="#">Profil</a></li>
-					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite se</a></li>
+					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite
+							se</a></li>
 				</ul>
 			</div>
 		</div>
@@ -83,37 +98,37 @@
 		<table id="tableInfo">
 			<tr>
 				<td>
-				   <table>
-					<tr>
-						<th>Tip:</th>
-						<td class="td" id="tipTD"></td>
-					</tr>
-					<tr>
-						<th>Adresa:</th>
-						<td class="td" id="adrTD"></td>
-					</tr>
-					<tr>
-						<th>Grad:</th>
-						<td class="td" id="gradTD"></td>
-					</tr>
-					<tr>
-						<th>Telefon:</th>
-						<td class="td" id="telTD"></td>
-					</tr>
-					<tr>
-						<th>E-mail:</th>
-						<td class="td" id="emailTD"></td>
-					</tr>
-					<tr>
-						<th>Radno vreme:</th>
-						<td class="td" id="radnoVremeTD"></td>
-					</tr>
-				</table>
+					<table>
+						<tr>
+							<th>Tip:</th>
+							<td class="td" id="tipTD"></td>
+						</tr>
+						<tr>
+							<th>Adresa:</th>
+							<td class="td" id="adrTD"></td>
+						</tr>
+						<tr>
+							<th>Grad:</th>
+							<td class="td" id="gradTD"></td>
+						</tr>
+						<tr>
+							<th>Telefon:</th>
+							<td class="td" id="telTD"></td>
+						</tr>
+						<tr>
+							<th>E-mail:</th>
+							<td class="td" id="emailTD"></td>
+						</tr>
+						<tr>
+							<th>Radno vreme:</th>
+							<td class="td" id="radnoVremeTD"></td>
+						</tr>
+					</table>
 				</td>
 				<td>&nbsp;</td>
-				<td style="border:solid">
-					<img id="slikaRestImg" src="/slike/restorani/restoran.jpg" style="width:250px;height:100"/>
-				</td>
+				<td style="border: solid"><img id="slikaRestImg"
+					src="/slike/restorani/restoran.jpg"
+					style="width: 250px; height: 100" /></td>
 			</tr>
 		</table>
 		<div class="col-md-6" style="padding: 10px">
@@ -190,7 +205,7 @@
 	</div>
 
 
-<div class="container" style="display: none; background-color: #E8E8E8"
+	<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>
 		<div class="row">

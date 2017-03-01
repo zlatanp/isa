@@ -1,12 +1,10 @@
 package com.example.controller.restoran;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.dto.korisnici.KorisnikDTO;
 import com.example.service.KorisnikService;
 import com.example.service.korisniciImpl.PonudjacService;
 import com.fasterxml.jackson.core.JsonProcessingException;
