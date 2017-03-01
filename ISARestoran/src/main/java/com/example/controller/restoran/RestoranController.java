@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.beans.restoran.Rezervacija;
 import com.example.beans.restoran.Sto;
+import com.example.beans.restoran.ZakupPomocna;
 import com.example.dto.hellpers.CompareStringsDTO;
 import com.example.dto.korisnici.KorisnikDTO;
 import com.example.dto.korisnici.MenadzerDTO;
@@ -750,15 +751,14 @@ public class RestoranController {
 		return flag;
 	}
 	
-	@RequestMapping(value = "/rezervacije/dodajRezervacijuBezPrijatelja", method = { RequestMethod.POST }, consumes="application/json", produces="application/json")
-	public boolean rezervacijaBezPrijatelja(@ModelAttribute("rezervisao") String emailUsera, @ModelAttribute("datum") Date datum, @ModelAttribute("trajanje") String sati, @ModelAttribute("restoran") String idRestorana, @ModelAttribute("stolovi") ArrayList<Object> listaStolova ) throws JsonProcessingException{
+	@RequestMapping(value = "/rezervacije/dodajRezervacijuBezPrijatelja", method = RequestMethod.POST, consumes="application/json", produces="application/json")
+	public boolean rezervacijaBezPrijatelja(@RequestBody ZakupPomocna stolovi) throws JsonProcessingException{
 		Iterable<Rezervacija> rezervacje = rezervacijaService.getAllRezervacije();
-		System.out.println(listaStolova.size());
-		System.out.println(emailUsera);
-		System.out.println(datum);
-		System.out.println(sati);
-		System.out.println(idRestorana);
-		
+		System.out.println(stolovi.email);
+		System.out.println(stolovi.datum);
+		System.out.println(stolovi.sati);
+		System.out.println(stolovi.idRestorana);
+		System.out.println(stolovi.getListaStolova().size());
 		return true;
 		
 		

@@ -1008,6 +1008,7 @@ var zauzimamStolove = [];
 		
 		
 		function rezervisemRestoran(id){
+			restoranIDE = id;
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
 			document.getElementById('desniDiv').style.display = 'none';
@@ -1225,23 +1226,28 @@ var zauzimamStolove = [];
 			emailUlogovanog = delovi[1];
 			
 			var rezervacija = new Object();
+			rezervacija['email'] = emailUlogovanog;
 			rezervacija['datum'] = datum;
-			rezervacija['trajanje'] = brojSati;
-			rezervacija['stolovi'] = Object.keys(zauzimamStolove);
-			rezervacija['restoran'] = restoranIDE;
-			rezervacija['rezervisao'] = emailUlogovanog;
+			rezervacija['sati'] = brojSati;
+			rezervacija['idRestorana'] = restoranIDE;
+			rezervacija['listaStolova'] = zauzimamStolove;
 			
-			var jsonArray = JSON.parse(JSON.stringify(rezervacija));
+			//var jsonArray = JSON.parse(JSON.stringify(rezervacija));
 			
-			//alert(JSON.stringify(zauzimamStolove));
 			
-			var lista = JSON.stringify(zauzimamStolove);
+			
+		var lista = JSON.stringify(rezervacija);
+			alert(lista);
+//			alert(emailUlogovanog);
+//			alert(datum);
+//			alert(brojSati);
+//			alert(restoranIDE);
 			
 			$.ajax({
 				url : 'restoran/rezervacije/dodajRezervacijuBezPrijatelja',
 				type : 'POST',
 				contentType: 'application/json; charset=UTF-8',
-				data : {rezervisao : emailUlogovanog, datum  : datum, trajanje : brojSati, restoran : restoranIDE, stolovi : lista},
+				data : lista,
 				//data : JSON.stringify(jsonArray),
 				success : function(data) {
 					console.log(data);
@@ -1257,4 +1263,7 @@ var zauzimamStolove = [];
 			$('#modalZaSto').modal('hide');
 		});
 		
-		
+		function promenioSate(){
+			var e = document.getElementsByName('satiBoravka');
+			brojSati = e[0].value;
+		}

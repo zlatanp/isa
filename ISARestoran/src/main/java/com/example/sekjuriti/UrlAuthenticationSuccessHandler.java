@@ -28,7 +28,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 			throws IOException, ServletException {
 		
 		LoggedUser korisnik = (LoggedUser) auth.getPrincipal();
-		Korisnik user = korisnik.Korisnik();
+		Korisnik user = korisnik.getKorisnik();
 		System.out.println("user ispromeniolozinku: +" + user.isPromenioLozinku());
 		
 		if (!user.isPromenioLozinku()){
