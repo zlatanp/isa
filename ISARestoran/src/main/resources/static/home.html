@@ -7,14 +7,27 @@
 <link rel="stylesheet" href="html/css/bootstrap.min.css" />
 <link rel="stylesheet" href="html/css/bootstrap-theme.min.css" />
 <link rel="stylesheet" href="html/css/homecss.css" />
+<link rel="stylesheet" href="html/css/bootstrap-datetimepicker.min.css" />
+<link rel="stylesheet" href="html/css/toastr.css" />
+
+<script type="text/javascript" src="html/js/moment.js"></script>
+
+
 <script src="html/js/jquery-3.1.0.min.js"></script>
 <script src="html/js/jquery.min.js"></script>
 <script src="html/js/bootstrap.js"></script>
 <script src="html/js/bootstrap.min.js"></script>
 <link href='http://fonts.googleapis.com/css?family=Cookie'
 	rel='stylesheet' type='text/css'>
+	
+	<script src="html/js/bootstrap-datetimepicker.min.js"></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet">
 
-<script src="html/js/homeSkripte.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+
+
 
 <script
 	src="http://maps.google.com/maps/api/js?key=AIzaSyC9ocJcfr3p5BWAiPcmkb55y3wzGWPjJ14"></script>
@@ -25,6 +38,10 @@
 <script
 	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
+<script src="html/js/fabric.js"></script>
+<script src="html/js/fabric.canvasex.js"></script>
+<script src="html/js/toastr.js"></script>
+<script src="html/js/homeSkripte.js"></script>
 
 <meta charset="ISO-8859-1">
 
@@ -71,9 +88,18 @@
 		</div>
 		<!-- /.container-fluid -->
 	</nav>
+	
+	<div class="container" id="istorijaPohadjanja" style="background-color: #E8E8E8">
+		<h1 id="helloHeder">Istorijat vaših rezervacija:
+		<h6>(Poslednjih 20 prikazano) </h6><a onclick="prikaziSVEIstorije()" href="#">Prikaži celu istoriju.</a></h1>
+		<div class="row">
+			
+			<div class="col-sm-9" id="istorijatMain"></div>
+		</div>
+		</div>
 
 
-	<div class="container" style="display: none; background-color: #E8E8E8"
+<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>
 		<div class="row">
@@ -84,8 +110,62 @@
 			</div>
 			<div class="col-sm-9" id="desniDiv"></div>
 		</div>
+		
+		<div id="zarezervaciju" style="display: none;">
+		<table>
+			<tr><td>Izaberite datum i vreme posete restoranu: &nbsp;</td><td><div class="input-group date" id="datapicker" >
 
+  					<input type="text" class="form-control" id="datumcina"/>
+
+  					<span class="input-group-addon">
+
+    				<span class="glyphicon glyphicon-calendar"></span>
+  					</span>
+
+				</div>
+				</td></tr>
+				<tr><td>&nbsp;</td></tr>
+				<tr><td>Dužina boravka u restoranu (u satima): </td><td><select onchange="promenioSate()" name="satiBoravka">
+    <option value="1">1 sat</option>
+    <option value="2">2 sata</option>
+    <option value="3">3 sata</option>
+    <option value="4">4 sata</option>
+    <option value="5">5 sati</option>
+    <option value="6">6 sati</option>
+    <option value="7">7 sati</option>
+    <option value="8">8 sati</option>
+  </select></td></tr>
+	</table>
+	<br>
+	<br>
+	<br>
+	
+
+	<div class="container">
+		<div class="col-md-9">
+			<canvas id="canvasId" width="800" height="450"
+				style="border: 1px solid #000000"></canvas>
+		</div>
+		
 	</div>
+	<br>
+	<br>
+	<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button onclick="return nastaviRezervaciju()" class="btn btn-success">Nastavi</button></p>
+	<br>
+	<br>
+	</div>
+	
+	
+	</div>
+
+	<script>
+ 	$('#datapicker').datetimepicker();
+</script>		
+			
+			
+		
+
+	
 	
 	<div id="restoranProfil" style="display: none;">
 	
@@ -209,5 +289,90 @@
 
 	
 	</div>
+	
+	<!-- 	MODAL ZA STO -->
+	<div id="modalZaSto" class="modal fade" role="dialog" data-backdrop = "false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Detalji stola</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addSto" action="#" method="post" role="form"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<div class="col-sm-8">
+									<input required id="nazivStola" class="pull-right form-control"
+										type="hidden" name="naziv">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Broj stolica:</label>
+								<div class="col-sm-8">
+									<input required id="brojStolica"
+										class="pull-right form-control" type="text" name="stolice" readonly="readonly">
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="control-label col-sm-3">Segment:</label>
+								<div class="col-sm-8">
+									<select id="segmentSel" class="form-control pull-right" disabled>
+										<option value="UNUTRA">UNUTRA</option>
+										<option value="ZA_NEPUSACE">UNUTRA BEZ PUŠENJA</option>
+										<option value="OTVORENA_BASTA">OTVORENA BAŠTA</option>
+										<option value="ZATVORENA_BASTA">ZATVORENA BAŠTA</option>
+									</select>
+								</div>
+							</div>
+							<hr/>
+							<div class="form-group">
+								<div class="col-sm-11">
+									<button type="button"
+										class="btn btn-md btn-primary"
+										id="btnStoAdd">Rezerviši sto</button>
+									<button type="button" class="btn btn-md btn-danger pull-right"
+										id="btnStoDelete">Obriši sto iz rezervacije</button>
+								</div>
+								<br />
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div id="modalZaNastaviti" class="modal fade" role="dialog" data-backdrop = "false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">Da li želite pozvati prijatelje u rezervisani termin?</h4>
+				</div>
+				<div class="modal-body">
+					<form id="addSto" action="#" method="post" role="form"
+						class="form-horizontal">
+						<fieldset>
+							<div class="form-group">
+								<div class="col-sm-11">
+									<button type="button"
+										class="btn btn-md btn-success"
+										id="btnPrijateljiDa">Da</button>
+									<button type="button" class="btn btn-md btn-danger pull-right"
+										id="btnPrijateljiNe">Ne</button>
+								</div>
+								<br />
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
 </body>
 </html>

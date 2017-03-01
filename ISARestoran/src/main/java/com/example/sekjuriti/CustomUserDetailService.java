@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.beans.korisnici.Korisnik;
+import com.example.dto.korisnici.FactoryKorisnikDTO;
 import com.example.service.korisniciImpl.KorisnikServiceImpl;
 
 

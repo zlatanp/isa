@@ -48,6 +48,10 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+   <groupId>org.json</groupId>
+   <artifactId>json</artifactId>
+</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 			<scope>provided</scope>
@@ -132,13 +136,14 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-        <dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-redis</artifactId>
-</dependency>
+        
 <dependency>
     <groupId>org.springframework.session</groupId>
     <artifactId>spring-session</artifactId>
+</dependency>
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 	</dependencies>
 

@@ -78,12 +78,12 @@ function dodajCetvrtasti() {
 		  height: 75,
 		  width: 75,
 		  opacity: 1,
-		  name: nameCircle + "circle"
+		  name: nameCircle + "rect"
 		});
 	canvas.add(imgInstance);
 	$('#segmentSel').val("UNUTRA");
 	$('#brojStolica').val("4");
-	$('#nazivStola').val(nameCircle + "circle");
+	$('#nazivStola').val(nameCircle + "rect");
 	dodajStoNaKanvas();
 	setTimeout(function(){
 		canvas.renderAll(); 

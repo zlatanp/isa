@@ -1,14 +1,23 @@
-
 var ipadresa;
 var grad;
 var restoranIDE;
 var karticeJela;
 var karticaPica;
+var emailUlogovanog;
+
+var brojSati;
+var datum = new Date();
+
+
+var stolovi = [];
+
+var zauzimamStolove = [];
+
 
 	function onload(){
 		var x = document.cookie;
 		var delovi = x.split("=");
-		var emailUlogovanog = delovi[1];
+		emailUlogovanog = delovi[1];
 		
 		if(emailUlogovanog.search("@")==-1){
 			$('.navbar').hide();
@@ -34,14 +43,56 @@ var karticaPica;
 		$.getJSON('//freegeoip.net/json/'+ipadresa, function(data) {grad = data.city;});
 		});
 			
-
+		if(emailUlogovanog.search("@")!=-1){
+			$('#istorijatMain').html('');
+	     	$.ajax({ 
+	             type: 'GET',
+	             url: 'restoran/rezervacije/dajPosete',
+	             dataType: 'json',
+	             data: {mojEmail : emailUlogovanog},
+	     		 success: function(data){
+	             			console.log(data);
+	             			var lis = data.lista;
+	             			var z =0;
+		            			for(var i=0;i<lis.length;i++){
+		            				if(z<20){
+		            				$('#istorijatMain').append('<table border="1"><tr><td>Ime restorana: </td><td>' +lis[i].restoran + '</td></tr><tr><td>Datum i vreme: </td><td>'+lis[i].datum +'</td></tr><tr><td>Zadrzavanje u satima: </td><td>'+lis[i].zadrzavanje +'</td></tr><tr><td>Broj zauzetih stolica: </td><td>'+lis[i].brojStolica +'</td></tr></table><br><br>');
+		            				console.log(lis[i].restoran);
+		            				z++;
+		            				}
+	     		 }
+	     		 }
+	     	});
+	     }
 
 		
 	}
 	
+	function prikaziSVEIstorije(){
+		$('#istorijatMain').html('');
+     	$.ajax({ 
+             type: 'GET',
+             url: 'restoran/rezervacije/dajPosete',
+             dataType: 'json',
+             data: {mojEmail : emailUlogovanog},
+     		 success: function(data){
+             			console.log(data);
+             			var lis = data.lista;
+	            			for(var i=0;i<lis.length;i++){
+	            				$('#istorijatMain').append('<table border="1"><tr><td>Ime restorana: </td><td>' +lis[i].restoran + '</td></tr><tr><td>Datum i vreme: </td><td>'+lis[i].datum +'</td></tr><tr><td>Zadrzavanje u satima: </td><td>'+lis[i].zadrzavanje +'</td></tr><tr><td>Broj zauzetih stolica: </td><td>'+lis[i].brojStolica +'</td></tr></table><br><br>');
+	            				console.log(lis[i].restoran);
+        		
+     		 }
+     		 }
+     	});
+	}
+	
 	function profilKorisnika(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -70,8 +121,11 @@ var karticaPica;
 	}
 	
 	function basicDetails(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -91,8 +145,11 @@ var karticaPica;
 	}
 	
 	function editDetails(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -134,8 +191,10 @@ var karticaPica;
 
 	
 	function saveDetails(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		
 		var i = document.getElementById('FirstName');
 		var ime = i.value;
 		var j = document.getElementById('LastName');
@@ -186,8 +245,11 @@ var karticaPica;
 	}
 	
 	function dajSliku(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -204,8 +266,11 @@ var karticaPica;
 			}
 	
 	function friends(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -231,6 +296,9 @@ var karticaPica;
 	}
 
 	function dajPrijateljeTrazi(){
+		$('#istorijaPohadjanja').hide();
+		
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
 		var x = document.cookie;
@@ -266,8 +334,11 @@ var karticaPica;
 	}
 
 	function dodajPrijatelja(email,broj){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var JAemail = delovi[1];
@@ -287,8 +358,11 @@ var karticaPica;
 	}
 
 	function notifikacija(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -319,8 +393,11 @@ var karticaPica;
 	}
 
 	function odbaciPrijatelja(emailKogPrijatelja){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -339,8 +416,11 @@ var karticaPica;
 	}
 
 	function  prihvatiPrijatelja(email) {
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var mojEmail = delovi[1];
@@ -359,8 +439,11 @@ var karticaPica;
 	}
 
 	function ukloniPrijatelja(email,broj){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		
 		var x = document.cookie;
 		var delovi = x.split("=");
@@ -381,8 +464,11 @@ var karticaPica;
 	}
 
 	function pocetnaFrends(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 	var x = document.cookie;
 	var delovi = x.split("=");
 	var email = delovi[1];
@@ -413,8 +499,11 @@ var karticaPica;
 	}
 
 	function sortPoImenu(){
+		document.getElementById('zarezervaciju').style.display = 'none';
 		document.getElementById('restoranProfil').style.display = 'none';
 		document.getElementById('glavniDiv').style.display = 'block';
+		$('#istorijaPohadjanja').hide();
+		
 		var x = document.cookie;
 		var delovi = x.split("=");
 		var email = delovi[1];
@@ -444,8 +533,11 @@ var karticaPica;
 		}
 		
 		function sortPoPrezimenu(){
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
+			$('#istorijaPohadjanja').hide();
+			
 			var x = document.cookie;
 			var delovi = x.split("=");
 			var email = delovi[1];
@@ -475,8 +567,11 @@ var karticaPica;
 		}
 
 		function sviRestorani(){
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
+			$('#istorijaPohadjanja').hide();
+			
 			var cars = new Array();
 			var imaga = false;
 			$.ajax({ 
@@ -533,9 +628,11 @@ var karticaPica;
 		var valuta = null;
 		
 		function dajStranicuRestorana(idRestorana){
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'block';
 			document.getElementById('glavniDiv').style.display = 'none';
 			restoranIDE = idRestorana;
+			$('#istorijaPohadjanja').hide();
 			$.ajax({	     
 				type: 'GET',
 				url: 'restoran/dajRestoranSaId', 
@@ -613,9 +710,11 @@ var karticaPica;
 		}
 		
 		function pogledajJelovnik(id){
+			
 			document.getElementById('jelaipica').style.display = 'block';
 			document.getElementById('picaijela').style.display = 'none';
 			getJela(id);
+			$('#istorijaPohadjanja').hide();
 		}
 		
 		function getJela(idRestorana){
@@ -735,6 +834,7 @@ var karticaPica;
 		function pogledajPicovnik(id){
 			document.getElementById('jelaipica').style.display = 'none';
 			document.getElementById('picaijela').style.display = 'block';
+			$('#istorijaPohadjanja').hide();
 			//alert("gledaj picovnik + "+id);
 			getPica(restoranIDE);
 		}
@@ -840,6 +940,8 @@ var karticaPica;
 		
 		
 		function sortPoImenuRestorane(){
+			$('#istorijaPohadjanja').hide();
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
 			$.ajax({ 
@@ -867,6 +969,8 @@ var karticaPica;
 		}
 		
 		function dajRestoraneTrazi(){
+			$('#istorijaPohadjanja').hide();
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
 			var r = document.getElementsByName('staTrazimR');
@@ -901,8 +1005,10 @@ var karticaPica;
 		}
 		
 		function traziPoVrsti(){
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
+			$('#istorijaPohadjanja').hide();
 			var i = document.getElementById('vrstaRestorana');
 			var selektovanog = i.options[i.selectedIndex].value;
 			
@@ -938,9 +1044,10 @@ var karticaPica;
 
 		
 		function sortPoUdaljenosti(){
-			
+			document.getElementById('zarezervaciju').style.display = 'none';
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
+			$('#istorijaPohadjanja').hide();
 			
 			
 				$.ajax({ 
@@ -975,24 +1082,264 @@ var karticaPica;
 		}
 		
 		
+		
+		
 		function rezervisemRestoran(id){
+			restoranIDE = id;
 			document.getElementById('restoranProfil').style.display = 'none';
 			document.getElementById('glavniDiv').style.display = 'block';
-			$('#leviDiv').html('');
+			document.getElementById('desniDiv').style.display = 'none';
+			document.getElementById('leviDiv').style.display = 'none';
+			$('#istorijaPohadjanja').hide();
 			
-			alert("rezervisem restoran sa id + " + id);
 			
+//			document.getElementById('datumDiv').style.display = 'block';
 			$.ajax({	     
 				type: 'GET',
 				url: 'restoran/dajRestoranSaId', 
 				dataType: 'JSON',
 		        data: {id : id},
 		        success: function(data){
-		        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv;
-		        	$('#desniDiv').html('<table><tr><td>Izaberite datum posete restoranu: </td><td><input type="date" name="datum" id="datum"></td></tr><tr><td>Unesite vreme posete restoranu: </td><td>vremenekonesto</td></tr><tr><td>Dužina boravka u restoranu (u satima): </td><td>nekisatinesto</td></tr></table>');
-		        }
+		        	document.getElementById("helloHeder").innerHTML = "Rezervacija restorana: " + data.naziv +"<br><br>";
+		        	document.getElementById('zarezervaciju').style.display = 'block';
+		        	getCanvas(id);
+		        	 }
 		        
 		        });
 		}
-	
+		//POTREBNE FUNKCIJE ZA DOBAVLJANJE KANVASA RESTORANA
 		
+		
+		function getCanvas(id) {
+			// dobavi raspored ako ga ima preko ajaxa
+			$.ajax({
+				url : 'restoran/dobaviKanvasZaHome/'+id ,
+				type : 'GET',
+				dataType : 'text',
+				success : function(data) {
+					if (data != "nema") {
+						// iscitaj kanvas ako postoji raspored
+						console.log("vratio se neko drugi");
+						pripremiGotovCanvas(data);
+					}else{
+						alert("Ne postoji raspored stolova u restoranu!");
+					}
+				}
+			});
+		}
+
+		function pripremiGotovCanvas(data){
+			console.log("pripremam gotov");
+			var canvas = new fabric.CanvasEx("canvasId");
+			canvas.loadFromJSON(data);
+			document.getElementById("canvasId").fabric = canvas;
+			canvas.setHeight(450);
+			canvas.setWidth(800);
+			
+			canvas.on('mouse:dblclick', function(options) {
+				var e = document.getElementsByName('satiBoravka');
+				brojSati = e[0].value;
+				
+				datum = $('#datumcina').val();
+				
+				if (imeElementa == null || brojSati =="" || !datum ) {
+					toastr.error("Morate uneti Datum i vreme i dužinu boravka da biste mogli selektovati sto!");
+				}else{
+					var pom = imeElementa;
+					//vidi da li je ID stola vec rezervisan?
+					$.ajax({
+						url : 'restoran/rezervacije/proveriSto/',
+						type : 'GET',
+						contentType: 'application/json; charset=UTF-8',
+						data : {imeStola : imeElementa, datum : datum, sati : brojSati},
+						success : function(data) {
+							console.log(data);
+							if (data == true) { //ako je rezervisan nista
+								toastr.error("Morate odabrati drugi sto! Ovaj sto je rezervisan za datum za koji vi želite rezervisati!.");
+								return;
+							}else if (data == false){
+								//ako nije rezervisan i nije u listi selektovanih omogucni DODAJ
+								if(zauzimamStolove.length <1){
+									$('#btnStoAdd').show();
+									$('#btnStoDelete').hide();
+									return;
+								}else{
+								for (var i = 0; i < zauzimamStolove.length; i++) {
+									if (zauzimamStolove[i].naziv != pom) {
+										$('#btnStoAdd').show();
+										$('#btnStoDelete').hide();
+										
+									}else{
+										$('#btnStoAdd').hide();
+										$('#btnStoDelete').show();
+										break;
+									}
+								}
+								}
+							}
+						}
+					});
+					
+					
+					//ako nije rezervisan i nije u listi selektovanih omogucni DODAJ
+					
+					//ako nije rezervisan a jeste u listi selektvanih omoguci OBRISI
+					$("#modalZaSto").modal();
+					$("#nazivStola").val(imeElementa);
+					dobaviStoPoID(imeElementa);
+					imeElementa = null;
+				}
+			});
+
+			canvas.on('object:selected', onObjectSelected)
+
+			fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';
+			fabric.Object.prototype.transparentCorners = false;
+			fabric.Object.prototype.objectCaching = true;
+		}
+		
+		//Dugme za dodavanje stola u listu
+		$(document).on("click", "#btnStoAdd", function() {
+			var segment = $("#segmentSel").val();
+			var stolica = $("#brojStolica").val();
+			var nazivStola = $("#nazivStola").val();
+			var noviSto = new Object();
+
+			noviSto['naziv'] = nazivStola;
+			noviSto['brojStolica'] = stolica;
+			noviSto['tipSegmenta'] = segment;
+			zauzimamStolove.push(noviSto);
+			toastr.success("Uspešno ste dodali sto u rezervaciju.");
+			$('#modalZaSto').modal('hide');
+		});
+		
+		//Dugme za brisanje stola iz liste
+		$(document).on("click", "#btnStoDelete", function() {
+			var segment = $("#segmentSel").val();
+			var stolica = $("#brojStolica").val();
+			var nazivStola = $("#nazivStola").val();
+			
+			for (i = 0; i < zauzimamStolove.length; i++) {
+				if (zauzimamStolove[i].naziv == nazivStola) {
+					zauzimamStolove.splice(i, 1);
+					toastr.success("Uspešno ste uklonili sto iz rezervacije.");
+					$('#modalZaSto').modal('hide');
+					break;
+				}
+			}
+			
+			
+			
+		});
+
+		//NAMED IMAGE-> custom objekat
+		fabric.NamedImage = fabric.util.createClass(fabric.Image, {
+
+			
+			  type: 'named-image',
+
+			  initialize: function(element, options) {
+				this.callSuper('initialize', element, options);
+				options && this.set('name', options.name);
+			  },
+
+			  toObject: function() {
+				return fabric.util.object.extend(this.callSuper('toObject'), { name: this.name });
+			  }
+		});fabric.NamedImage.async = true;
+
+
+		fabric.NamedImage.fromObject = function(object, callback) {
+			  fabric.util.loadImage(object.src, function(img) {
+				callback && callback(new fabric.NamedImage(img, object));
+			  });
+		};
+		
+		function onObjectSelected(e) {
+			console.log("objekat selektovan")
+			console.log(e.target);
+			imeElementa = e.target.get('name');
+			console.log(imeElementa);
+		}
+		
+		function dobaviStoPoID(id) {
+			var push = false;
+
+			for (var i = 0; i < stolovi.length; i++) {
+				if (stolovi[i].naziv === id) {
+					$("#brojStolica").val(stolovi[i].brojStolica);
+					$("#segmentSel").val(stolovi[i].tipSegmenta);
+					push = true;
+					break;
+				}
+			}
+
+			if (!push) {
+				$.ajax({
+					url : 'restoran/getTable',
+					data : id,
+					dataType : "json",
+					type : 'POST',
+					success : function(data) {
+						// zapisi to u modal dijalog
+						$("#segmentSel").val(data.tipSegmenta);
+						$("#brojStolica").val(data.brojStolica);
+					}
+
+				})
+			}
+		}
+		
+		function nastaviRezervaciju(){
+			if(brojSati =="" || !datum || zauzimamStolove.length < 1){
+				toastr.error("Ne možete nastaviti dok ne unesete DATUM, BROJ SATI i ZAUZMETE barem 1 STO!");
+			}else{
+				$("#modalZaNastaviti").modal();
+			}
+		}
+		
+		$(document).on("click", "#btnPrijateljiNe", function() {
+			var x = document.cookie;
+			var delovi = x.split("=");
+			emailUlogovanog = delovi[1];
+			
+			var rezervacija = new Object();
+			rezervacija['email'] = emailUlogovanog;
+			rezervacija['datum'] = datum;
+			rezervacija['sati'] = brojSati;
+			rezervacija['idRestorana'] = restoranIDE;
+			rezervacija['listaStolova'] = zauzimamStolove;
+			
+			//var jsonArray = JSON.parse(JSON.stringify(rezervacija));
+			
+			
+			
+		var lista = JSON.stringify(rezervacija);
+			
+			$.ajax({
+				url : 'restoran/rezervacije/dodajRezervacijuBezPrijatelja',
+				type : 'POST',
+				contentType: 'application/json; charset=UTF-8',
+				data : lista,
+				//data : JSON.stringify(jsonArray),
+				success : function(data) {
+					if(data == true){
+						alert("Uspešno ste rezervisali sto.");
+						location.reload(true);
+					}
+				}
+			});
+			
+		});
+		
+		
+		
+		$(document).on("click", "#btnPrijateljiDa", function() {
+			alert("U izradi");
+			$('#modalZaNastaviti').modal('hide');
+		});
+		
+		function promenioSate(){
+			var e = document.getElementsByName('satiBoravka');
+			brojSati = e[0].value;
+		}
