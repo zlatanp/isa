@@ -30,6 +30,7 @@
 <script src="html/js/toastr.js"></script>
 
 <script src="Scripts/Jelovnik.js"></script>
+<script src="Scripts/Navbar.js"></script>
 
 <title>Jelovnik</title>
 <style>
@@ -61,7 +62,7 @@
 			<div class="collapse navbar-collapse"
 				id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a href="#" class="OpenUpdateRest">Početna</a></li>
+					<li><a href="menadzerPage.html">Početna</a></li>
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
 						data-toggle="dropdown" role="button" aria-haspopup="true"
 						aria-expanded="false">Usluge <span class="caret"></span></a>
@@ -70,8 +71,8 @@
 							<li><a href="#" id="piceHref">Karta pića</a></li>
 							<li><a href="#" id="sedenjeHref">Konfiguracija sedenja</a></li>
 						</ul></li>
-					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
-					<li><a href="#" class="OpenPonude">Nabavke</a></li>
+					<li><a href="#" id="zaposleniHref">Zaposleni</a></li>
+					<li><a href="#" id="nabavkeHref">Nabavke</a></li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">
@@ -87,7 +88,7 @@
 		<h3 id="opis"></h3>
 	</div>
 
-	<div class="row-content jelovnikDiv col-lg-6">
+	<div class="row-content jelovnikDiv col-lg-6 sakrijZaProfil">
 		<div id="glavni_tab" class="tab-pane fade in active">
 				<div class="form-group col-lg-5">
 					<h4>Unesite naziv jela:</h4>
@@ -300,6 +301,7 @@
 		</div>
 	</div>
 	
+<!-- 	PROFIL -->
 	<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>

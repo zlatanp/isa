@@ -30,6 +30,7 @@
 <script src="html/js/toastr.js"></script>
 
 <script src="Scripts/ProfileMenadzer.js"></script>
+<script src="Scripts/Navbar.js"></script>
 
 <title>Menadžer restorana</title>
 </head>
@@ -62,29 +63,22 @@
 							<li><a href="#" id="piceHref">Karta pića</a></li>
 							<li><a href="#" id="sedenjeHref">Konfiguracija sedenja</a></li>
 						</ul></li>
-					<li><a href="#" class="OpenZaposleni">Zaposleni</a></li>
-					<!-- 					<li><a href="#" class="OpenPonude">Ponude</a></li> -->
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown" role="button" aria-haspopup="true"
-						aria-expanded="false">Konkursi <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="#" id="kreirajPonuduHref">Kreiraj ponudu</a></li>
-							<li><a href="#" id="sviKonkursiHref">Svi konkursi</a></li>
-						</ul></li>
-				</ul>
+					<li><a href="#" id="zaposleniHref">Zaposleni</a></li>
+					<li><a href="#" id="nabavkeHref">Nabavke</a></li>
 
-				<ul class="nav navbar-nav navbar-right">
-					<li class="dropdown"><a class="dropdown-toggle"
-						data-toggle="dropdown" href="#"><span
-							class="glyphicon glyphicon-bell"></span> <span class="badge"
-							id="br_notifikacija" style="color: yellow"></span></a>
-						<ul class="dropdown-menu" id="notifikacije">
 
-						</ul></li>
-					<li><a onclick="profilmidaj()" href="#">Profil</a></li>
-					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite
-							se</a></li>
-				</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown"><a class="dropdown-toggle"
+							data-toggle="dropdown" href="#"><span
+								class="glyphicon glyphicon-bell"></span> <span class="badge"
+								id="br_notifikacija" style="color: yellow"></span></a>
+							<ul class="dropdown-menu" id="notifikacije">
+
+							</ul></li>
+						<li><a onclick="profilmidaj()" href="#">Profil</a></li>
+						<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite
+								se</a></li>
+					</ul>
 			</div>
 		</div>
 	</nav>
@@ -204,7 +198,7 @@
 		</div>
 	</div>
 
-
+<!-- 	PROFIL -->
 	<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>

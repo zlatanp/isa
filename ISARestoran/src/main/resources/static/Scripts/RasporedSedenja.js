@@ -335,37 +335,6 @@ function sacuvajStolove(){
 }
 
 
-// KLIKOVI
-$(document).on("click", "#jeloHref", function(e) {
-	e.preventDefault();
-	window.location.replace("jelovnik.html?" + restoranID);
-});
-
-$(document).on("click", "#piceHref", function(e) {
-	e.preventDefault();
-	window.location.replace("kartaPica.html?" + restoranID);
-});
-
-$(document).on("click", "#sedenjeHref", function(e) {
-	e.preventDefault();
-	window.location.replace("sedenje.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenPonude", function(e) {
-	e.preventDefault();
-	window.location.replace("ponude.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenZaposleni", function(e) {
-	e.preventDefault();
-	window.location.replace("zaposleni.html?" + restoranID);
-});
-
-$(document).on("click", ".OpenUpdateRest", function(e) {
-	e.preventDefault();
-	window.location.replace("menadzerPage.html");
-});
-
 // DOBAVI ID RESTORANA IZ URL-a
 function getIdFromUrl() {
 	var id = null;
