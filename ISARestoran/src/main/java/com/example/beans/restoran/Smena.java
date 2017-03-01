@@ -83,6 +83,12 @@ public class Smena implements Serializable{
 	public void setDo_vreme(String do_vreme) {
 		this.do_vreme = do_vreme;
 	}
-	
-	
+
+	public Set<USmeniRadnik> getRade_u_smeni() {
+		return rade_u_smeni;
+	}
+
+	public void setRade_u_smeni(Set<USmeniRadnik> rade_u_smeni) {
+		this.rade_u_smeni = rade_u_smeni;
+	}
 }

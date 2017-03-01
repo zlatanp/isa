@@ -10,8 +10,12 @@ function izlogujSe() {
 }
 
 $(document).ready(function() {
-	$("#timepickerOD").timepicker();
-	$("#timepickerDO").timepicker();
+	$("#timepickerOD").timepicker({
+	    showMeridian: false
+	});
+	$("#timepickerDO").timepicker({
+		showMeridian: false
+	});
 
 	$('.selectpicker').selectpicker({
 		style : 'btn-info',

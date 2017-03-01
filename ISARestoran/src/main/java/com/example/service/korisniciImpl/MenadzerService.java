@@ -37,4 +37,8 @@ public class MenadzerService {
 		menadzeri = menadzerRepository.findAll();
 		return menadzeri;
 	}
+	
+	public MenadzerRestorana findById(int id){
+		return menadzerRepository.findOne(id);
+	}
 }

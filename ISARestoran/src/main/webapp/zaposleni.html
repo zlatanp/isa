@@ -37,6 +37,7 @@
 
 <script src="Scripts/EvidencijaZaposlenih.js"></script>
 <script src="Scripts/Navbar.js"></script>
+<script src="Scripts/Smene.js"></script>
 
 <title>Evidencija zaposlenih</title>
 </head>
@@ -76,7 +77,8 @@
 
 				<ul class="nav navbar-nav navbar-right">
 					<li><a onclick="profilmidaj()" href="#">Profil</a></li>
-					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite se</a></li>
+					<li><a onclick="izlogujSe()" href="/korisnik/logout">Odjavite
+							se</a></li>
 				</ul>
 			</div>
 		</div>
@@ -90,53 +92,63 @@
 
 
 	<div class="sakrijZaProfil">
-	
-	<div class="col-lg-6 controlZap">
-		<button id="dugmeDodaj" data-toggle="modal"
-			data-target="#modalZaposleni" type="button" class="btn btn-danger">
-			Registruj zaposlenog <span class="glyphicon glyphicon-plus"></span>
-		</button>
-		<br>
-		<div class="form-group col-lg-6">
-			<h4>Unesite ime i prezime zaposlenog:</h4>
-			<input class="form-control col-lg-1" type="text" id="zapZaPretragu"
-				style="margin-bottom: 5px">
-			<button id="btnTraziZaposlenog" type="button" class="btn btn-success"
-				style="margin-right: 10px">
-				Traži <span class="glyphicon glyphicon-search"></span>
+
+		<div class="col-lg-6 controlZap">
+			<button id="dugmeDodaj" data-toggle="modal"
+				data-target="#modalZaposleni" type="button" class="btn btn-danger"
+				style="margin-right: 5px">
+				Registruj zaposlenog <span class="glyphicon glyphicon-plus"></span>
 			</button>
-			<button id="dugmePregled" type="button" class="btn btn-success">
-				Pregled svih zaposlenih <span class="glyphicon glyphicon-list"></span>
+			<button id="dugmeSmena" data-toggle="modal"
+				data-target="#modalDefSmena" type="button" class="btn btn-danger"
+				style="margin-right: 5px">
+				Definiši smenu <span class="glyphicon glyphicon-plus"></span>
 			</button>
+			<br>
+			<div class="form-group col-lg-10">
+				<h4>Unesite ime i prezime zaposlenog:</h4>
+				<input class="form-control col-lg-1" type="text" id="zapZaPretragu"
+					style="margin-bottom: 5px">
+				<button id="btnTraziZaposlenog" type="button"
+					class="btn btn-success" style="margin-right: 10px">
+					Traži <span class="glyphicon glyphicon-search"></span>
+				</button>
+				<button id="dugmePregled" type="button" class="btn btn-success"
+					style="margin-right: 5px">
+					Pregled svih zaposlenih <span class="glyphicon glyphicon-list"></span>
+				</button>
+				<button id="dugmePregledSmena" data-toggle="modal"
+				data-target="#modalSveSmene" type="button" class="btn btn-success">
+					Pregled svih smena <span class="glyphicon glyphicon-list"></span>
+				</button>
+			</div>
+		</div>
+
+		<div class="container col-md-10" id="kartice_zaposleni"
+			style="margin-left: 100px"></div>
+
+		<div id="tab_radnik" hidden>
+			<h2 id="naslovKonobar"></h2>
+			<hr>
+			<br>
+			<button type="button" class="btn btn-warning" id="nazad">
+				<span class="glyphicon glyphicon-menu-left"></span> Nazad
+			</button>
+			<br> <br>
+			<div class="row">
+				<div class="col-md-2">
+					<p>Ukupna ocena:</p>
+				</div>
+				<div class="col-md-3">
+					<div id="zvezdice_za_konobara"></div>
+				</div>
+			</div>
+			<br>
+			<div id="cards_comments"></div>
 		</div>
 	</div>
 
-	<div class="container col-md-10" id="kartice_zaposleni"
-		style="margin-left: 100px"></div>
-
-	<div id="tab_radnik" hidden>
-		<h2 id="naslovKonobar"></h2>
-		<hr>
-		<br>
-		<button type="button" class="btn btn-warning" id="nazad">
-			<span class="glyphicon glyphicon-menu-left"></span> Nazad
-		</button>
-		<br>
-		<br>
-		<div class="row">
-			<div class="col-md-2">
-				<p>Ukupna ocena:</p>
-			</div>
-			<div class="col-md-3">
-				<div id="zvezdice_za_konobara"></div>
-			</div>
-		</div>
-		<br>
-		<div id="cards_comments"></div>
-	</div>
-	</div>
-
-<!-- 	mODAL DODAJ ZAPOSLENOG -->
+	<!-- 	mODAL DODAJ ZAPOSLENOG -->
 	<div id="modalZaposleni" class="modal fade" role="dialog"
 		data-backdrop="false">
 		<div class="modal-dialog">
@@ -217,8 +229,8 @@
 			</div>
 		</div>
 	</div>
-	
-<!-- 	PROFIL -->
+
+	<!-- 	PROFIL -->
 	<div class="container" style="display: none; background-color: #E8E8E8"
 		id="glavniDiv">
 		<h1 id="helloHeder"></h1>
@@ -230,7 +242,78 @@
 			</div>
 			<div class="col-sm-9" id="desniDiv"></div>
 		</div>
+	</div>
 
+	<!-- 	MODAL NOVA SMENA -->
+	<div id="modalDefSmena" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Definisanje smena</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="control-label col-sm-3">Naziv smene:</label>
+							<div class="col-sm-8">
+								<input required class="pull-right form-control" type="text"
+									name="naziv" id="nazivSmene">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Početak smene:</label>
+							<div class="col-sm-8">
+								<div class="input-group bootstrap-timepicker">
+									<input id="smenaOD" type="text" class="form-control"> <span
+										class="input-group-addon"><i
+										class="glyphicon glyphicon-time"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="control-label col-sm-3">Kraj smene:</label>
+							<div class="col-sm-8">
+								<div class="input-group bootstrap-timepicker">
+									<input id="smenaDO" type="text" class="form-control"> <span
+										class="input-group-addon"><i
+										class="glyphicon glyphicon-time"></i></span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<button class="btn btn-success" id="btnDodajSmenu"
+								style="margin-left: 130px">Potvrdi smenu</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 	MODAL ZA SVE SMENE-->
+	<div id="modalSveSmene" class="modal fade" role="dialog"
+		data-backdrop="false">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close_link" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<h4>Pregled svih smena u restoranu</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-hover" id="tabla_smene">
+						<tr>
+							<th>Naziv:</th>
+							<th>Početak:</th>
+							<th>Kraj:</th>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 </html>

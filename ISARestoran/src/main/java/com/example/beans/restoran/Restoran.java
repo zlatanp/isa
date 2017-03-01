@@ -83,6 +83,9 @@ public class Restoran implements Serializable {
 	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY , mappedBy= "restoran")
 	protected Set<Ocena> ocene;
 	
+	@OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+	protected Set<Smena> smene;
+	
 	public Restoran() {
 	}
 
@@ -261,4 +264,11 @@ public class Restoran implements Serializable {
 		this.zaposleni = zaposleni;
 	}
 
+	public Set<Smena> getSmene() {
+		return smene;
+	}
+
+	public void setSmene(Set<Smena> smene) {
+		this.smene = smene;
+	}
 }
