@@ -6,24 +6,30 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -35,6 +41,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.beans.korisnici.Gost;
+import com.example.beans.korisnici.Korisnik;
+import com.example.beans.korisnici.MenadzerRestorana;
+import com.example.beans.restoran.Restoran;
 import com.example.beans.restoran.Rezervacija;
 import com.example.beans.restoran.Sto;
 import com.example.beans.restoran.ZakupPomocna;
@@ -45,11 +55,15 @@ import com.example.dto.korisnici.ZaposleniDTO;
 import com.example.dto.restoran.JeloDTO;
 import com.example.dto.restoran.PiceDTO;
 import com.example.dto.restoran.RestoranDTO;
+import com.example.dto.restoran.RezervacijaDTO;
 import com.example.dto.restoran.StoDTO;
 import com.example.enums.TipKorisnika;
 import com.example.enums.TipRestorana;
+import com.example.service.GostService;
 import com.example.service.KorisnikService;
+import com.example.service.RestoranMyService;
 import com.example.service.RezervacijaService;
+import com.example.service.StoMyService;
 import com.example.service.korisniciImpl.KonobarService;
 import com.example.service.korisniciImpl.ZaposlenService;
 import com.example.service.restoranImpl.JeloService;
@@ -96,8 +110,17 @@ public class RestoranController {
 	@Autowired
 	private ServletContext servletContext;
 	
+	@Autowired
+	private GostService gostService;
+	
+	@Autowired
+	private RestoranMyService restoranMyService;
+	
 	@Autowired 
 	private RezervacijaService rezervacijaService;
+	
+	@Autowired
+	private StoMyService stoMyService;
 
 	private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -720,19 +743,33 @@ public class RestoranController {
 	}
 	
 	@RequestMapping(value = "/rezervacije/proveriSto", method = { RequestMethod.GET }, consumes="application/json", produces="application/json")
-	public boolean proveraRezervisanogStola(@ModelAttribute("imeStola") String imeStola, @ModelAttribute("datum") Date datum, @ModelAttribute("sati") String sati) throws JsonProcessingException{
+	public boolean proveraRezervisanogStola(@ModelAttribute("imeStola") String imeStola, @ModelAttribute("datum") String datum, @ModelAttribute("sati") String sati) throws JsonProcessingException{
 		Iterable<Rezervacija> rezervacje = rezervacijaService.getAllRezervacije();
 		
 		System.out.println(imeStola);
+		 Date date = null;
+			DateFormat readFormat = new SimpleDateFormat( "MM/dd/yyyy h:mm a");
+			try {
+			       date = readFormat.parse(datum);
+			    } catch ( ParseException e ) {
+			        e.printStackTrace();
+			    }
+			
+			
 		
 		boolean flag = false;
-		Date mojOd = datum;
+		Date mojOd = date;
+		System.out.println("odkad sam tamo : "+mojOd.toString());
 		Calendar konverter = Calendar.getInstance(); 
-		konverter.setTime(datum); 
+		konverter.setTime(mojOd); 
 		konverter.add(Calendar.HOUR, Integer.parseInt(sati));
 		Date mojDo = konverter.getTime();
+		System.out.println("dokad sam tamo : "+mojDo.toString());
 		for(Rezervacija r : rezervacje){
-			if(!r.getStolovi().isEmpty()){
+			System.out.print("petlja jelima tu stola uopste bre!?");
+			System.out.println(r.getStolovi().size());
+			if(r.getStolovi().size()>0){
+				System.out.print("uso jelima tu stola uopste bre!?");
 				for(Iterator<Sto> it = r.getStolovi().iterator(); it.hasNext(); ){
 					Sto s = it.next();
 					if(s.getNaziv().equals(imeStola)){
@@ -752,16 +789,106 @@ public class RestoranController {
 	}
 	
 	@RequestMapping(value = "/rezervacije/dodajRezervacijuBezPrijatelja", method = RequestMethod.POST, consumes="application/json", produces="application/json")
-	public boolean rezervacijaBezPrijatelja(@RequestBody ZakupPomocna stolovi) throws JsonProcessingException{
-		Iterable<Rezervacija> rezervacje = rezervacijaService.getAllRezervacije();
+	public boolean rezervacijaBezPrijatelja(@RequestBody ZakupPomocna stolovi) throws JsonProcessingException, ParseException{
 		System.out.println(stolovi.email);
 		System.out.println(stolovi.datum);
 		System.out.println(stolovi.sati);
 		System.out.println(stolovi.idRestorana);
 		System.out.println(stolovi.getListaStolova().size());
+		
+		Iterable<Sto> svistolovi = stoMyService.getAllStolovi();
+		
+		Set<Sto> listaStolovaZaUpis = new HashSet<Sto>();
+		int brojStolica = 0;
+		
+		
+		for(Sto s : svistolovi){
+			for(int i=0;i<stolovi.getListaStolova().size();i++){
+				if(s.getNaziv().equals(stolovi.getListaStolova().get(i).getNaziv())){
+					System.out.println("woohoo");
+					listaStolovaZaUpis.add(s);
+					brojStolica += s.getBrojStolica();
+				}
+			}
+			
+		}
+		
+		 Date date = null;
+		DateFormat readFormat = new SimpleDateFormat( "MM/dd/yyyy h:mm a");
+		try {
+		       date = readFormat.parse( stolovi.datum );
+		    } catch ( ParseException e ) {
+		        e.printStackTrace();
+		    }
+		
+		
+		System.out.println(date.toString());
+		
+		String emailZakupca = stolovi.email;
+		Gost g = new Gost();
+		Iterable<Gost> gosti = gostService.getAllGosti();
+		for(Gost kk : gosti){
+			if(kk.getEmail().equals(emailZakupca)){
+				g = kk;
+			}
+		}
+		
+		int trajanje = Integer.parseInt(stolovi.sati);
+		
+		Restoran restt = restoranMyService.getRestoranById(Integer.parseInt(stolovi.getIdRestorana()));
+		
+		Rezervacija r = new Rezervacija();
+		r.setDatum(date);
+		r.setTrajanje(trajanje);
+		r.setGost(g);
+		r.setStolovi(null);
+		r.setRestoran(restt);
+		r.setBroj_stolica(brojStolica);
+		
+		rezervacijaService.saveRezervacija(r);
+		
+		
+		
 		return true;
 		
 		
+	}
+	
+
+	@RequestMapping(value = "/rezervacije/dajPosete", method = { RequestMethod.GET })
+	public String dajPosete(@RequestParam("mojEmail") String mojEmail) throws JsonProcessingException, ParseException{
+		
+		 ArrayList<Rezervacija> zavratiti = new ArrayList<Rezervacija>();
+		Iterable<Rezervacija> sve = rezervacijaService.getAllRezervacije();
+		Iterable<Gost> svigosti = gostService.getAllGosti();
+		
+		JSONObject json = new JSONObject();
+		JSONArray array = new JSONArray();
+		
+		Gost g = null;
+		for(Gost gg : svigosti){
+			if(gg.getEmail().equals(mojEmail)){
+				System.out.println("nasaoga");
+				g =gg;
+				break;
+			}
+		}
+		
+		for(Rezervacija r : sve){
+			if(r.getGost().getId() == g.getId()){
+				System.out.println(g.getId());
+				zavratiti.add(r);
+				JSONObject item = new JSONObject();
+				item.put("brojStolica", r.getBroj_stolica());
+				item.put("datum", r.getDatum().toString());
+				item.put("zadrzavanje", r.getTrajanje());
+				item.put("restoran", r.getRestoran().getNaziv());
+				array.put(item);
+		}
+			}
+		
+		json.put("lista", array);
+		return json.toString();
 	}
 
 	private boolean porediDatume(Date mojOD, Date mojDo, Date stoOd, Date stoDo){

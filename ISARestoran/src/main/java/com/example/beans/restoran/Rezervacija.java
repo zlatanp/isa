@@ -38,7 +38,7 @@ public class Rezervacija implements Serializable{
 	
 	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name="rezervisao", nullable=false, referencedColumnName="id")
-	protected Gost gost;
+	protected Gost rezervisao;
 	
 	@OneToMany(mappedBy="rezervacija", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
 	protected Set<Poziv> pozvani;
@@ -87,11 +87,11 @@ public class Rezervacija implements Serializable{
 	}
 
 	public Gost getGost() {
-		return gost;
+		return rezervisao;
 	}
 
 	public void setGost(Gost gost) {
-		this.gost = gost;
+		this.rezervisao = gost;
 	}
 
 	public Set<Poziv> getPozvani() {
